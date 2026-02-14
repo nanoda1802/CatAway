@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5217072782857560512}
   - component: {fileID: 2197047522549048270}
   - component: {fileID: 1438477544044540174}
+  - component: {fileID: 3405671391917645100}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -149,6 +150,20 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.75, z: 0}
+--- !u!114 &3405671391917645100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 370726618954477168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e172cbf5de540e4cb1c649f15463ad5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Player.MovementBehaviour
+  ShowTopMostFoldoutHeaderGroup: 1
+  playerData: {fileID: 11400000, guid: 46c3a7296a7045d4a94965a86ceeb4b4, type: 2}
 --- !u!1 &1419803983543362625
 GameObject:
   m_ObjectHideFlags: 0
