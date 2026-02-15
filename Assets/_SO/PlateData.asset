@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6a52980b944003a4bd31c897c4b493, type: 3}
+  m_Name: PlateData
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.PlateData
+  maxPlatingCount: 3
+  platingLocalPos: {x: 0, y: 0.08, z: 0}
+  platingLocalScale: {x: 0.7, y: 0.5, z: 0.7}
+  defaultPlatingMesh: {fileID: -7989646137125262055, guid: 3a0d6805265bab6429e19fbe43ed27b9, type: 3}
+  platingMeshDic:
+    _serializedList:
+    - Key: 1
+      Value: {fileID: -7989646137125262055, guid: 3a0d6805265bab6429e19fbe43ed27b9, type: 3}
+    - Key: 2
+      Value: {fileID: -6773220265015557402, guid: 646aaf727223efa4fa628affc344e4ba, type: 3}
+    - Key: 4
+      Value: {fileID: -1252703206165543353, guid: 1d1ed4e93327d3a4396c786232315a1f, type: 3}
+    - Key: 8
+      Value: {fileID: 8308955259316188003, guid: bc424f95edf0847459b791996f354726, type: 3}
+    - Key: 16
+      Value: {fileID: 1361608503392013976, guid: ec1c3084109837240ab0d56ea1bb80af, type: 3}
+    - Key: 3
+      Value: {fileID: 6686962980312776870, guid: 2770123d8d63df04e8e21908493417d2, type: 3}
+    - Key: 5
+      Value: {fileID: 1315773894591433460, guid: faf0fc277a995c44d85f199cb0c50a07, type: 3}
+    - Key: 9
+      Value: {fileID: 263597860767127616, guid: c315f85c7d4d42b44bab92d38b7ada44, type: 3}
+    - Key: 17
+      Value: {fileID: 1085000937362733249, guid: dca7bece8b5bcc54da01437d311d3970, type: 3}
+    - Key: 6
+      Value: {fileID: 8239815612548082831, guid: de76a5eca9fdd004db6df8fd657ffddd, type: 3}
+    - Key: 10
+      Value: {fileID: 5665954553331786839, guid: a18b3c091e723b543b64f6593c28d240, type: 3}
+    - Key: 18
+      Value: {fileID: 5175613127888185997, guid: 69a37802977d7f241bce8e6613fedb03, type: 3}
+    - Key: 12
+      Value: {fileID: -1814702132228268331, guid: 5a78efcbc81d6ef439bf89bad8d79efd, type: 3}
+    - Key: 20
+      Value: {fileID: -3675933241472738472, guid: f999fd6a558f8564eb97ef60401ba1c8, type: 3}
+    - Key: 24
+      Value: {fileID: -8467245685539969967, guid: a73e4433a022cd24dbab57e9e3c7f111, type: 3}
+    - Key: 7
+      Value: {fileID: -8282155543719371406, guid: c82667feeb686904d8c24acb8d8ccd71, type: 3}
+    - Key: 11
+      Value: {fileID: -1098411480586489047, guid: 582686eb53d2dda47a752f5dd358966e, type: 3}
+    - Key: 19
+      Value: {fileID: -7758454531046478432, guid: 52670f2380634994a9e7e50118280161, type: 3}
+    - Key: 13
+      Value: {fileID: -5690494165209950274, guid: 82bd536df11b81f429ec10ca201ca9dd, type: 3}
+    - Key: 21
+      Value: {fileID: 9116407647566822776, guid: 5ab671656692bec4386db0b5e6eab932, type: 3}
+    - Key: 25
+      Value: {fileID: 5872315925304505690, guid: 0b1cfc182f35ec74fa5852c94b0e0e78, type: 3}

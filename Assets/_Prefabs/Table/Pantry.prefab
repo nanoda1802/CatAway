@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8921095354905934193}
-  - component: {fileID: 4164617881290140602}
-  - component: {fileID: 7644298163498126306}
   - component: {fileID: 6732246247530902020}
   m_Layer: 8
   m_Name: Pantry
@@ -35,50 +33,6 @@ Transform:
   - {fileID: 3377158459218646895}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4164617881290140602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4140863123615490672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1246262236
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 0
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 0
-  SyncOwnerTransformWhenParented: 0
-  AllowOwnerToParent: 0
---- !u!114 &7644298163498126306
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4140863123615490672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8447cb8927a223f44bb4b5177a582c8c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Pantry
-  ShowTopMostFoldoutHeaderGroup: 1
-  ingredientType: 0
-  provider: {fileID: 0}
-  modelData: {fileID: 11400000, guid: 6803872e1cba12547bac801f9441356f, type: 2}
-  sampleFilter: {fileID: 2111704165715404800}
-  sampleRenderer: {fileID: 468649961833183504}
-  sampleTr: {fileID: 1435684261668717331}
 --- !u!65 &6732246247530902020
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06ede87c9df14d9bb02353ccf6c9fde2, type: 3}
+  m_Name: Lettuce
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.IngredientData
+  type: 8
+  defaultRenderMesh: {fileID: 3760286561286826541, guid: d8ecb712bfd84474aa5c417b7b4b0c20, type: 3}
+  preppedRenderMesh: {fileID: -682357888511628354, guid: e11d9cbcb51649a4d8f186784d5a4f97, type: 3}
+  defaultColliderMesh: {fileID: 3760286561286826541, guid: d8ecb712bfd84474aa5c417b7b4b0c20, type: 3}
+  preppedColliderMesh: {fileID: -682357888511628354, guid: e11d9cbcb51649a4d8f186784d5a4f97, type: 3}
+  defaultScale: {x: 0.4, y: 0.35, z: 0.4}
+  preppedScale: {x: 0.6, y: 2.5, z: 0.6}
+  maxProgress: 1
+  maxPrepState: 1
+  throwForce: 15
+  dampingThreshold: 8
+  dampingRatio: 0.99
+  detachOffset: 0.25

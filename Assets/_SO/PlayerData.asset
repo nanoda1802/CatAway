@@ -23,10 +23,11 @@ MonoBehaviour:
   interactInterval: 0.2
   tableLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   rayDistance: 1.2
   itemLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
+  maxDetectionCount: 5
   overlapBoxSize: {x: 0.7, y: 0.5, z: 0.5}
   overlapBoxOffset: 0.5

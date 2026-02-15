@@ -111,9 +111,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2303034472434000605}
-  - component: {fileID: 6051458122181526232}
   - component: {fileID: 664470068792072275}
-  - component: {fileID: 1095690747847519090}
   m_Layer: 8
   m_Name: Stove
   m_TagString: Table
@@ -138,31 +136,6 @@ Transform:
   - {fileID: 3833919147235019637}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6051458122181526232
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7940219582672123014}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1839824121
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 0
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 0
-  SyncOwnerTransformWhenParented: 0
-  AllowOwnerToParent: 0
 --- !u!65 &664470068792072275
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -184,21 +157,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &1095690747847519090
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7940219582672123014}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b64f95a71eaff94ea0eba90fd9cbadd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StoveTable
-  ShowTopMostFoldoutHeaderGroup: 1
-  pivot: {fileID: 1666764335131423576}
-  availableType: 2
 --- !u!1001 &4176935532246561169
 PrefabInstance:
   m_ObjectHideFlags: 0
