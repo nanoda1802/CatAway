@@ -1,4 +1,5 @@
 ﻿using _Scripts.Stage.Item;
+using _Scripts.Stage.Table;
 using UnityEngine;
 
 namespace _Scripts.Stage.Player.Status
@@ -16,7 +17,7 @@ namespace _Scripts.Stage.Player.Status
             _data = data;
             _detectedItems = new Collider[data.MaxDetectionCount];
         }
-        
+
         public bool DetectItem(out Carriable closest)
         {
             closest = null;
@@ -24,7 +25,7 @@ namespace _Scripts.Stage.Player.Status
             Vector3 offset = _detectPoint.forward  * _data.OverlapBoxOffset;
             int hitCount = Physics.OverlapBoxNonAlloc(_detectPoint.position + offset, _data.OverlapBoxSize, _detectedItems, _detectPoint.rotation,_data.ItemLayer);
 
-            DrawDebugBox(_detectPoint.position + offset, _data.OverlapBoxSize, _detectPoint.rotation, Color.cyan);
+            // DrawDebugBox(_detectPoint.position + offset, _data.OverlapBoxSize, _detectPoint.rotation, Color.cyan);
             
             if (hitCount <= 0) return false;
             
@@ -82,7 +83,7 @@ namespace _Scripts.Stage.Player.Status
             
             table = isHit ? hit.collider.gameObject : null;
             
-            return isHit;
+            return isHit && table is not null;
         }
     }
 }

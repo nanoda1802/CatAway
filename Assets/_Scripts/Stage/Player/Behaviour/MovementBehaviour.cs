@@ -9,7 +9,6 @@ namespace _Scripts.Stage.Player.Behaviour
 {
     public class MovementBehaviour : NetworkBehaviour, INetworkUpdateSystem
     {
-        [SerializeField] PlayerData playerData; // [임시]
         private PlayerInput _inputMap;  // [임시]
         
         private MoveStatus _moveStatus;
@@ -17,9 +16,8 @@ namespace _Scripts.Stage.Player.Behaviour
     
         private InputAction _moveAction;
         private InputAction _dashAction;
-    
-        private Transform _playerTr;
-        private CharacterController _charCtrl;
+
+        private Rigidbody _playerRb;
         private Animator _animator;
     
         private readonly int _moveParamHash = Animator.StringToHash("Move");
@@ -31,7 +29,7 @@ namespace _Scripts.Stage.Player.Behaviour
             MoveStatus moveStatus, 
             InteractStatus interactStatus,
             PlayerInput inputMap, // 이거 어디선가 enable disable 해줘야해 leak 경고 뜨던데
-            CharacterController  characterController,
+            Rigidbody playerRb,
             Animator playerAnimator)
         {
             _inputMap =  inputMap; // [임시]
@@ -42,8 +40,7 @@ namespace _Scripts.Stage.Player.Behaviour
             _moveAction = inputMap.asset.FindAction("Movement"); // 방법 1
             _dashAction = inputMap.Stage.Button1; // 방법 2
 
-            _playerTr = this.transform;
-            _charCtrl = characterController;
+            _playerRb = playerRb;
             _animator = playerAnimator;
         }
 
@@ -52,7 +49,7 @@ namespace _Scripts.Stage.Player.Behaviour
             if (!IsLocalPlayer) return;
             
             _inputMap.Enable(); // [임시]
-            this.RegisterNetworkUpdate(NetworkUpdateStage.Update);
+            this.RegisterNetworkUpdate(NetworkUpdateStage.FixedUpdate);
             SubscribeInputEvents();
         }
         
@@ -61,7 +58,7 @@ namespace _Scripts.Stage.Player.Behaviour
             if (!IsLocalPlayer) return;
             
             _inputMap.Disable(); // [임시]
-            this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
+            this.UnregisterNetworkUpdate(NetworkUpdateStage.FixedUpdate);
             UnsubscribeInputEvents();
         }
         
@@ -75,21 +72,21 @@ namespace _Scripts.Stage.Player.Behaviour
         
         private void Move()
         {
-            _charCtrl.SimpleMove(_moveStatus.MoveOffset);
+            _playerRb.MovePosition(_playerRb.position + _moveStatus.MoveOffset);
         }
     
         private void Rotate()
         {
-            Quaternion smoothRot = Quaternion.Slerp(_playerTr.rotation, _moveStatus.LookRot, _moveStatus.RotRatio);
-            transform.rotation = smoothRot;
+            Quaternion smoothRot = Quaternion.Slerp(_playerRb.rotation, _moveStatus.LookRot, _moveStatus.RotRatio);
+            _playerRb.MoveRotation(smoothRot);
         }
     
         private async UniTaskVoid Dash()
         {
             SetDashState(true);
             
-            // 어떻게 해야하지?
-            Debug.Log("Dashing");
+            _playerRb.MoveRotation(_moveStatus.LookRot);
+            _playerRb.AddForce(_moveStatus.DashForce, ForceMode.VelocityChange);
 
             await _moveStatus.WaitForDash; // UniTask.WaitForSeconds();
             SetDashState(false);
@@ -99,19 +96,16 @@ namespace _Scripts.Stage.Player.Behaviour
         {
             _animator.SetBool(_dashParamHash, isDashBegin);
             _moveStatus.IsDashing = isDashBegin;
+            _playerRb.linearVelocity = _playerRb.angularVelocity = Vector3.zero;
             if (!isDashBegin) _moveStatus.UpdateLastDashTime();
-        }
-    
-        private void OnMoveStarted(InputAction.CallbackContext ctx)
-        {
-            if (_interactStatus.IsInteracting) return;
-            _animator.SetBool(_moveParamHash, true);
         }
     
         private void OnMovePerformed(InputAction.CallbackContext ctx)
         {
             if (_interactStatus.IsInteracting) return;
+            
             _moveStatus.SetMoveDirection(ctx.ReadValue<Vector2>());
+            _animator.SetBool(_moveParamHash, true);
         }
     
         private void OnMoveCanceled(InputAction.CallbackContext ctx)
@@ -144,7 +138,6 @@ namespace _Scripts.Stage.Player.Behaviour
         private void SubscribeInputEvents()
         {
             _moveAction.Enable();
-            _moveAction.started += OnMoveStarted;
             _moveAction.performed += OnMovePerformed;
             _moveAction.canceled += OnMoveCanceled;
             
@@ -155,7 +148,6 @@ namespace _Scripts.Stage.Player.Behaviour
     
         private void UnsubscribeInputEvents()
         {
-            _moveAction.started -= OnMoveStarted;
             _moveAction.performed -= OnMovePerformed;
             _moveAction.canceled -= OnMoveCanceled;
             _moveAction.Disable();

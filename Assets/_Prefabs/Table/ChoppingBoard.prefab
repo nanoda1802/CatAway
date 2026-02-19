@@ -9,8 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 875617918589404095}
+  - component: {fileID: 8142648700398495914}
+  - component: {fileID: 4471335043192074823}
   - component: {fileID: 1545303299914478099}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: ChoppingBoard
   m_TagString: Table
   m_Icon: {fileID: 0}
@@ -35,6 +37,50 @@ Transform:
   - {fileID: 5085169896251369540}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8142648700398495914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030974058247843654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 3631993648
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 0
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 0
+  SyncOwnerTransformWhenParented: 0
+  AllowOwnerToParent: 0
+--- !u!114 &4471335043192074823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030974058247843654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1926d841069849f18c7592e41627b092, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Table.ChoppingTable
+  ShowTopMostFoldoutHeaderGroup: 1
+  pivot: {fileID: 1848493422409544387}
+  knifeModel: {fileID: 6152500931055720481}
+  availableType: 28
+  indicatorPrefab: {fileID: 0}
+  movableCanvas: {fileID: 0}
+  indicatorOffsetY: 1.2
 --- !u!65 &1545303299914478099
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -45,10 +91,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 127
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -65,7 +111,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5085169896251369540}
-  - component: {fileID: 3614118919891630793}
+  - component: {fileID: 1848493422409544387}
   m_Layer: 0
   m_Name: Pivot
   m_TagString: Untagged
@@ -88,7 +134,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 875617918589404095}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3614118919891630793
+--- !u!114 &1848493422409544387
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -267,6 +313,11 @@ PrefabInstance:
 --- !u!4 &5464387245211259272 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7835455880646214474, guid: 7de4b22e30d10ed45ad4fd836ae607d8, type: 3}
+  m_PrefabInstance: {fileID: 2839597233011675842}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6152500931055720481 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8217473226905864931, guid: 7de4b22e30d10ed45ad4fd836ae607d8, type: 3}
   m_PrefabInstance: {fileID: 2839597233011675842}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3519452689011383485

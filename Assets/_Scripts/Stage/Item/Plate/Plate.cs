@@ -8,106 +8,137 @@ using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Item.Plate
 {
-    public class Plate : NetworkBehaviour, IPrepable, IPlacable
+    public class Plate : NetworkBehaviour, IPrepable, IIngredientHolder
     {
-        [SF] private PlateData data;
-        [SF] private IngredientType requiredIngredient = IngredientType.Bun;
+        private PlateData _data;
+        private IngredientProvider _ingredientProvider;
         
         private readonly List<IngredientType> _platingList = new();
         private IngredientType _platingMask = 0;
-        [SF] private MeshFilter platingMeshFilter;
-
-        private Carriable _carriable;
+        [SF] private MeshFilter platingModel;
         
-        private bool IsFull => _platingList.Count >= data.MaxPlatingCount;
+        private float _curProgress;
+        private PrepState _prepState; // 이걸로 동기화 다시 해야해
         
-        private void Awake() // [임시]
+        public bool IsReady => _prepState == PrepState.WellDone;
+        public bool IsFull => _platingList.Count >= _data.MaxPlatingCount;
+        public bool HasIngredient => _platingList.Count > 0;
+        
+        // [추후 수정] 주입받도록
+        private void Construct(IngredientProvider provider, PlateData data) // 등등
         {
-            InitComponents();
+            this._ingredientProvider = provider;
         }
 
-        private void OnCollisionEnter(Collision other) // [임시]
+        public void InitComponents(bool isServer, PlateData data)
         {
-            if (!IsServer) return;
+            _data = data;
+            _ingredientProvider = FindFirstObjectByType<IngredientProvider>(); // [임시]
             
-            if (other.collider.CompareTag("Item")) return;
-            if (!other.collider.TryGetComponent(out Carriable carriable)) return;
-            if (carriable.Type != CarriableType.Ingredient) return;
+            var plateCarriable = this.GetComponentInChildren<Carriable>();
+            var plateRb = this.GetComponentInChildren<Rigidbody>();
 
-            if (TryPlace(carriable))
+            plateRb.detectCollisions = isServer;
+            
+            plateCarriable?.Construct(plateRb);
+
+            var plateCollider = this.GetComponentInChildren<Collider>();
+            plateCollider.isTrigger = !isServer;
+
+            if (platingModel == null)
             {
-                carriable.NetworkObject.Despawn();
-            }
-        }
-
-        public void InitComponents()
-        {
-            _carriable = this.GetComponentInChildren<Carriable>();
-            var rb = this.GetComponentInChildren<Rigidbody>();
-
-            _carriable?.Construct(rb);
-
-            if (platingMeshFilter == null)
-            {
-                platingMeshFilter = transform.GetChild(0).GetChild(0).GetComponent<MeshFilter>();
+                platingModel = transform.GetChild(0).GetChild(0).GetComponent<MeshFilter>();
             }
 
-            platingMeshFilter.gameObject.SetActive(false);
-            platingMeshFilter.transform.localPosition = data.PlatingLocalPos;
-            platingMeshFilter.transform.localScale = data.PlatingLocalScale;
+            platingModel.gameObject.SetActive(false);
+            platingModel.transform.localPosition = data.PlatingLocalPos;
+            platingModel.transform.localScale = data.PlatingLocalScale;
         }
 
-        public float Prepare()
+        public float Prepare(int multiplier)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public bool TryPlace(Carriable carriable)
-        {
-            // Prep 됐는지도 확인해야해
+            if (_curProgress >= _data.MaxProgress) return 1;
             
-            if (carriable.Type != CarriableType.Ingredient) return false;
+            _curProgress += Time.deltaTime * multiplier;
+            return _curProgress / _data.MaxProgress;
+        }
+
+        public void OnPrepFinished()
+        {
+            InitStatus();
+        }
+
+        public bool TryAdd(Carriable carriable)
+        {
+            if (!IsReady || IsFull) return false;
+            if (!carriable.IsSpawned) return false;
             if (!carriable.NetworkObject.TryGetComponent(out Ingredient.Ingredient ingredient)) return false;
-            if (IsFull || _platingMask.HasFlag(ingredient.Type))  return false;
+            
+            if (_platingMask.HasFlag(ingredient.Type))  return false;
+            if (!ingredient.IsReady) return false;
             if (!HasRequiredIngredient(ingredient.Type)) return false;
             
-            if (_platingList.Count <= 0)
-            {
-                platingMeshFilter.gameObject.SetActive(true);
-            }
-
+            if (carriable.IsAttach) carriable.Detach();
+            _ingredientProvider.ReleaseIngredient(ingredient);
+            ingredient.NetworkObject.Despawn(false);
+            
             _platingMask |= ingredient.Type;
             _platingList.Add(ingredient.Type);
             
-            UpdatePlatingClientRpc(_platingMask);
+            UpdatePlatingRpc(_platingMask);
             
             return true;
         }
 
-        public bool TryDisplace(CarrierBehaviour carrier)
-        {
-            return false;
-        }
-
         private bool HasRequiredIngredient(IngredientType type)
         {
+            var requiredIngredient = _ingredientProvider.RequiredType;
+            
             if (_platingMask.HasFlag(requiredIngredient)) return true;
-            if (_platingList.Count < data.MaxPlatingCount - 1) return true;
+            if (_platingList.Count < _data.MaxPlatingCount - 1) return true;
             
             return type == requiredIngredient;
         }
 
-        [ClientRpc]
-        private void UpdatePlatingClientRpc(IngredientType key)
+        public void ClearHolder()
         {
-            platingMeshFilter.sharedMesh = data.GetMesh(key);
+            if (!IsReady) return;
+            _curProgress = 0;
+            _prepState = PrepState.Raw;
+            ClearPlatingRpc();
         }
 
-        public void ResetPlate()
+        public void InitStatus()
         {
+            _curProgress = 1;
+            _prepState = PrepState.WellDone;
+            
             _platingMask = 0;
             _platingList.Clear();
-            platingMeshFilter.gameObject.SetActive(false);
+            
+            ResetStatusRpc();
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void UpdatePlatingRpc(IngredientType key)
+        {
+            if (!platingModel.gameObject.activeSelf) platingModel.gameObject.SetActive(true);
+            platingModel.sharedMesh = _data.GetMesh(key);
+            platingModel.transform.localScale = _data.PlatingLocalScale;
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void ClearPlatingRpc()
+        {
+            if (!platingModel.gameObject.activeSelf) platingModel.gameObject.SetActive(true);
+            platingModel.sharedMesh = _data.FoodWasteMesh;
+            platingModel.transform.localScale = _data.FoodWasteLocalScale;
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void ResetStatusRpc()
+        {
+            platingModel.gameObject.SetActive(false);
         }
     }
 }

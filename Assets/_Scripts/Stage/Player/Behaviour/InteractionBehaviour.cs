@@ -16,11 +16,9 @@ namespace _Scripts.Stage.Player.Behaviour
         private MoveStatus _moveStatus;
         
         private InputAction _interactAction;
-    
+
+        private Rigidbody _playerRb;
         private Animator _animator;
-    
-        private ClientRpcParams _clientRpcParams;
-        private readonly ulong[] _clientId = new ulong[1];
         
         [Inject]
         private void Construct(
@@ -29,6 +27,7 @@ namespace _Scripts.Stage.Player.Behaviour
             MoveStatus moveStatus,
             CarryStatus carrierStatus, 
             PlayerInput inputMap, 
+            Rigidbody playerRb,
             Animator playerAnimator)
         {
             _detectStatus = detectStatus;
@@ -36,12 +35,10 @@ namespace _Scripts.Stage.Player.Behaviour
             _carryStatus = carrierStatus;
             _moveStatus = moveStatus;
             
+            _playerRb = playerRb;
             _animator = playerAnimator;
             
             _interactAction = inputMap.FindAction("Button2");
-            
-            _clientRpcParams = new ClientRpcParams();
-            _clientRpcParams.Send.TargetClientIds = _clientId;
         }
     
         public override void OnNetworkSpawn()
@@ -56,72 +53,59 @@ namespace _Scripts.Stage.Player.Behaviour
             UnsubscribeInputEvents();
         }
     
-        [ServerRpc]
-        private void StartInteractionServerRpc(ServerRpcParams rpcParams = default)
+        [Rpc(SendTo.Server)]
+        private void TryInteractionRpc()
         {
             if (_carryStatus.HasCarriable) return;
             if (!_detectStatus.DetectTable(out var table)) return;
-            if (!table.TryGetComponent<IInteractable>(out var interactable)) return;
+            if (!table.TryGetComponent(out IInteractable interactable)) return;
             
-            bool hasStated = interactable.TryInteractStart(this, out int animParamHash);
+            if (!interactable.TryInteraction(this, out int animParamHash)) return;
             
-            _clientId[0] = rpcParams.Receive.SenderClientId;
-            ConfirmStartClientRpc(hasStated, animParamHash, _clientRpcParams);
-            
-            if (hasStated) _interactStatus.CurInteractable = interactable;
+            _interactStatus.CurInteractable = interactable;
+            StartInteractionRpc(animParamHash, RpcTarget.Single(this.OwnerClientId,RpcTargetUse.Temp));
         }
     
-        [ServerRpc]
-        private void StopInteractionServerRpc(ServerRpcParams rpcParams = default)
+        [Rpc(SendTo.Server)]
+        public void CancelInteractionRpc()
         {
             if (!_interactStatus.IsInteracting) return;
-            bool hasStopped = _interactStatus.CurInteractable.TryInteractStop(this, out int animParamHash); 
             
-            _clientId[0] = rpcParams.Receive.SenderClientId;
-            ConfirmStopClientRpc(hasStopped,animParamHash,_clientRpcParams);
+            _interactStatus.CurInteractable.CancelInteraction(this.OwnerClientId); 
             
-            if (hasStopped) _interactStatus.CurInteractable = null;
+            _interactStatus.CurInteractable = null;
+            StopInteractionRpc(RpcTarget.Single(this.OwnerClientId,RpcTargetUse.Temp));
+        }
+
+        [Rpc(SendTo.Server)]
+        public void FinishInteractionRpc()
+        {
+            if (!_interactStatus.IsInteracting) return;
+            
+            _interactStatus.CurInteractable = null;
+            StopInteractionRpc(RpcTarget.Single(this.OwnerClientId,RpcTargetUse.Temp));
+        }
+
+        [Rpc(SendTo.SpecifiedInParams)]
+        private void StartInteractionRpc(int animParamHash, RpcParams rpcParams = default)
+        {
+            _moveStatus.MoveConstraint = true;
+            _moveStatus.SetMoveDirection(Vector2.zero);
+            
+            _playerRb.linearVelocity = _playerRb.angularVelocity = Vector3.zero;
+            _playerRb.constraints = RigidbodyConstraints.FreezeAll;
+            
+            _interactStatus.StartInteractionAnim(_animator, animParamHash);
         }
         
-        // public void FinishInteraction(ulong targetClientId)
-        // {
-        //     if (!_interactStatus.IsInteracting) return;
-        //     
-        //     _clientId[0] = targetClientId;
-        //     ConfirmStopClientRpc(true, _interactStatus.CurInteractable.AnimParamHash, _clientRpcParams);
-        //     _interactStatus.CurInteractable = null;
-        // }
-    
-        [ClientRpc]
-        private void ConfirmStartClientRpc(bool isSuccess, int animParamHash, ClientRpcParams rpcParams = default)
+        [Rpc(SendTo.SpecifiedInParams)]
+        private void StopInteractionRpc(RpcParams rpcParams = default)
         {
-            if (isSuccess)
-            {
-                Debug.Log("Interact Start Success");
-                _animator.SetBool(animParamHash, true);
-                // _moveStatus.MoveConstraint = true;
-            }
-            else
-            {
-                Debug.Log("Interact Start Failed");
-                // 실패했을 때 처리
-            }
-        }
-        
-        [ClientRpc]
-        private void ConfirmStopClientRpc(bool isSuccess, int animParamHash, ClientRpcParams rpcParams = default)
-        {
-            if (isSuccess)
-            {
-                Debug.Log("Interact Stop Success");
-                _animator.SetBool(animParamHash, false);
-                // _moveStatus.MoveConstraint = false;
-            }
-            else
-            {
-                Debug.Log("Interact Stop Failed");
-                // 실패했을 때 처리
-            }
+            _moveStatus.MoveConstraint = false;
+            
+            _playerRb.constraints = RigidbodyConstraints.FreezeRotation;
+            
+            _interactStatus.StopInteractionAnim(_animator);
         }
     
         private void OnInteractStarted(InputAction.CallbackContext ctx)
@@ -129,14 +113,14 @@ namespace _Scripts.Stage.Player.Behaviour
             if (!_interactStatus.IsInteractAvailable) return;
             if (ctx.interaction is not HoldInteraction) return;
             
-            StartInteractionServerRpc();
+            TryInteractionRpc();
         }
     
         private void OnInteractCanceled(InputAction.CallbackContext ctx)
         {
             if (ctx.interaction is not HoldInteraction) return;
             
-            StopInteractionServerRpc();
+            CancelInteractionRpc();
             _interactStatus.UpdateLastInteractTime();
         }
     

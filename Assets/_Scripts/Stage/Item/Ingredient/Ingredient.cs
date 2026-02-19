@@ -7,7 +7,7 @@ namespace _Scripts.Stage.Item.Ingredient
 {
     public class Ingredient : NetworkBehaviour, IPrepable
     {
-        [SF] private IngredientData data;
+        private IngredientData _data;
         
         private MeshFilter _meshFilter;
         private MeshCollider _meshCollider;
@@ -18,76 +18,83 @@ namespace _Scripts.Stage.Item.Ingredient
         private readonly NetworkVariable<IngredientType> _sharedType = new();
 
         private float _curProgress;
-        private PrepState _prepState;
+        private PrepState _prepState; // 이걸로 동기화 다시 해야해
 
-        public IngredientType Type => data.Type;
+        public IngredientType Type => _data.Type;
+        public bool IsReady => _prepState == PrepState.WellDone;
 
-        private void Awake() // [임시]
+        // isServer 매개변수가 있는 메서드들은 호출 시점이 스폰 이전이라서 그렇슴
+        
+        public void InitStatus(bool isServer, IngredientData data, bool isRequiredIngredient)
         {
-            InitComponents();
+            _curProgress = 0;
+            _prepState = isRequiredIngredient? PrepState.WellDone : PrepState.Raw;
+            
+            _data = data;
+            SetModel(_data.DefaultRenderMesh,_data.DefaultScale,_data.DefaultColliderMesh, isServer);
         }
 
-        public void InitComponents()
+        public void InitComponents(bool isServer)
         {
             _meshFilter = this.GetComponentInChildren<MeshFilter>();
             _meshCollider = this.GetComponentInChildren<MeshCollider>();
             
+            _meshCollider.isTrigger = !isServer;
+            
             _carriable = this.GetComponentInChildren<Carriable>();
             _throwable = this.GetComponentInChildren<Throwable>();
-         
-            var rb = this.GetComponentInChildren<Rigidbody>();
+            
+            var ingredientRb = this.GetComponentInChildren<Rigidbody>();
             var netTr = this.GetComponentInChildren<NetworkTransform>();
             
-            _carriable?.Construct(rb);
-            _throwable?.Construct(this.data, rb, netTr);
+            ingredientRb.detectCollisions = isServer;
+            
+            _carriable?.Construct(ingredientRb);
+            _throwable?.Construct(ingredientRb, netTr);
         }
 
         public override void OnNetworkSpawn()
         {
-            if (HasAuthority) _sharedType.Value = data.Type;
+            if (HasAuthority)
+            {
+                _throwable?.InitStatus(_data);
+                _sharedType.Value = _data.Type;
+            }
             
             base.OnNetworkSpawn();
         }
 
-        private void OnCollisionEnter(Collision other)
+        public float Prepare(int multiplier)
         {
-            if (!HasAuthority) return;
-            if (!_throwable.IsThrowing) return;
+            if (_curProgress >= _data.MaxProgress) return 1;
             
-            _throwable.StopThrowing();
+            _curProgress += Time.deltaTime * multiplier;
+            return _curProgress / _data.MaxProgress;
         }
 
-        public float Prepare()
+        public void OnPrepFinished()
         {
-            return _curProgress / data.MaxProgress;
+            _prepState = PrepState.WellDone;
+            UpdateModelRpc();
         }
 
-        private void OnPrepDone()
-        {
-            SetModel(data.PreppedRenderMesh,data.PreppedScale,data.PreppedColliderMesh);
-        }
-
-        public void Reset()
-        {
-            _curProgress = 0;
-
-            ResetModelClientRpc();
-            
-            _carriable.Detach();
-            _throwable.StopThrowing();
-        }
-
-        private void SetModel(Mesh renderMesh, Vector3 scale, Mesh colliderMesh)
+        private void SetModel(Mesh renderMesh, Vector3 scale, Mesh colliderMesh, bool isServer)
         {
             _meshFilter.sharedMesh = renderMesh;
             _meshFilter.transform.localScale = scale;
+            
+            if (!isServer) return;
+            
+            if (!_meshCollider.convex) _meshCollider.convex = true;
             _meshCollider.sharedMesh = colliderMesh;
         }
 
-        [ClientRpc]
-        private void ResetModelClientRpc()
+        [Rpc(SendTo.Everyone)]
+        private void UpdateModelRpc()
         {
-            SetModel(data.DefaultRenderMesh,data.DefaultScale,data.DefaultColliderMesh);
+            // 몰러,,, 매개변수로 WellDone인지, OverDone인지 받기
+            // 그리고 맞는 쪽으로 SetModel
+            SetModel(_data.PreppedRenderMesh,_data.PreppedScale,_data.PreppedColliderMesh, IsServer);
         }
     }
 }

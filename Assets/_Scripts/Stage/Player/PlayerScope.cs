@@ -1,4 +1,5 @@
-﻿using _Scripts.Stage.Player.Status;
+﻿using _Scripts.Stage.Player.Behaviour;
+using _Scripts.Stage.Player.Status;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
@@ -11,10 +12,16 @@ namespace _Scripts.Stage.Player
     {
         [SF] private PlayerData playerData;
         
-        [SF] private CharacterController characterController;
+        [SF] private Rigidbody playerRb;
         [SF] private Animator animator;
         [SF] private Transform detectPoint;
-        
+         
+        [SF] private MovementBehaviour movementBehaviour;
+        [SF] private InteractionBehaviour interactionBehaviour;
+        [SF] private CarrierBehaviour carrierBehaviour;
+        [SF] private CollisionBehaviour collisionBehaviour;
+        [SF] private EmotionBehaviour emotionBehaviour;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.Register<PlayerInput>(Lifetime.Scoped);
@@ -26,9 +33,15 @@ namespace _Scripts.Stage.Player
 
             builder.RegisterInstance(playerData);
 
-            builder.RegisterComponent(characterController);
+            builder.RegisterComponent(playerRb);
             builder.RegisterComponent(animator);
             builder.RegisterComponent(detectPoint);
+            
+            builder.RegisterComponent(movementBehaviour);
+            builder.RegisterComponent(interactionBehaviour);
+            builder.RegisterComponent(carrierBehaviour);
+            builder.RegisterComponent(collisionBehaviour);
+            // builder.RegisterComponent(emotionBehaviour);
             
             base.Configure(builder);
         }

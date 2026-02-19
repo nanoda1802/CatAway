@@ -32,14 +32,14 @@ namespace _Scripts.Stage.Item.Ingredient
         public PrepState MaxPrepState => maxPrepState;
         
         [Header("[ Throw ]")]
-        [SF] private float throwForce = 15;
-        [SF] private float dampingThreshold = 8;
-        [SF] private float dampingRatio = 0.99f;
-        [SF] private float detachOffset = 0.25f;
+        [SF] private float throwForce = 17;
+        [SF] private float dampingThreshold = 6;
+        [SF] private float dampingRatio = 0.97f;
+        [SF] private float validVelocityCutOff = 5f;
     
         public float ThrowForce => throwForce;
         public float DampingThreshold => dampingThreshold;
         public float DampingRatio => dampingRatio;
-        public float DetachOffset => detachOffset;
+        public float ValidVelocityCutOff => validVelocityCutOff;
     }
 }

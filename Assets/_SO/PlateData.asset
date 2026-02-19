@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.PlateData
   maxPlatingCount: 3
   platingLocalPos: {x: 0, y: 0.08, z: 0}
-  platingLocalScale: {x: 0.7, y: 0.5, z: 0.7}
-  defaultPlatingMesh: {fileID: -7989646137125262055, guid: 3a0d6805265bab6429e19fbe43ed27b9, type: 3}
+  platingLocalScale: {x: 0.75, y: 0.5, z: 0.75}
   platingMeshDic:
     _serializedList:
     - Key: 1
@@ -60,3 +59,7 @@ MonoBehaviour:
       Value: {fileID: 9116407647566822776, guid: 5ab671656692bec4386db0b5e6eab932, type: 3}
     - Key: 25
       Value: {fileID: 5872315925304505690, guid: 0b1cfc182f35ec74fa5852c94b0e0e78, type: 3}
+  foodWasteMesh: {fileID: -7489542688892551453, guid: 367bab942037468409d91209a6d73770, type: 3}
+  foodWasteLocalScale: {x: 1.5, y: 0.1, z: 1}
+  maxProgress: 2
+  maxPrepState: 1

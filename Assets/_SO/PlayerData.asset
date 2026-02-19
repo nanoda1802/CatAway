@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: PlayerData
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Player.PlayerData
   moveSpeed: 4
-  rotSpeed: 15
-  dashSpeed: 12
-  dashDuration: 0.25
+  rotSpeed: 25
+  dashSpeed: 6
+  dashDuration: 0.22
   minSpeedMultiplier: 1
   maxSpeedMultiplier: 1.65
+  knockBackImpact: 3
+  knockBackDuration: 0.25
   dashInterval: 0.5
-  carryInterval: 0.2
-  interactInterval: 0.2
+  carryInterval: 0.1
+  interactInterval: 0.1
   tableLayer:
     serializedVersion: 2
     m_Bits: 64

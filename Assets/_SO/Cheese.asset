@@ -18,10 +18,10 @@ MonoBehaviour:
   defaultColliderMesh: {fileID: 3235158736321004145, guid: c77e13b355f72044683605dafb23df16, type: 3}
   preppedColliderMesh: {fileID: -5494476718865515032, guid: c77e13b355f72044683605dafb23df16, type: 3}
   defaultScale: {x: 0.75, y: 0.5, z: 0.6}
-  preppedScale: {x: 0.45, y: 0.4, z: 0.45}
-  maxProgress: 1
+  preppedScale: {x: 0.25, y: 0.3, z: 0.25}
+  maxProgress: 3
   maxPrepState: 1
-  throwForce: 15
-  dampingThreshold: 8
-  dampingRatio: 0.99
-  detachOffset: 0.25
+  throwForce: 17
+  dampingThreshold: 6
+  dampingRatio: 0.97
+  validVelocityCutOff: 25

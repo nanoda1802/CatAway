@@ -1,36 +1,48 @@
-﻿using Unity.Netcode;
+﻿using System;
+using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Pool;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Item.Ingredient
 {
-    public class IngredientProvider : NetworkBehaviour, INetworkPrefabInstanceHandler
+    public class IngredientProvider : NetworkBehaviour
     {
-        [SF] private Item.Ingredient.Ingredient prefab;
-        [SF] private int defaultCapacity = 15;
-        [SF] private int maxPoolSize = 30;
+        [SF] private Ingredient prefab;
+        [SF] private SerializedDictionary<IngredientType, IngredientData> ingredientDataDic;
+        [SF] private IngredientType requiredType;
+        [SF] private int defaultCapacity = 20;
+        [SF] private int maxPoolSize = 40;
         
-        private IObjectPool<Item.Ingredient.Ingredient> _pool;
-    
+        private IObjectPool<Ingredient> _pool;
+
+        public IngredientType RequiredType => requiredType;
+        
         public override void OnNetworkSpawn()
         {
+            var ingredientNetObj = prefab.GetComponent<NetworkObject>();
+            var prefabHandler = new IngredientPrefabHandler(this);
+            NetworkManager.PrefabHandler.AddHandler(ingredientNetObj, prefabHandler);
+            
+            Debug.Log($"[provider spawn] server : {IsServer} / host : {IsHost} / auth : {HasAuthority}");
             InitPool();
-            if (IsServer) NetworkManager.PrefabHandler.AddHandler(prefab.NetworkObject, this);
             
             base.OnNetworkSpawn();
         }
-    
+
         public override void OnNetworkDespawn()
         {
-            if (IsServer) NetworkManager.PrefabHandler.RemoveHandler(prefab.NetworkObject);
+            var ingredientNetObj = prefab.GetComponent<NetworkObject>();
+            NetworkManager.PrefabHandler.RemoveHandler(ingredientNetObj);
             
             base.OnNetworkDespawn();
         }
     
         private void InitPool()
         {
-            _pool = new ObjectPool<Item.Ingredient.Ingredient>(
+            _pool = new ObjectPool<Ingredient>(
                 CreateIngredient, 
                 OnGetIngredient, 
                 OnReleaseIngredient, 
@@ -42,58 +54,53 @@ namespace _Scripts.Stage.Item.Ingredient
             for (int i = 0; i < defaultCapacity; i++)
             {
                 var ingredient = CreateIngredient();
-                ingredient.InitComponents();
                 _pool.Release(ingredient);
             }
         }
         
-        private Item.Ingredient.Ingredient CreateIngredient()
+        private Ingredient CreateIngredient()
         {
             var ingredient = Instantiate(prefab,this.transform);
             ingredient.name = $"Ingredient_{ingredient.GetHashCode()}";
+            ingredient.InitComponents(IsServer);
             return ingredient;
         }
         
-        private void OnGetIngredient(Item.Ingredient.Ingredient ingredient)
+        private void OnGetIngredient(Ingredient ingredient)
         {
             ingredient.gameObject.SetActive(true);
         }
     
-        private void OnReleaseIngredient(Item.Ingredient.Ingredient ingredient)
+        private void OnReleaseIngredient(Ingredient ingredient)
         {
-            if (IsServer) ingredient.Reset();
-            
             ingredient.gameObject.SetActive(false);
             ingredient.transform.localPosition = Vector3.zero;
             ingredient.transform.localRotation = Quaternion.identity;
         }
     
-        private void OnDestroyIngredient(Item.Ingredient.Ingredient ingredient)
+        private void OnDestroyIngredient(Ingredient ingredient)
         {
         }
     
-        public Item.Ingredient.Ingredient GetIngredient(Vector3 pos)
+        public Ingredient GetIngredient(IngredientType type, Vector3 pos)
         {
             var ingredient = _pool.Get();
+            var data = ingredientDataDic.GetValueOrDefault(type, ingredientDataDic[requiredType]);
+            ingredient.InitStatus(IsServer, data, data.Type == requiredType);
             ingredient.transform.position = pos;
             return ingredient;
         }
     
-        public void ReleaseIngredient(Item.Ingredient.Ingredient ingredient)
+        public void ReleaseIngredient(Ingredient ingredient)
         {
             if (IsServer) ingredient.NetworkObject.TrySetParent(this.NetworkObject);
             _pool.Release(ingredient);
         }
-    
-        public NetworkObject Instantiate(ulong ownerClientId, Vector3 position, Quaternion rotation)
+
+        public (Mesh, Vector3) GetModelInfo(IngredientType type)
         {
-            return GetIngredient(position).NetworkObject;
-        }
-    
-        public void Destroy(NetworkObject networkObject)
-        {
-            var ingredient = networkObject.GetComponent<Item.Ingredient.Ingredient>();
-            ReleaseIngredient(ingredient);
+            var data = ingredientDataDic.GetValueOrDefault(type, ingredientDataDic[requiredType]);
+            return (data.DefaultRenderMesh, data.DefaultScale);
         }
     }
 }

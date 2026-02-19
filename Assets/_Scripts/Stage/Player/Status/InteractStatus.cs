@@ -8,6 +8,7 @@ namespace _Scripts.Stage.Player.Status
         private readonly PlayerData _data;
     
         private float _lastInteractTime;
+        private int _curAnimParamHash = -1;
     
         public InteractStatus(PlayerData data)
         {
@@ -21,6 +22,18 @@ namespace _Scripts.Stage.Player.Status
         public void UpdateLastInteractTime()
         {
             _lastInteractTime = Time.unscaledTime;
+        }
+
+        public void StartInteractionAnim(Animator animator, int paramHash)
+        {
+            _curAnimParamHash = paramHash;
+            animator.SetBool(_curAnimParamHash, true);
+        }
+
+        public void StopInteractionAnim(Animator animator)
+        {
+            animator.SetBool(_curAnimParamHash, false);
+            _curAnimParamHash = -1;
         }
     }
 }

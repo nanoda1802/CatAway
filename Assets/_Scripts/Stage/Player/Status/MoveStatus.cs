@@ -19,16 +19,19 @@ namespace _Scripts.Stage.Player.Status
             _speedMultiplier = _data.MinSpeedMultiplier;
         }
 
-        public bool IsMovable => _moveDir.sqrMagnitude > 0 && !IsDashing;
-        public Vector3 MoveOffset => (_data.MoveSpeed * _speedMultiplier) * _moveDir;
+        public bool MoveConstraint { get; set; }
+        public bool IsMovable => _moveDir != Vector3.zero && !MoveConstraint;
+        public Vector3 MoveOffset => (_data.MoveSpeed * _speedMultiplier * Time.fixedDeltaTime) * _moveDir;
         public Quaternion LookRot => Quaternion.LookRotation(_moveDir);
-        public float RotRatio => _data.RotSpeed * Time.deltaTime;
+        public float RotRatio => _data.RotSpeed * Time.fixedDeltaTime;
         public bool IsDashing { get; set; }
         public Vector3 DashForce => _data.DashSpeed * _moveDir;
         public UniTask WaitForDash => UniTask.WaitForSeconds(_data.DashDuration,false,PlayerLoopTiming.EarlyUpdate);
         public bool IsDashAvailable => _lastDashTime + _data.DashInterval <= Time.unscaledTime;
-        public float SpeedMultiplier => _speedMultiplier;
-
+        public float KnockBackImpact => _data.KnockBackImpact;
+        public UniTask WaitForKnockBack =>
+            UniTask.WaitForSeconds(_data.KnockBackDuration, false, PlayerLoopTiming.EarlyUpdate);
+        
         public void SetMoveDirection(Vector2 inputValue)
         {
             _moveDir = new Vector3(inputValue.x, 0, inputValue.y);

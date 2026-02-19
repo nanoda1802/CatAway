@@ -20,6 +20,8 @@ namespace _Scripts.Stage.Player.Behaviour
          private InputAction _carryAction;
          private InputAction _throwAction;
       
+         private InteractionBehaviour _interactionBehaviour;
+         
          private Animator _animator;
       
          private readonly int _carryParamHash = Animator.StringToHash("Carry");
@@ -31,6 +33,7 @@ namespace _Scripts.Stage.Player.Behaviour
             DetectStatus detectStatus,
             CarryStatus carryStatus,
             PlayerInput inputMap,
+            InteractionBehaviour interactionBehaviour,
             Animator playerAnimator)
          {
             _detectStatus = detectStatus;
@@ -39,6 +42,8 @@ namespace _Scripts.Stage.Player.Behaviour
             _carryAction = inputMap.asset.FindAction("Button0"); // 방법 1
             _throwAction = inputMap.Stage.Button2; // 방법 2
       
+            _interactionBehaviour = interactionBehaviour;
+            
             _animator = playerAnimator;
          }
       
@@ -60,6 +65,8 @@ namespace _Scripts.Stage.Player.Behaviour
       
             if (!IsLocalPlayer) return;
       
+            _interactionBehaviour.CancelInteractionRpc();
+            
             _animator.SetBool(_carryParamHash, this.HasAttachments);
             _carryStatus.UpdateLastCarryTime();
          }
@@ -74,8 +81,8 @@ namespace _Scripts.Stage.Player.Behaviour
             _carryStatus.UpdateLastCarryTime();
          }
          
-         [ServerRpc]
-         private void PickServerRpc()
+         [Rpc(SendTo.Server)]
+         private void PickRpc()
          {
             if (_detectStatus.DetectItem(out var item))
             {
@@ -83,12 +90,13 @@ namespace _Scripts.Stage.Player.Behaviour
                return;
             }
             
-            if (!_detectStatus.DetectTable(out var table)) return;
-            if (!table.TryGetComponent(out IPlacable placable)) return;
+            if (!_detectStatus.DetectTable(out var tableObj)) return;
+            if (!tableObj.TryGetComponent(out IPlacable table)) return;
             
-            if (placable.TryDisplace(this))
+            if (table.TryDisplace(this, out Carriable placedItem))
             {
                Debug.Log("Displace Success");
+               placedItem.Attach(this);
             }
             else
             {
@@ -96,54 +104,56 @@ namespace _Scripts.Stage.Player.Behaviour
             }
          }
       
-         [ServerRpc]
-         private void DropServerRpc()
+         [Rpc(SendTo.Server)]
+         private void DropRpc()
          {
             var item = _carryStatus.CurCarriable;
-            item?.Detach();
-            
-            if (!_detectStatus.DetectTable(out var table)) return;
-            if (!table.TryGetComponent(out IPlacable placable)) return;
-            
-            if (placable.TryPlace(item))
+            if (item == null) return;
+
+            if (!_detectStatus.DetectTable(out var tableObj) || !tableObj.TryGetComponent(out IPlacable table))
             {
-               Debug.Log("Place Success");
+               item.Detach();
+               return;
             }
-            else
-            {
-               Debug.Log("Place Failure");
-            }
+            
+            // [수정 예정] CurCarriable이 cookware고, 그 cookware가 hasIngredient면...
+            // cookware에서 TakeOutCarriable해서 꺼낸 내용물을 TryPlace...
+            
+            if (table.TryPlace(item)) return;
+            
+            if (!item.NetworkObject.TryGetComponent(out IIngredientHolder holder)) return;
+            if (!table.TryDisplace(this,out var placedItem)) return;
+            if (holder.TryAdd(placedItem)) return;
+            
+            table.TryPlace(placedItem);
          }
-      
-         [ServerRpc]
-         private void ThrowServerRpc()
+
+         [Rpc(SendTo.Server)]
+         private void ThrowRpc()
          {
-            var item = _carryStatus.CurCarriable;
-            var throwable = item?.NetworkObject.GetComponentInChildren<Throwable>();
+            var carriable = _carryStatus.CurCarriable;
             
-            if (throwable == null) return;
+            if (carriable is null) return;
+            if (!carriable.TryGetComponent(out Throwable throwable)) return;
             
             throwable.Throw(throwPoint.position, throwPoint.rotation,throwPoint.forward).Forget();
-            item.Detach();
+            carriable.Detach();
          }
-         
+
          private void OnCarryStarted(InputAction.CallbackContext ctx)
          {
-            // if (_interactStatus.IsInteracting) return;
             if (!_carryStatus.IsCarryAvailable) return;
       
-            if (this.HasAttachments) DropServerRpc();
-            else PickServerRpc();
+            if (this.HasAttachments) DropRpc();
+            else PickRpc();
          }
       
          private void OnThrowStarted(InputAction.CallbackContext ctx)
          {
-            if (!this.HasAttachments) return;
-            // if (_interactStatus.IsInteracting || _moveStatus.IsDashing) return;
-            if (!_carryStatus.IsCarryAvailable || !_carryStatus.HasCarriable) return;
+            if (!this.HasAttachments || !_carryStatus.HasCarriable) return;
             if (ctx.interaction is not PressInteraction) return;
             
-            ThrowServerRpc();
+            ThrowRpc();
          }
          
          private void SubscribeInputEvents()

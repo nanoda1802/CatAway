@@ -8,11 +8,13 @@ namespace _Scripts.Stage.Player
     {
         [Header("[ Movement ]")]
         [SF,Range(1f,20f)] private float moveSpeed = 5f;
-        [SF,Range(1f,20f)] private float rotSpeed = 15f;
+        [SF,Range(1f,50f)] private float rotSpeed = 25f;
         [SF,Range(1f,50f)] private float dashSpeed = 12f;
         [SF,Range(0f,1f)] private float dashDuration = 0.25f;
         [SF,Range(1f,2f)] private float minSpeedMultiplier = 1f;
         [SF,Range(1f,2f)] private float maxSpeedMultiplier = 1.5f;
+        [SF,Range(0f,5f)] private float knockBackImpact = 3f;
+        [SF,Range(0f,1f)] private float knockBackDuration = 0.25f;
    
         public float MoveSpeed => moveSpeed;
         public float RotSpeed => rotSpeed;
@@ -20,6 +22,8 @@ namespace _Scripts.Stage.Player
         public float DashDuration => dashDuration;
         public float MinSpeedMultiplier => minSpeedMultiplier;
         public float MaxSpeedMultiplier => maxSpeedMultiplier;
+        public float KnockBackImpact => knockBackImpact;
+        public float KnockBackDuration => knockBackDuration;
         
         [Header("[ Interval ]")]
         [SF,Range(0f,1f)] private float dashInterval = 0.5f;

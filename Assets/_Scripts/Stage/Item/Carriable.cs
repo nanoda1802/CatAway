@@ -1,8 +1,7 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using _Scripts.Stage.Player.Behaviour;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
-using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Item
@@ -13,6 +12,7 @@ namespace _Scripts.Stage.Item
         private Rigidbody _rb;
         
         public CarriableType Type => carriableType;
+        public bool IsAttach => m_AttachState is AttachState.Attaching or AttachState.Attached;
         
         public void Construct(Rigidbody rb)
         {
@@ -34,6 +34,7 @@ namespace _Scripts.Stage.Item
                 case AttachState.Detached:
                     OnDetached(); break;
                 default:
+                    Debug.LogError($"[{this.OwnerClientId} Carriable.OnAttachStateChanged] \"{attachState}\"은 존재하지 않는 AttachState 입니다.");
                     break;
             }
 
@@ -45,28 +46,38 @@ namespace _Scripts.Stage.Item
             if (!IsSpawned || !HasAuthority) return;
             if (m_AttachState != AttachState.Attached) return;
 
-            NetworkObject.transform.position = this.transform.position;
+            SyncWithNetObjPosition();
         }
 
         private void OnAttaching()
         {
-            this.RegisterNetworkUpdate(NetworkUpdateStage.PreLateUpdate);
+            _rb.linearVelocity = _rb.angularVelocity = Vector3.zero;
             _rb.isKinematic = true;
         }
 
         private void OnAttached()
         {
+            Debug.Log($"[OnAttached] {this.NetworkObject.gameObject.name} attach to {m_AttachableNode.NetworkObject.gameObject.name} (carrier ? {this.m_AttachableNode is CarrierBehaviour})");
             transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            SyncWithNetObjPosition();
+            
+            if (this.m_AttachableNode is CarrierBehaviour) this.RegisterNetworkUpdate(NetworkUpdateStage.PreLateUpdate);
         }
 
         private void OnDetaching()
         {
+            NetworkObject.transform.rotation = this.transform.rotation;
             this.UnregisterNetworkUpdate(NetworkUpdateStage.PreLateUpdate);
         }
 
         private void OnDetached()
         {
             _rb.isKinematic = false;
+        }
+
+        private void SyncWithNetObjPosition()
+        {
+            NetworkObject.transform.position = this.transform.position;
         }
     }
 }
