@@ -53,10 +53,8 @@ namespace _Scripts.Stage.Item.Cookware
             if (!carriable.NetworkObject.TryGetComponent(out Ingredient.Ingredient ingredient)) return false;
             if (!availableType.HasFlag(ingredient.Type)) return false;
             
-            if (carriable.IsAttach) carriable.Detach();
-            
             _holdingQueue.Enqueue(carriable);
-            carriable.Attach(pivot);
+            carriable.AttachTo(pivot);
             return true;
         }
 
@@ -75,7 +73,7 @@ namespace _Scripts.Stage.Item.Cookware
             ClearCookwareRpc();
         }
 
-        public Carriable TakeOutCarriable()
+        public Carriable TakeOutIngredient()
         {
             return _holdingQueue.TryDequeue(out var carriable) ? carriable : null;
         }

@@ -238,7 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1276203209
+  GlobalObjectIdHash: 588258136
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -264,8 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Table.PlateRackTable
   ShowTopMostFoldoutHeaderGroup: 1
-  pivot: {fileID: 9131849406676312097}
-  plateOffsetY: 0.1
+  plateOffsetY: 0.12
 --- !u!65 &2023958274270780325
 BoxCollider:
   m_ObjectHideFlags: 0

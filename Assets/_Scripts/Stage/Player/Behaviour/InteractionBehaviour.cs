@@ -114,6 +114,7 @@ namespace _Scripts.Stage.Player.Behaviour
             if (ctx.interaction is not HoldInteraction) return;
             
             TryInteractionRpc();
+            _interactStatus.UpdateLastInteractTime();
         }
     
         private void OnInteractCanceled(InputAction.CallbackContext ctx)
@@ -121,7 +122,6 @@ namespace _Scripts.Stage.Player.Behaviour
             if (ctx.interaction is not HoldInteraction) return;
             
             CancelInteractionRpc();
-            _interactStatus.UpdateLastInteractTime();
         }
     
         private void SubscribeInputEvents()

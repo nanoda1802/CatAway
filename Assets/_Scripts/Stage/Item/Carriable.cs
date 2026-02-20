@@ -75,6 +75,12 @@ namespace _Scripts.Stage.Item
             _rb.isKinematic = false;
         }
 
+        public void AttachTo(AttachableNode node)
+        {
+            if (this.IsAttach) this.Detach();
+            this.Attach(node);
+        }
+
         private void SyncWithNetObjPosition()
         {
             NetworkObject.transform.position = this.transform.position;

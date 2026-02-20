@@ -4,27 +4,26 @@ using _Scripts.Stage.Item.Plate;
 using _Scripts.Stage.Player.Behaviour;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Table
 {
     public class BinTable : NetworkBehaviour, IPlacable
     {
-        [SF] private IngredientProvider _ingredientProvider;
-        
+        /* 컴포넌트 */
+        private IngredientProvider _ingredientProvider;
+        /* 기타 */
         private TagHandle _itemTag;
-
+        /* 프로퍼티 */
         public Carriable PlacedItem => null;
         
-        private void Awake()
-        {
-            _itemTag = TagHandle.GetExistingTag("Item");
-        }
-        
-        // [추후 수정] 주입받도록
+        [Inject]
         private void Construct(IngredientProvider provider)
         {
-            this._ingredientProvider = provider;
+            _ingredientProvider = provider;
+            
+            _itemTag = TagHandle.GetExistingTag("Item");
         }
         
         private void OnTriggerEnter(Collider other)
@@ -34,21 +33,18 @@ namespace _Scripts.Stage.Table
             if (!other.TryGetComponent(out Throwable throwable) || !throwable.IsThrowing) return;
             if (!other.TryGetComponent(out Carriable carriable) || carriable.IsAttach) return;
 
-            if (TryPlace(carriable))
-            {
-               
-            }
+            TryPlace(carriable);
         }
         
-        public bool TryPlace(Carriable carriable)
+        public bool TryPlace(Carriable item)
         {
-            if (carriable == null || !carriable.IsSpawned) return false;
-            return CanHandleItem(carriable);
+            if (item == null || !item.IsSpawned) return false;
+            return CanHandleItem(item);
         }
 
-        public bool TryDisplace(CarrierBehaviour carrier, out Carriable carriable)
+        public bool TryDisplace(CarrierBehaviour carrier, out Carriable displacedItem)
         {
-            carriable = null;
+            displacedItem = null;
             return false;
         }
 
@@ -56,8 +52,7 @@ namespace _Scripts.Stage.Table
         {
             switch (item.Type)
             {
-                case CarriableType.Plate:
-                case CarriableType.Cookware:
+                case CarriableType.Plate or CarriableType.Cookware:
                     if (!item.NetworkObject.TryGetComponent(out IIngredientHolder holder)) return false;
                     if (!holder.HasIngredient) return false;
                     holder.ClearHolder();
@@ -65,7 +60,6 @@ namespace _Scripts.Stage.Table
                 
                 case CarriableType.Ingredient:
                     if (!item.NetworkObject.TryGetComponent(out Ingredient ingredient)) return false;
-                    if (item.IsAttach) item.Detach();
                     _ingredientProvider.ReleaseIngredient(ingredient);
                     ingredient.NetworkObject.Despawn(false);
                     return true;

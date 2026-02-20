@@ -74,8 +74,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Table.PlateReturnTable
   ShowTopMostFoldoutHeaderGroup: 1
-  pivot: {fileID: 4302860570901193453}
-  plateOffsetY: 0.07
+  plateOffsetY: 0.1
 --- !u!65 &7093064201908499242
 BoxCollider:
   m_ObjectHideFlags: 0

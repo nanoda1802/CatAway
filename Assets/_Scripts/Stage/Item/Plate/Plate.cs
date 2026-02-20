@@ -108,6 +108,11 @@ namespace _Scripts.Stage.Item.Plate
             ClearPlatingRpc();
         }
 
+        public Carriable TakeOutIngredient()
+        {
+            return null;
+        }
+
         public void InitStatus()
         {
             _curProgress = 1;

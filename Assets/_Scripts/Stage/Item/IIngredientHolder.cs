@@ -6,6 +6,7 @@
         public bool HasIngredient { get; }
 
         public bool TryAdd(Carriable carriable);
+        public Carriable TakeOutIngredient();
         public void ClearHolder();
     }
 }

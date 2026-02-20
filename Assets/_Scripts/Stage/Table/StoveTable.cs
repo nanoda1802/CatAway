@@ -4,51 +4,50 @@ using _Scripts.Stage.Item.Cookware;
 using _Scripts.Stage.Item.Ingredient;
 using _Scripts.Stage.Player.Behaviour;
 using _Scripts.Stage.UI.Movable;
+using _Scripts.Stage.UI.Widget;
+using _Scripts.Stage.UI.Widget.ProgressBar;
+using MessagePipe;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem.Utilities;
+using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Table
 {
     public class StoveTable : NetworkBehaviour, IPlacable, INetworkUpdateSystem
     {
-        [SF] private AttachableNode pivot;
-        
-        [SF] private ProgressIndicator indicatorPrefab; // [임시]
-        [SF] private Canvas movableCanvas; // [임시]
-        [SF] private float indicatorOffsetY = 1.5f;
-        private ProgressIndicator _activeIndicator;
-        
+        /* 컴포넌트 */
+        private AttachableNode _pivot;
+        private WidgetProvider<ProgressBarWidget> _widgetProvider;
+        /* 캐싱 */
         private Carriable _placedItem;
-        private Cookware _placedCookware;
-
+        private Cookware _targetCookware;
+        private IPrepable _targetIngredient;
+        private ProgressBarWidget _activeBarWidget;
+        /* 네트워크 */
         private readonly NetworkVariable<float> _sharedProgress = new();
-        
-        private event Action OnFinished;
+        /* 기타 */
         private TagHandle _itemTag;
-        
-        public bool IsWorking => _curTargetIngredient != null;
-        
+        private event Action OnFinished;
+        /* 프로퍼티 */
+        public bool IsHeating => _targetIngredient != null;
         public Carriable PlacedItem => _placedItem;
-
-        private IPrepable _curTargetIngredient; // [임시]
         
-        public override void OnNetworkSpawn()
+        [Inject]
+        private void Construct(IBufferedSubscriber<ProgressBarProvider> subscriber)
         {
-            _sharedProgress.CheckExceedsDirtinessThreshold = CheckDirtiness;
-        
+           subscriber.Subscribe(msg =>
+            {
+                _widgetProvider = msg;
+                Debug.Log($"[{_widgetProvider is not null}] StoveTable에 widgetProvider 주입");
+            });
+            
+            _pivot = GetComponentInChildren<AttachableNode>();
             _itemTag = TagHandle.GetExistingTag("Item");
-            
-            base.OnNetworkSpawn();
         }
 
-        public override void OnNetworkDespawn()
-        {
-            _sharedProgress.CheckExceedsDirtinessThreshold = null;
-            
-            base.OnNetworkDespawn();
-        }
-        
+        #region 유니티 이벤트 메서드
         private void OnTriggerEnter(Collider other)
         {
             if (!IsServer || !IsSpawned) return;
@@ -56,10 +55,21 @@ namespace _Scripts.Stage.Table
             if (!other.TryGetComponent(out Throwable throwable) || !throwable.IsThrowing) return;
             if (!other.TryGetComponent(out Carriable carriable) || carriable.IsAttach) return;
 
-            if (TryPlace(carriable))
-            {
-                
-            }
+            TryPlace(carriable);
+        }
+        #endregion
+
+        #region 네트워크 이벤트 관련 메서드
+        public override void OnNetworkSpawn()
+        {
+            _sharedProgress.CheckExceedsDirtinessThreshold = CheckDirtiness;
+            base.OnNetworkSpawn();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            _sharedProgress.CheckExceedsDirtinessThreshold = null;
+            base.OnNetworkDespawn();
         }
         
         private bool CheckDirtiness(in float prev, in float next)
@@ -69,43 +79,65 @@ namespace _Scripts.Stage.Table
         
         public void NetworkUpdate(NetworkUpdateStage updateStage)
         {
-            if (!IsWorking) return;
+            if (!IsHeating) return;
             
-            float progress = _curTargetIngredient.Prepare(1);
+            float progress = _targetIngredient.Prepare(1);
             _sharedProgress.Value = progress;
 
-            if (progress >= 0.99f)
-            {
-                FinishWork();
-            }
+            if (progress >= 0.99f) FinishHeat();
+        }
+        #endregion
+
+        #region RPC 메서드
+        [Rpc(SendTo.Everyone)]
+        private void StartHeatRpc()
+        {
+            var widget = _activeBarWidget ?? ActivateWidget();
+            _sharedProgress.OnValueChanged = widget.UpdateProgress;
         }
         
-        public bool TryPlace(Carriable carriable)
+        [Rpc(SendTo.Everyone)]
+        private void CancelHeatRpc()
         {
-            if (carriable == null || !carriable.IsSpawned) return false;
-            if (!CanPlaceItem(carriable)) return false;
+            DeactivateWidget();
+            _sharedProgress.OnValueChanged = null;
+        }
 
-            if (_placedCookware.IsFull)
-            {
-                StartWork();
-            }
-            
+        [Rpc(SendTo.Everyone)]
+        private void FinishHeatRpc()
+        {
+            DeactivateWidget();
+            _sharedProgress.OnValueChanged = null;
+        }
+        #endregion
+        
+        #region Placable 관련 메서드
+         public bool TryPlace(Carriable item)
+        {
+            if (item == null || !item.IsSpawned) return false;
+            if (!CanPlaceItem(item)) return false;
+
+            if (_targetCookware.IsFull) StartHeat();
             return true;
         }
 
-        public bool TryDisplace(CarrierBehaviour carrier, out Carriable carriable)
+        public bool TryDisplace(CarrierBehaviour carrier, out Carriable displacedItem)
         {
-            carriable = null;
-            if (!pivot.HasAttachments || _placedItem == null || _placedCookware == null) return false;
+            displacedItem = null;
+            if (!_pivot.HasAttachments || _targetCookware == null || _placedItem == null) return false;
 
-            if (IsWorking) CancelWork();
+            CancelHeat();
 
-            if (carrier.HasAttachments && CanDisplaceAdditionalItem(ref carriable)) return true;
+            if (carrier.HasAttachments)
+            {
+                if (CanDisplaceAdditionalItem(ref displacedItem)) return true;
+            }
             
-            carriable = _placedItem;
             _placedItem.Detach();
+            displacedItem = _placedItem;
+            
             _placedItem = null;
-            _placedCookware = null;
+            _targetCookware = null;
             
             return true;
         }
@@ -115,17 +147,15 @@ namespace _Scripts.Stage.Table
             switch (item.Type)
             {
                 case CarriableType.Cookware:
-                    if (pivot.HasAttachments || _placedItem != null) return false;
-                    if (!item.NetworkObject.TryGetComponent(out _placedCookware)) return false;
-                    if (item.IsAttach) item.Detach();
-                    item.Attach(pivot);
+                    if (_pivot.HasAttachments || _placedItem != null) return false;
+                    if (!item.NetworkObject.TryGetComponent(out _targetCookware)) return false;
+                    item.AttachTo(_pivot);
                     _placedItem = item;
                     return true;
                 
                 case CarriableType.Ingredient:
-                    if (!pivot.HasAttachments || _placedItem == null) return false;
-                    if (_placedCookware == null || _placedCookware.IsFull) return false;
-                    return _placedCookware.TryAdd(item);
+                    if (_targetCookware == null || _targetCookware.IsFull) return false;
+                    return _targetCookware.TryAdd(item);
                 
                 case CarriableType.Plate:
                     return false;
@@ -138,94 +168,68 @@ namespace _Scripts.Stage.Table
 
         private bool CanDisplaceAdditionalItem(ref Carriable item)
         {
-            if (!_placedCookware.HasIngredient) return false;
+            if (!_targetCookware.HasIngredient) return false;
             
-            item = _placedCookware.TakeOutCarriable();
+            item = _targetCookware.TakeOutIngredient();
             item?.Detach();
             
             return item is not null;
         }
-
-        private void StartWork()
+        #endregion
+        
+        #region Heat 관련 메서드
+        private void StartHeat()
         {
-            if (!pivot.HasAttachments || _placedItem == null) return;
-            if (_placedCookware == null || !_placedCookware.HasIngredient) return;
+            if (_targetCookware == null || !_targetCookware.HasIngredient) return;
             
-            _curTargetIngredient = _placedCookware.FirstIngredient;
-            if (_curTargetIngredient is null) return;
+            _targetIngredient = _targetCookware.FirstIngredient;
+            if (_targetIngredient is null) return;
                 
-            OnFinished += _curTargetIngredient.OnPrepFinished;
+            OnFinished += _targetIngredient.OnPrepFinished;
                 
-            StartWorkRpc();
+            StartHeatRpc();
             this.RegisterNetworkUpdate(NetworkUpdateStage.Update);
         }
 
-        private void CancelWork()
+        private void CancelHeat()
         {
-            CancelWorkRpc();
+            if (!IsHeating) return;
+            
+            CancelHeatRpc();
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
             
-            _curTargetIngredient = null;
+            _targetIngredient = null;
             OnFinished = null;
         }
 
-        private void FinishWork()
+        private void FinishHeat()
         {
-            FinishWorkRpc();
+            FinishHeatRpc();
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
             
             OnFinished?.Invoke();
             _sharedProgress.Value = 0;
             
-            _curTargetIngredient = null;
+            _targetIngredient = null;
             OnFinished = null;
         }
+        #endregion
 
-        private ProgressIndicator ActivateIndicator()
+        #region UI 관련 메서드
+        private ProgressBarWidget ActivateWidget()
         {
-            // pool에서 하나 Get (추후 수정)
-            var indicator = Instantiate(indicatorPrefab, movableCanvas.transform);
-            
-            // table의 월드 위치에 오프셋 더한 좌표 전달해 indicator 위치 설정
-            var worldPos = transform.position + indicatorOffsetY * Vector3.up;
-            indicator.SetPos(worldPos);
-            
-            // 현재 활성화된 Indicator 캐싱
-            _activeIndicator = indicator;
-            
-            return indicator;
+            var widget = _widgetProvider.GetWidget(this.transform.position);
+            _activeBarWidget = widget;
+            return widget;
         }
 
-        private void DeactivateIndicator()
+        private void DeactivateWidget()
         {
-            if (_activeIndicator == null) return;
+            if (_activeBarWidget == null) return;
             
-            // pool에 Release (추후 수정)
-            Destroy(_activeIndicator.gameObject);
-            
-            // 캐싱해둔 Indicator 비우기
-            _activeIndicator = null;
+            _widgetProvider.ReleaseWidget(_activeBarWidget);
+            _activeBarWidget = null;
         }
-        
-        [Rpc(SendTo.Everyone)]
-        private void StartWorkRpc()
-        {
-            var indicator = _activeIndicator ?? ActivateIndicator();
-            _sharedProgress.OnValueChanged = indicator.UpdateProgress;
-        }
-        
-        [Rpc(SendTo.Everyone)]
-        private void CancelWorkRpc()
-        {
-            DeactivateIndicator();
-            _sharedProgress.OnValueChanged = null;
-        }
-
-        [Rpc(SendTo.Everyone)]
-        private void FinishWorkRpc()
-        {
-            DeactivateIndicator();
-            _sharedProgress.OnValueChanged = null;
-        }
+        #endregion
     }
 }

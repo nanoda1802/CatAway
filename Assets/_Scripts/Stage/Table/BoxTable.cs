@@ -6,21 +6,26 @@ using _Scripts.Stage.Item.Plate;
 using _Scripts.Stage.Player.Behaviour;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Table
 {
     public class BoxTable : NetworkBehaviour, IPlacable
     {
-        [SF] private AttachableNode pivot;
-        
+        /* 컴포넌트 */
+        private AttachableNode _pivot;
+        /* 캐싱 */
         private Carriable _placedItem;
+        /* 기타 */
         private TagHandle _itemTag;
-
+        /* 프로퍼티 */
         public Carriable PlacedItem => _placedItem;
-        
-        private void Awake()
+
+        [Inject]
+        private void Construct()
         {
+            _pivot = GetComponentInChildren<AttachableNode>();
             _itemTag = TagHandle.GetExistingTag("Item");
         }
 
@@ -31,32 +36,29 @@ namespace _Scripts.Stage.Table
             if (!other.TryGetComponent(out Throwable throwable) || !throwable.IsThrowing) return;
             if (!other.TryGetComponent(out Carriable carriable) || carriable.IsAttach) return;
 
-            if (TryPlace(carriable))
-            {
-                
-            }
+            TryPlace(carriable);
         }
 
-        public bool TryPlace(Carriable carriable)
+        public bool TryPlace(Carriable item)
         {
-            if (carriable == null || !carriable.IsSpawned) return false;
-            if (pivot.HasAttachments && _placedItem is not null) return CanPlaceAdditionalItem(carriable);
+            if (item == null || !item.IsSpawned) return false;
+            if (_pivot.HasAttachments && _placedItem is not null) return CanPlaceAdditionalItem(item);
             
-            if (carriable.IsAttach) carriable.Detach();
-            carriable.Attach(pivot);
-            _placedItem = carriable;
+            item.AttachTo(_pivot);
+            _placedItem = item;
+            
             return true;
         }
 
-        public bool TryDisplace(CarrierBehaviour carrier, out Carriable carriable)
+        public bool TryDisplace(CarrierBehaviour carrier, out Carriable displacedItem)
         {
-            carriable = null;
-            if (carrier == null) return false;
-            if (!pivot.HasAttachments || _placedItem is null) return false;
+            displacedItem = null;
+            if (carrier == null || !carrier.IsSpawned) return false;
+            if (!_pivot.HasAttachments || _placedItem is null) return false;
 
-            if (carrier.HasAttachments && CanDisplaceAdditionalItem(ref carriable)) return true;
+            if (carrier.HasAttachments && CanDisplaceAdditionalItem(ref displacedItem)) return true;
             
-            carriable = _placedItem;
+            displacedItem = _placedItem;
             _placedItem.Detach();
             _placedItem = null;
             
@@ -67,15 +69,12 @@ namespace _Scripts.Stage.Table
         {
             switch (_placedItem.Type)
             {
-                case CarriableType.Plate:
-                case CarriableType.Cookware:
+                case CarriableType.Plate or CarriableType.Cookware:
                     if (item.Type != CarriableType.Ingredient) return false;
                     if (!_placedItem.NetworkObject.TryGetComponent(out IIngredientHolder holder)) return false;
                     return holder.TryAdd(item);
-                
                 case CarriableType.Ingredient:
                     return false;
-                
                 default:
                     Debug.LogError($"[{this.OwnerClientId} BoxTable.TryPlace] \"{_placedItem.Type}\"은 존재하지 않는 CarriableType 입니다.");
                     return false;
@@ -86,11 +85,12 @@ namespace _Scripts.Stage.Table
         {
             if (_placedItem is null || !_placedItem.IsSpawned) return false;
             if (_placedItem.Type != CarriableType.Cookware) return false;
-            if (!_placedItem.NetworkObject.TryGetComponent(out Cookware cookware)) return false;
+            if (!_placedItem.NetworkObject.TryGetComponent(out IIngredientHolder cookware)) return false;
             if (!cookware.HasIngredient) return false;
             
-            item = cookware.TakeOutCarriable();
+            item = cookware.TakeOutIngredient();
             item?.Detach();
+            
             return item is not null;
         }
     }

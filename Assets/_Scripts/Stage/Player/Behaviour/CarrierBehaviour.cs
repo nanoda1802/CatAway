@@ -80,59 +80,74 @@ namespace _Scripts.Stage.Player.Behaviour
             _animator.SetBool(_carryParamHash, this.HasAttachments);
             _carryStatus.UpdateLastCarryTime();
          }
-         
+
          [Rpc(SendTo.Server)]
-         private void PickRpc()
+         private void HandleEmptyCaseRpc()
          {
             if (_detectStatus.DetectItem(out var item))
             {
-               item?.Attach(this);
+               item?.AttachTo(this);
                return;
             }
             
             if (!_detectStatus.DetectTable(out var tableObj)) return;
             if (!tableObj.TryGetComponent(out IPlacable table)) return;
+            if (!table.TryDisplace(this, out var placedItem)) return;
             
-            if (table.TryDisplace(this, out Carriable placedItem))
-            {
-               Debug.Log("Displace Success");
-               placedItem.Attach(this);
-            }
-            else
-            {
-               Debug.Log("Displace Failure");
-            }
+            placedItem?.AttachTo(this);
          }
-      
+         
          [Rpc(SendTo.Server)]
-         private void DropRpc()
+         private void HandleIngredientCaseRpc()
          {
-            var item = _carryStatus.CurCarriable;
-            if (item == null) return;
-
-            if (!_detectStatus.DetectTable(out var tableObj) || !tableObj.TryGetComponent(out IPlacable table))
+            var carriedItem = _carryStatus.CurCarriable;
+            
+            if (!_detectStatus.DetectTable(out var tableObj)
+                || !tableObj.TryGetComponent(out IPlacable table))
             {
-               item.Detach();
+               carriedItem.Detach();
+               return;
+            }
+
+            if (!table.TryPlace(carriedItem)) return;
+            
+            // 실패 시 효과음?
+         }
+         
+         [Rpc(SendTo.Server)]
+         private void HandleHolderCaseRpc()
+         {
+            var carriedItem = _carryStatus.CurCarriable;
+            
+            if (!_detectStatus.DetectTable(out var tableObj)
+                || !tableObj.TryGetComponent(out IPlacable table))
+            {
+               carriedItem.Detach();
+               return;
+            }
+
+            if (table.TryPlace(carriedItem)) return;
+
+            if (!carriedItem.NetworkObject.TryGetComponent(out IIngredientHolder holder))
+            {
+               // 실패 시 효과음?
                return;
             }
             
-            // [수정 예정] CurCarriable이 cookware고, 그 cookware가 hasIngredient면...
-            // cookware에서 TakeOutCarriable해서 꺼낸 내용물을 TryPlace...
+            if (table.TryPlace(holder.TakeOutIngredient())) return;
             
-            if (table.TryPlace(item)) return;
+            if (table.TryDisplace(this, out var placedItem)
+                && holder.TryAdd(placedItem)) return;
             
-            if (!item.NetworkObject.TryGetComponent(out IIngredientHolder holder)) return;
-            if (!table.TryDisplace(this,out var placedItem)) return;
-            if (holder.TryAdd(placedItem)) return;
-            
-            table.TryPlace(placedItem);
+            // 실패 시 효과음?
+            if (placedItem != null) table.TryPlace(placedItem);
          }
+
 
          [Rpc(SendTo.Server)]
          private void ThrowRpc()
          {
             var carriable = _carryStatus.CurCarriable;
-            
             if (carriable is null) return;
             if (!carriable.TryGetComponent(out Throwable throwable)) return;
             
@@ -143,9 +158,25 @@ namespace _Scripts.Stage.Player.Behaviour
          private void OnCarryStarted(InputAction.CallbackContext ctx)
          {
             if (!_carryStatus.IsCarryAvailable) return;
-      
-            if (this.HasAttachments) DropRpc();
-            else PickRpc();
+
+            if (!(this.HasAttachments && _carryStatus.HasCarriable))
+            {
+               HandleEmptyCaseRpc();
+               return;
+            }
+            
+            switch (_carryStatus.CurCarriable.Type)
+            {
+               case CarriableType.Ingredient:
+                  HandleIngredientCaseRpc();
+                  break;
+               case CarriableType.Plate or CarriableType.Cookware:
+                  HandleHolderCaseRpc();
+                  break;
+               default:
+                  Debug.LogError($"[CarrierBehaviour.OnCarryStarted] 유효하지 않은 Carriable Type 입니다.");
+                  break;
+            }
          }
       
          private void OnThrowStarted(InputAction.CallbackContext ctx)

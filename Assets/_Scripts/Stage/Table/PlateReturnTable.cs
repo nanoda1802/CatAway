@@ -2,51 +2,62 @@
 using _Scripts.Stage.Item;
 using _Scripts.Stage.Item.Plate;
 using _Scripts.Stage.Player.Behaviour;
+using MessagePipe;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Table
 {
     public class PlateReturnTable : NetworkBehaviour, IPlacable
     {
-        [SF] private AttachableNode pivot;
-        [SF] private float plateOffsetY = 0.07f;
-        
+        /* 데이터 */
+        [SF] private float plateOffsetY = 0.1f;
+        /* 컴포넌트 */
+        private AttachableNode _pivot;
+        /* 캐싱 */
         private readonly Stack<Carriable> _returnedPlates = new();
-        
+        /* 프로퍼티 */
         public Carriable PlacedItem => _returnedPlates.TryPeek(out Carriable plate) ? plate : null;
-        
-        public bool TryPlace(Carriable carriable)
+
+        [Inject]
+        private void Construct(IBufferedPublisher<PlateReturnTable> pub)
         {
-            if (carriable == null || !carriable.IsSpawned) return false;
-            if (carriable.Type != CarriableType.Plate) return false;
-            if (!carriable.NetworkObject.TryGetComponent(out Plate plate) || plate.IsReady) return false;
+            pub.Publish(this);
             
-            _returnedPlates.Push(carriable);
+            _pivot = GetComponentInChildren<AttachableNode>();
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void UpdatePositionRpc(NetworkBehaviourReference carriableRef, Vector3 localPos)
+        {
+            if (!carriableRef.TryGet(out Carriable carriable)) return;
+            carriable.transform.localPosition = localPos;
+        }
+        
+        public bool TryPlace(Carriable item)
+        {
+            if (item == null || !item.IsSpawned) return false;
+            if (item.Type != CarriableType.Plate) return false;
+            if (!item.NetworkObject.TryGetComponent(out Plate plate) || plate.IsReady) return false;
             
-            if (carriable.IsAttach) carriable.Detach();
-            carriable.Attach(pivot);
+            _returnedPlates.Push(item);
+            
+            item.AttachTo(_pivot);
 
             var newPlatePos = (_returnedPlates.Count - 1) * plateOffsetY * Vector3.up;
-            SetPlatePositionRpc(carriable, newPlatePos);
+            UpdatePositionRpc(item, newPlatePos);
             
             return true;
         }
 
-        public bool TryDisplace(CarrierBehaviour carrier, out Carriable carriable)
+        public bool TryDisplace(CarrierBehaviour carrier, out Carriable displacedItem)
         {
-            if (!_returnedPlates.TryPop(out carriable)) return false;
-            carriable?.Detach();
+            if (!_returnedPlates.TryPop(out displacedItem)) return false;
+            displacedItem?.Detach();
             
-            return carriable is not null;
-        }
-        
-        [Rpc(SendTo.Everyone)]
-        private void SetPlatePositionRpc(NetworkBehaviourReference carriableRef, Vector3 localPos)
-        {
-            if (!carriableRef.TryGet(out Carriable carriable)) return;
-            carriable.transform.localPosition = localPos;
+            return displacedItem is not null;
         }
     }
 }

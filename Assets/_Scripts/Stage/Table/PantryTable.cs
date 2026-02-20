@@ -3,21 +3,23 @@ using _Scripts.Stage.Item.Ingredient;
 using _Scripts.Stage.Player.Behaviour;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Table
 {
     public class PantryTable : NetworkBehaviour, IPlacable
     {
+        /* 데이터 */
         [SF] private IngredientType ingredientType;
-        [SF] private IngredientProvider _ingredientProvider;
-    
-        [SF] private MeshFilter sampleFilter;
-        [SF] private Transform sampleTr;
-
+        /* 컴포넌트 */
+        [SF] private MeshFilter sampleMeshFilter;
+        [SF] private Transform sampleTransform;
+        private IngredientProvider _ingredientProvider;
+        /* 프로퍼티 */
         public Carriable PlacedItem => null;
-
-        // [추후 수정] 주입받도록
+        
+        [Inject]
         private void Construct(IngredientProvider provider)
         {
             this._ingredientProvider = provider;
@@ -27,25 +29,25 @@ namespace _Scripts.Stage.Table
         {
             (Mesh mesh, Vector3 scale) = _ingredientProvider.GetModelInfo(ingredientType);
                 
-            sampleFilter.sharedMesh = mesh;
-            sampleTr.localScale = scale;
+            sampleMeshFilter.sharedMesh = mesh;
+            sampleTransform.localScale = scale;
         
             base.OnNetworkSpawn();
         }
 
-        public bool TryPlace(Carriable carriable)
+        public bool TryPlace(Carriable item)
         {
             return false;
         }
 
-        public bool TryDisplace(CarrierBehaviour carrier, out Carriable carriable)
+        public bool TryDisplace(CarrierBehaviour carrier, out Carriable displacedItem)
         {
-            carriable = null;
+            displacedItem = null;
             if (carrier == null || carrier.HasAttachments) return false;
         
             var ingredient = _ingredientProvider.GetIngredient(ingredientType, transform.position);
-            carriable = ingredient?.GetComponentInChildren<Carriable>();
-            if (ingredient == null || carriable == null) return false;
+            displacedItem = ingredient?.GetComponentInChildren<Carriable>();
+            if (ingredient == null || displacedItem == null) return false;
             
             NetworkManager.PrefabHandler.SetInstantiationData(ingredient.NetworkObject,new IngredientTypeNetData(ingredientType));
             ingredient.NetworkObject.Spawn();

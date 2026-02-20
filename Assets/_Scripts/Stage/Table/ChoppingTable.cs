@@ -2,52 +2,51 @@
 using _Scripts.Stage.Item;
 using _Scripts.Stage.Item.Ingredient;
 using _Scripts.Stage.Player.Behaviour;
-using _Scripts.Stage.UI.Movable;
+using _Scripts.Stage.UI.Widget.ProgressBar;
+using MessagePipe;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Table
 {
     public class ChoppingTable : NetworkBehaviour, IPlacable, IInteractable, INetworkUpdateSystem
     {
-        [SF] private AttachableNode pivot;
-        [SF] private GameObject knifeModel;
+        /* 데이터 */
         [SF] private IngredientType availableType = IngredientType.Lettuce | IngredientType.Cheese | IngredientType.Tomato;
-
-        [SF] private ProgressIndicator indicatorPrefab; // [임시]
-        [SF] private Canvas movableCanvas; // [임시]
-        [SF] private float indicatorOffsetY = 1.2f;
-        private ProgressIndicator _activeIndicator;
-        
+        /* 컴포넌트 */
+        [SF] private GameObject knifeModel;
+        private AttachableNode _pivot;
+        private ProgressBarProvider _widgetProvider;
+        /* 캐싱 */
         private Carriable _placedItem;
-        private IPrepable _chopTarget;
+        private IPrepable _targetIngredient;
+        private ProgressBarWidget _activeBarWidget;
+        /* 네트워크 */
         private readonly NetworkVariable<float> _sharedProgress = new();
-
-        private event Action OnFinished;
+        /* 기타 */
         private TagHandle _itemTag;
-        
+        private event Action OnFinished;
         private readonly int _chopAnimParamHash = Animator.StringToHash("Chop");
-        
+        /* 프로퍼티 */
+        public bool IsInteracting => _targetIngredient != null;
         public Carriable PlacedItem => _placedItem;
-        public bool IsInteracting => _chopTarget != null;
 
-        public override void OnNetworkSpawn()
+        [Inject]
+        private void Construct(IBufferedSubscriber<ProgressBarProvider> sub)
         {
-            _sharedProgress.CheckExceedsDirtinessThreshold = CheckDirtiness;
-        
+            sub.Subscribe(msg =>
+            {
+                _widgetProvider = msg;
+                Debug.Log($"[{_widgetProvider is not null}] ChoppingTable에 widgetProvider 주입");
+            });
+
+            _pivot = GetComponentInChildren<AttachableNode>();
             _itemTag = TagHandle.GetExistingTag("Item");
-            
-            base.OnNetworkSpawn();
         }
 
-        public override void OnNetworkDespawn()
-        {
-            _sharedProgress.CheckExceedsDirtinessThreshold = null;
-            
-            base.OnNetworkDespawn();
-        }
-        
+        #region 유니티 이벤트 메서드
         private void OnTriggerEnter(Collider other)
         {
             if (!IsServer || !IsSpawned) return;
@@ -55,10 +54,21 @@ namespace _Scripts.Stage.Table
             if (!other.TryGetComponent(out Throwable throwable) || !throwable.IsThrowing) return;
             if (!other.TryGetComponent(out Carriable carriable) || carriable.IsAttach) return;
 
-            if (TryPlace(carriable))
-            {
-               
-            }
+            TryPlace(carriable);
+        }
+        #endregion
+
+        #region 네트워크 이벤트 관련 메서드
+        public override void OnNetworkSpawn()
+        {
+            _sharedProgress.CheckExceedsDirtinessThreshold = CheckDirtiness;
+            base.OnNetworkSpawn();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            _sharedProgress.CheckExceedsDirtinessThreshold = null;
+            base.OnNetworkDespawn();
         }
         
         private bool CheckDirtiness(in float prev, in float next)
@@ -70,38 +80,73 @@ namespace _Scripts.Stage.Table
         {
             if (!IsInteracting) return;
             
-            float progress = _chopTarget.Prepare(1);
+            float progress = _targetIngredient.Prepare(1);
             _sharedProgress.Value = progress;
 
-            if (progress >= 0.99f)
-            {
-                FinishInteraction();
-            }
+            if (progress >= 0.99f) FinishInteraction();
+        }
+        #endregion
+
+        #region RPC 메서드
+        [Rpc(SendTo.Everyone)]
+        private void PlaceRpc()
+        {
+            knifeModel.SetActive(false);
         }
         
-        public bool TryPlace(Carriable carriable)
+        [Rpc(SendTo.Everyone)]
+        private void DisplaceRpc()
         {
-            if (carriable == null || !carriable.IsSpawned) return false;
-            if (pivot.HasAttachments || _placedItem is not null) return false;
-            if (!carriable.NetworkObject.TryGetComponent(out Ingredient ingredient)) return false;
+            knifeModel.SetActive(true);
+            
+            DeactivateWidget();
+            _sharedProgress.OnValueChanged = null;
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void StartInteractionRpc()
+        {
+            var widget = _activeBarWidget ?? ActivateWidget();
+            _sharedProgress.OnValueChanged = widget.UpdateProgress;
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void CancelInteractionRpc()
+        {
+            _sharedProgress.OnValueChanged = null;
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void FinishInteractionRpc()
+        {
+            DeactivateWidget();
+            _sharedProgress.OnValueChanged = null;
+        }
+        #endregion
+        
+        #region Placable 관련 메서드
+        public bool TryPlace(Carriable item)
+        {
+            if (item == null || !item.IsSpawned) return false;
+            if (_pivot.HasAttachments || _placedItem is not null) return false;
+            if (!item.NetworkObject.TryGetComponent(out Ingredient ingredient)) return false;
             if (!availableType.HasFlag(ingredient.Type)) return false;
             
-            if (carriable.IsAttach) carriable.Detach();
-            carriable.Attach(pivot);
-            _placedItem = carriable;
+            item.AttachTo(_pivot);
+            _placedItem = item;
             
             PlaceRpc();
             
             return true;
         }
 
-        public bool TryDisplace(CarrierBehaviour carrier, out Carriable carriable)
+        public bool TryDisplace(CarrierBehaviour carrier, out Carriable displacedItem)
         {
-            carriable = null;
-            if (carrier == null) return false;
-            if (!pivot.HasAttachments || _placedItem is null) return false;
+            displacedItem = null;
+            if (carrier == null || !carrier.IsSpawned) return false;
+            if (!_pivot.HasAttachments || _placedItem is null) return false;
             
-            carriable = _placedItem;
+            displacedItem = _placedItem;
             
             _placedItem.Detach();
             _placedItem = null;
@@ -110,20 +155,22 @@ namespace _Scripts.Stage.Table
             
             return true;
         }
-
+        #endregion
+        
+        #region Interactable 관련 메서드
         public bool TryInteraction(InteractionBehaviour interactor, out int animParamHash)
         {
             animParamHash = -1;
             
             if (IsInteracting) return false;
-            if (!pivot.HasAttachments || _placedItem is null) return false;
-            if (!_placedItem.NetworkObject.TryGetComponent(out _chopTarget)) return false;
-            if (_chopTarget.IsReady) return false;
+            if (!_pivot.HasAttachments || _placedItem is null) return false;
+            if (!_placedItem.NetworkObject.TryGetComponent(out _targetIngredient)) return false;
+            if (_targetIngredient.IsReady) return false;
             
             animParamHash = _chopAnimParamHash;
             
             OnFinished += interactor.FinishInteractionRpc;
-            OnFinished += _chopTarget.OnPrepFinished;
+            OnFinished += _targetIngredient.OnPrepFinished;
             
             StartInteractionRpc();
             this.RegisterNetworkUpdate(NetworkUpdateStage.Update);
@@ -136,7 +183,7 @@ namespace _Scripts.Stage.Table
             CancelInteractionRpc();
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
             
-            _chopTarget = null;
+            _targetIngredient = null;
             OnFinished = null;
         }
 
@@ -147,70 +194,27 @@ namespace _Scripts.Stage.Table
             
             OnFinished?.Invoke();
             
-            _chopTarget = null;
-            OnFinished = null;
+            _targetIngredient = null;
             _sharedProgress.Value = 0;
+            OnFinished = null;
         }
-
-        private ProgressIndicator ActivateIndicator()
-        {
-            // pool에서 하나 Get (추후 수정)
-            var indicator = Instantiate(indicatorPrefab, movableCanvas.transform);
-            
-            // table의 월드 위치에 오프셋 더한 좌표 전달해 indicator 위치 설정
-            var worldPos = transform.position + indicatorOffsetY * Vector3.up;
-            indicator.SetPos(worldPos);
-            
-            // 현재 활성화된 Indicator 캐싱
-            _activeIndicator = indicator;
-            
-            return indicator;
-        }
-
-        private void DeactivateIndicator()
-        {
-            if (_activeIndicator == null) return;
-            
-            // pool에 Release (추후 수정)
-            Destroy(_activeIndicator.gameObject);
-            
-            // 캐싱해둔 Indicator 비우기
-            _activeIndicator = null;
-        }
-
-        [Rpc(SendTo.Everyone)]
-        private void PlaceRpc()
-        {
-            knifeModel.SetActive(false);
-        }
+        #endregion
         
-        [Rpc(SendTo.Everyone)]
-        private void DisplaceRpc()
+        #region UI 관련 메서드
+        private ProgressBarWidget ActivateWidget()
         {
-            knifeModel.SetActive(true);
+            var widget = _widgetProvider.GetWidget(this.transform.position);
+            _activeBarWidget = widget;
+            return widget;
+        }
+
+        private void DeactivateWidget()
+        {
+            if (_activeBarWidget == null) return;
             
-            DeactivateIndicator();
-            _sharedProgress.OnValueChanged = null;
+            _widgetProvider.ReleaseWidget(_activeBarWidget);
+            _activeBarWidget = null;
         }
-
-        [Rpc(SendTo.Everyone)]
-        private void StartInteractionRpc()
-        {
-            var indicator = _activeIndicator ?? ActivateIndicator();
-            _sharedProgress.OnValueChanged = indicator.UpdateProgress;
-        }
-        
-        [Rpc(SendTo.Everyone)]
-        private void CancelInteractionRpc()
-        {
-            _sharedProgress.OnValueChanged = null;
-        }
-
-        [Rpc(SendTo.Everyone)]
-        private void FinishInteractionRpc()
-        {
-            DeactivateIndicator();
-            _sharedProgress.OnValueChanged = null;
-        }
+        #endregion
     }
 }
