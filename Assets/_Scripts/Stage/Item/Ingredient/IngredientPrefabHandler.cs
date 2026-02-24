@@ -24,7 +24,9 @@ namespace _Scripts.Stage.Item.Ingredient
 
         public override void Destroy(NetworkObject networkObject)
         {
-            if (networkObject.TryGetComponent(out Ingredient ingredient))
+            var ingredient = networkObject.GetComponentInChildren<Ingredient>();
+
+            if (ingredient != null)
             {
                 _provider.ReleaseIngredient(ingredient);
             }

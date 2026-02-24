@@ -7,7 +7,7 @@ namespace _Scripts.Stage.Table
     {
         public bool IsInteracting { get; }
         public bool TryInteraction(InteractionBehaviour interactor, out int animParamHash);
-        public void CancelInteraction(ulong clientId);
+        public void CancelInteraction(InteractionBehaviour interactor);
         public void FinishInteraction();
     }
 }

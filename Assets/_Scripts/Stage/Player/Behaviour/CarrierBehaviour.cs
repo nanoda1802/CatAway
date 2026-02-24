@@ -1,4 +1,5 @@
-﻿using _Scripts.Stage.Item;
+﻿using System;
+using _Scripts.Stage.Item;
 using _Scripts.Stage.Item.Ingredient;
 using _Scripts.Stage.Player.Status;
 using _Scripts.Stage.Table;
@@ -14,28 +15,37 @@ namespace _Scripts.Stage.Player.Behaviour
 {
     public class CarrierBehaviour : AttachableNode
     {
+         // Data
+         private readonly int _carryParamHash = Animator.StringToHash("Carry");
+         // Broker
+         private PlacementBroker _placementBroker;
+         private ContactBroker _contactBroker;
+         // Status
          private DetectStatus _detectStatus;
          private CarryStatus _carryStatus;
-      
+         // Input
          private InputAction _carryAction;
          private InputAction _throwAction;
-      
-         private InteractionBehaviour _interactionBehaviour;
-         
+         // Component
          private Animator _animator;
-      
-         private readonly int _carryParamHash = Animator.StringToHash("Carry");
-      
+         private InteractionBehaviour _interactionBehaviour;
          [SF] private Transform throwPoint;
+         // Property
+         public Carriable CarriedItem => this._carryStatus.CurCarriable;
          
          [Inject]
          private void Construct(
+            PlacementBroker placementBroker,
+            ContactBroker contactBroker,
             DetectStatus detectStatus,
             CarryStatus carryStatus,
             PlayerInput inputMap,
             InteractionBehaviour interactionBehaviour,
             Animator playerAnimator)
          {
+            _placementBroker = placementBroker;
+            _contactBroker = contactBroker;
+            
             _detectStatus = detectStatus;
             _carryStatus = carryStatus;
       
@@ -46,7 +56,8 @@ namespace _Scripts.Stage.Player.Behaviour
             
             _animator = playerAnimator;
          }
-      
+
+         #region NGO 관련 메서드
          public override void OnNetworkSpawn()
          {
             if (!IsLocalPlayer) return;
@@ -62,10 +73,11 @@ namespace _Scripts.Stage.Player.Behaviour
          protected override void OnAttached(AttachableBehaviour attachableBehaviour)
          {
             _carryStatus.CurCarriable = attachableBehaviour as Carriable;
-      
+            _carryStatus.CurCarriable?.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            
             if (!IsLocalPlayer) return;
       
-            _interactionBehaviour.CancelInteractionRpc();
+            _interactionBehaviour.CancelRpc();
             
             _animator.SetBool(_carryParamHash, this.HasAttachments);
             _carryStatus.UpdateLastCarryTime();
@@ -80,6 +92,7 @@ namespace _Scripts.Stage.Player.Behaviour
             _animator.SetBool(_carryParamHash, this.HasAttachments);
             _carryStatus.UpdateLastCarryTime();
          }
+<<<<<<< Updated upstream
          
          [Rpc(SendTo.Server)]
          private void PickRpc()
@@ -102,9 +115,39 @@ namespace _Scripts.Stage.Player.Behaviour
             {
                Debug.Log("Displace Failure");
             }
+=======
+         #endregion
+
+         #region Carrier 관련 메서드
+         [Rpc(SendTo.Server)]
+         private void BehaveOnEmptyHandRpc()
+         {
+            if (_detectStatus.DetectItem(out var item))
+            {
+               this.Pick(item);
+               return;
+            }
+            
+            if (!_detectStatus.DetectTable(out var table)) return;
+            
+            AssignToBroker(table);
+         }
+
+         [Rpc(SendTo.Server)]
+         private void BehaveOnCarryingHandRpc()
+         {
+            if (!_detectStatus.DetectTable(out var table))
+            {
+               this.Drop();
+               return;
+            }
+
+            AssignToBroker(table);
+>>>>>>> Stashed changes
          }
       
          [Rpc(SendTo.Server)]
+<<<<<<< Updated upstream
          private void DropRpc()
          {
             var item = _carryStatus.CurCarriable;
@@ -135,22 +178,66 @@ namespace _Scripts.Stage.Player.Behaviour
             
             if (carriable is null) return;
             if (!carriable.TryGetComponent(out Throwable throwable)) return;
+=======
+         private void ThrowRpc()
+         {
+            if (CarriedItem is not Ingredient ingredient) return;
+>>>>>>> Stashed changes
             
-            throwable.Throw(throwPoint.position, throwPoint.rotation,throwPoint.forward).Forget();
-            carriable.Detach();
+            ingredient.Throw(throwPoint.position, throwPoint.rotation,throwPoint.forward).Forget();
+            ingredient.Detach();
+         }
+         
+         public void Pick(Carriable item)
+         {
+            if (item.IsCarrying) item.Detach();
+            item.Attach(this);
          }
 
+         private void Drop()
+         {
+            this.CarriedItem?.Detach();
+         }
+
+         private void AssignToBroker(NetworkObject table)
+         {
+            var result = default(BrokerResult);
+            
+            if (table.TryGetComponent(out IPlacable placable))
+            {
+               result = _placementBroker.AcceptCase(this, placable);
+               if (result.IsSuccess) return;
+            }
+            
+            if (table.TryGetComponent(out IContactable contactable))
+            {
+               result = _contactBroker.AcceptCase(this, contactable);
+               if (result.IsSuccess) return;
+            }
+            
+            if (result.Reason is not null)
+               Debug.LogWarning($"{result.Reason} [Player{this.OwnerClientId} + {table.name}]");
+         }
+         #endregion
+
+         #region Input 관련 메서드
          private void OnCarryStarted(InputAction.CallbackContext ctx)
          {
             if (!_carryStatus.IsCarryAvailable) return;
+<<<<<<< Updated upstream
       
             if (this.HasAttachments) DropRpc();
             else PickRpc();
+=======
+
+            if (CarriedItem == null) BehaveOnEmptyHandRpc();
+            else BehaveOnCarryingHandRpc();
+>>>>>>> Stashed changes
          }
       
          private void OnThrowStarted(InputAction.CallbackContext ctx)
          {
-            if (!this.HasAttachments || !_carryStatus.HasCarriable) return;
+            if (CarriedItem == null) return;
             if (ctx.interaction is not PressInteraction) return;
             
             ThrowRpc();
@@ -173,5 +260,6 @@ namespace _Scripts.Stage.Player.Behaviour
             _throwAction.started -= OnThrowStarted;
             _throwAction.Disable();
          }
+         #endregion
     }
 }

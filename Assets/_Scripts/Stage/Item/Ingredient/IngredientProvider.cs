@@ -4,42 +4,77 @@ using AYellowpaper.SerializedCollections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Pool;
+using VContainer;
+using VContainer.Unity;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Item.Ingredient
 {
     public class IngredientProvider : NetworkBehaviour
     {
-        [SF] private Ingredient prefab;
-        [SF] private SerializedDictionary<IngredientType, IngredientData> ingredientDataDic;
-        [SF] private IngredientType requiredType;
+        // [수정] 이 세 데이터 나중에 StageData 등에서 받아오기
         [SF] private int defaultCapacity = 20;
         [SF] private int maxPoolSize = 40;
+        [SF] private IngredientType requiredType;
+        
+        private IObjectResolver _container;
+        private NetworkObject _prefab;
         
         private IObjectPool<Ingredient> _pool;
+        private readonly Dictionary<IngredientType, IngredientData> _dataDic = new ();
 
         public IngredientType RequiredType => requiredType;
-        
+
+        [Inject]
+        private void Construct(
+            IObjectResolver container,
+            // IReadOnlyList<IngredientData> dataList,
+            IngredientData[] dataList)
+        {
+            _container = container;
+
+            foreach (var data in dataList)
+            {
+                _dataDic.TryAdd(data.Type, data);
+            }
+            
+            _prefab = dataList[0].TempPrefab; // 임시
+            
+            BakeMeshes();
+        }
+
         public override void OnNetworkSpawn()
         {
-            var ingredientNetObj = prefab.GetComponent<NetworkObject>();
-            var prefabHandler = new IngredientPrefabHandler(this);
-            NetworkManager.PrefabHandler.AddHandler(ingredientNetObj, prefabHandler);
-            
-            Debug.Log($"[provider spawn] server : {IsServer} / host : {IsHost} / auth : {HasAuthority}");
             InitPool();
+
+            // var ingredientNetObj = _prefab.GetComponent<NetworkObject>();
+            var prefabHandler = new IngredientPrefabHandler(this);
+            NetworkManager.PrefabHandler.AddHandler(_prefab, prefabHandler);
             
             base.OnNetworkSpawn();
         }
 
         public override void OnNetworkDespawn()
         {
-            var ingredientNetObj = prefab.GetComponent<NetworkObject>();
-            NetworkManager.PrefabHandler.RemoveHandler(ingredientNetObj);
+            // var ingredientNetObj = _prefab.GetComponent<NetworkObject>();
+            NetworkManager.PrefabHandler.RemoveHandler(_prefab);
             
             base.OnNetworkDespawn();
         }
-    
+
+        private void BakeMeshes()
+        {
+            MeshColliderCookingOptions options = MeshColliderCookingOptions.CookForFasterSimulation |
+                                                        MeshColliderCookingOptions.EnableMeshCleaning |
+                                                        MeshColliderCookingOptions.UseFastMidphase |
+                                                        MeshColliderCookingOptions.WeldColocatedVertices;
+            
+            foreach (var data in _dataDic.Values)
+            {
+                data.BakeColliderMesh(options);
+            }
+        }
+
         private void InitPool()
         {
             _pool = new ObjectPool<Ingredient>(
@@ -60,34 +95,34 @@ namespace _Scripts.Stage.Item.Ingredient
         
         private Ingredient CreateIngredient()
         {
-            var ingredient = Instantiate(prefab,this.transform);
-            ingredient.name = $"Ingredient_{ingredient.GetHashCode()}";
-            ingredient.InitComponents(IsServer);
-            return ingredient;
+            var netObj = _container.Instantiate(_prefab,this.transform);
+            netObj.name = $"Ingredient_{netObj.GetHashCode()}";
+            return netObj.GetComponentInChildren<Ingredient>();
         }
         
         private void OnGetIngredient(Ingredient ingredient)
         {
-            ingredient.gameObject.SetActive(true);
+            ingredient.transform.parent.gameObject.SetActive(true);
         }
     
         private void OnReleaseIngredient(Ingredient ingredient)
         {
-            ingredient.gameObject.SetActive(false);
-            ingredient.transform.localPosition = Vector3.zero;
-            ingredient.transform.localRotation = Quaternion.identity;
+            ingredient.transform.parent.gameObject.SetActive(false);
+            ingredient.transform.parent.transform.localPosition = Vector3.zero;
+            ingredient.transform.parent.transform.localRotation = Quaternion.identity;
         }
     
         private void OnDestroyIngredient(Ingredient ingredient)
         {
+            Destroy(ingredient.transform.parent.gameObject);
         }
     
         public Ingredient GetIngredient(IngredientType type, Vector3 pos)
         {
             var ingredient = _pool.Get();
-            var data = ingredientDataDic.GetValueOrDefault(type, ingredientDataDic[requiredType]);
-            ingredient.InitStatus(IsServer, data, data.Type == requiredType);
-            ingredient.transform.position = pos;
+            var data = _dataDic.GetValueOrDefault(type, _dataDic[requiredType]);
+            ingredient.InitData(data, data.Type == requiredType);
+            ingredient.transform.parent.transform.position = pos;
             return ingredient;
         }
     
@@ -99,8 +134,9 @@ namespace _Scripts.Stage.Item.Ingredient
 
         public (Mesh, Vector3) GetModelInfo(IngredientType type)
         {
-            var data = ingredientDataDic.GetValueOrDefault(type, ingredientDataDic[requiredType]);
-            return (data.DefaultRenderMesh, data.DefaultScale);
+            var data = _dataDic.GetValueOrDefault(type, _dataDic[requiredType]);
+            var modelInfo = data.GetModelInfo();
+            return (modelInfo.RenderMesh, modelInfo.Scale);
         }
     }
 }

@@ -2,21 +2,42 @@
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
+using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Item
 {
     public class Carriable : AttachableBehaviour, INetworkUpdateSystem
     {
-        [SF] private CarriableType carriableType;
-        private Rigidbody _rb;
+        [SF] private CarriableType itemType;
         
-        public CarriableType Type => carriableType;
-        public bool IsAttach => m_AttachState is AttachState.Attaching or AttachState.Attached;
+        protected Rigidbody ItemRb;
+        protected MeshCollider ItemCollider;
         
-        public void Construct(Rigidbody rb)
+        private int _defaultLayerMask;
+        private int _ignoreRayCastLayerMask;
+        
+        public CarriableType ItemType => itemType;
+        public bool IsCarrying => m_AttachState is AttachState.Attaching or AttachState.Attached;
+        
+        [Inject]
+        public virtual void Construct()
         {
-            _rb = rb;
+            ItemRb = this.transform.parent.GetComponentInChildren<Rigidbody>();
+            
+            ItemCollider = this.transform.parent.GetComponentInChildren<MeshCollider>();
+            ItemCollider.convex = true;
+            
+            _defaultLayerMask = LayerMask.NameToLayer("Item");
+            _ignoreRayCastLayerMask = LayerMask.NameToLayer("Ignore Raycast");
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            ItemCollider.enabled = HasAuthority;
+            ItemRb.detectCollisions = HasAuthority;
+            
+            base.OnNetworkSpawn();
         }
 
         protected override void OnAttachStateChanged(AttachState attachState, AttachableNode node)
@@ -34,7 +55,6 @@ namespace _Scripts.Stage.Item
                 case AttachState.Detached:
                     OnDetached(); break;
                 default:
-                    Debug.LogError($"[{this.OwnerClientId} Carriable.OnAttachStateChanged] \"{attachState}\"은 존재하지 않는 AttachState 입니다.");
                     break;
             }
 
@@ -49,19 +69,21 @@ namespace _Scripts.Stage.Item
             SyncWithNetObjPosition();
         }
 
-        private void OnAttaching()
+        protected virtual void OnAttaching()
         {
-            _rb.linearVelocity = _rb.angularVelocity = Vector3.zero;
-            _rb.isKinematic = true;
+            ItemRb.linearVelocity = ItemRb.angularVelocity = Vector3.zero;
+            ItemRb.isKinematic = true;
+            this.gameObject.layer = _ignoreRayCastLayerMask;
+            
+            if (HasAuthority) ItemCollider.enabled = false;
         }
 
         private void OnAttached()
         {
-            Debug.Log($"[OnAttached] {this.NetworkObject.gameObject.name} attach to {m_AttachableNode.NetworkObject.gameObject.name} (carrier ? {this.m_AttachableNode is CarrierBehaviour})");
-            transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             SyncWithNetObjPosition();
             
-            if (this.m_AttachableNode is CarrierBehaviour) this.RegisterNetworkUpdate(NetworkUpdateStage.PreLateUpdate);
+            if (this.m_AttachableNode is CarrierBehaviour) 
+                this.RegisterNetworkUpdate(NetworkUpdateStage.PreLateUpdate);
         }
 
         private void OnDetaching()
@@ -72,7 +94,14 @@ namespace _Scripts.Stage.Item
 
         private void OnDetached()
         {
+<<<<<<< Updated upstream
             _rb.isKinematic = false;
+=======
+            ItemRb.isKinematic = false;
+            this.gameObject.layer = _defaultLayerMask;
+            
+            if (HasAuthority) ItemCollider.enabled = true;
+>>>>>>> Stashed changes
         }
 
         private void SyncWithNetObjPosition()

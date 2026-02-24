@@ -64,7 +64,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3833919147235019637}
-  - component: {fileID: 358735392986046896}
+  - component: {fileID: 4935481869954354440}
   m_Layer: 0
   m_Name: Pivot
   m_TagString: Untagged
@@ -87,7 +87,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2303034472434000605}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &358735392986046896
+--- !u!114 &4935481869954354440
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -96,9 +96,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4642378962314365703}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b870dfbc4cccf6244b4ed1a9b379c701, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c9a95451d4b44ca84590ffcfd62ecd6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::AttachableNode
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Wrapper.AttachableSlot
   ShowTopMostFoldoutHeaderGroup: 1
   DetachOnDespawn: 1
 --- !u!1 &7940219582672123014
@@ -175,10 +175,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Table.StoveTable
   ShowTopMostFoldoutHeaderGroup: 1
+<<<<<<< Updated upstream
   pivot: {fileID: 358735392986046896}
   indicatorPrefab: {fileID: 0}
   movableCanvas: {fileID: 0}
   indicatorOffsetY: 1.2
+=======
+  dirtinessThreshold: 0.005
+  preWarnDelay: 5
+  warnDuration: 10
+>>>>>>> Stashed changes
 --- !u!65 &664470068792072275
 BoxCollider:
   m_ObjectHideFlags: 0

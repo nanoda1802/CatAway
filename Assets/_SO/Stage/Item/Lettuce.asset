@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06ede87c9df14d9bb02353ccf6c9fde2, type: 3}
+  m_Name: Lettuce
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.IngredientData
+  tempPrefab: {fileID: 5728861221599045894, guid: 7c68e747e58a6bc4eba8a59e0b3802cb, type: 3}
+  type: 8
+  defaultModelInfo:
+    renderMesh: {fileID: 3760286561286826541, guid: d8ecb712bfd84474aa5c417b7b4b0c20, type: 3}
+    colliderMesh: {fileID: 3760286561286826541, guid: d8ecb712bfd84474aa5c417b7b4b0c20, type: 3}
+    scale: {x: 0.4, y: 0.35, z: 0.4}
+  preppedModelInfo:
+    renderMesh: {fileID: -682357888511628354, guid: e11d9cbcb51649a4d8f186784d5a4f97, type: 3}
+    colliderMesh: {fileID: -682357888511628354, guid: e11d9cbcb51649a4d8f186784d5a4f97, type: 3}
+    scale: {x: 0.6, y: 2.5, z: 0.6}
+  burnedModelInfo:
+    renderMesh: {fileID: 0}
+    colliderMesh: {fileID: 0}
+    scale: {x: 0, y: 0, z: 0}
+  maxProgress: 2.5
+  maxPrepState: 1
+  throwForce: 17
+  dampingThreshold: 10
+  dampingRatio: 0.97
+  validVelocityCutOff: 25

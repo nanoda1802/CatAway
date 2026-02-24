@@ -11,12 +11,12 @@ namespace _Scripts.Stage.Player.Behaviour
 {
     public class CollisionBehaviour : NetworkBehaviour
     {
+        // Status
         private MoveStatus _moveStatus;
-        
+        // Component
         private CarrierBehaviour _carrierBehaviour;
-        
         private Rigidbody _playerRb;
-     
+        // Caching
         private TagHandle _itemTag;
         
         [Inject]
@@ -36,8 +36,8 @@ namespace _Scripts.Stage.Player.Behaviour
         {
             if (!IsServer || !IsSpawned) return;
             if (!other.collider.CompareTag(_itemTag)) return;
-            if (!other.collider.TryGetComponent(out Throwable throwable)) return;
-            if (!throwable.IsThrowing || !throwable.HasEnoughVelocity(other.relativeVelocity)) return;
+            if (!other.collider.TryGetComponent(out Ingredient ingredient)) return;
+            if (!ingredient.IsThrowing || !ingredient.HasEnoughVelocity(other.relativeVelocity)) return;
 
             if (_carrierBehaviour.HasAttachments)
             {
@@ -45,8 +45,7 @@ namespace _Scripts.Stage.Player.Behaviour
             }
             else
             {
-                if (!other.collider.TryGetComponent(out Carriable carriable)) return;
-                carriable.Attach(_carrierBehaviour);
+                ingredient.Attach(_carrierBehaviour);
             }
         }
 

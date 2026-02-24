@@ -75,12 +75,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Table.ChoppingTable
   ShowTopMostFoldoutHeaderGroup: 1
-  pivot: {fileID: 1848493422409544387}
+  dirtinessThreshold: 0.005
+  ingredientMask: 28
   knifeModel: {fileID: 6152500931055720481}
-  availableType: 28
-  indicatorPrefab: {fileID: 0}
-  movableCanvas: {fileID: 0}
-  indicatorOffsetY: 1.2
 --- !u!65 &1545303299914478099
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -111,7 +108,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5085169896251369540}
-  - component: {fileID: 1848493422409544387}
+  - component: {fileID: 4307973238450355851}
   m_Layer: 0
   m_Name: Pivot
   m_TagString: Untagged
@@ -128,13 +125,13 @@ Transform:
   m_GameObject: {fileID: 1492526543787933589}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.55, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 875617918589404095}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1848493422409544387
+--- !u!114 &4307973238450355851
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,9 +140,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1492526543787933589}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b870dfbc4cccf6244b4ed1a9b379c701, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c9a95451d4b44ca84590ffcfd62ecd6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::AttachableNode
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Wrapper.AttachableSlot
   ShowTopMostFoldoutHeaderGroup: 1
   DetachOnDespawn: 1
 --- !u!1 &8362117707667470433

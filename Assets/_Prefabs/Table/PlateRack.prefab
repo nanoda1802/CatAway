@@ -98,7 +98,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8701181747951707265}
-  - component: {fileID: 9131849406676312097}
+  - component: {fileID: 1856358116310512166}
   m_Layer: 0
   m_Name: Pivot
   m_TagString: Untagged
@@ -121,7 +121,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7985685425306940570}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
---- !u!114 &9131849406676312097
+--- !u!114 &1856358116310512166
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,9 +130,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7209662785182338720}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b870dfbc4cccf6244b4ed1a9b379c701, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c9a95451d4b44ca84590ffcfd62ecd6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::AttachableNode
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Wrapper.AttachableSlot
   ShowTopMostFoldoutHeaderGroup: 1
   DetachOnDespawn: 1
 --- !u!1 &7509009274432806474

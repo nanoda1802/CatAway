@@ -4,8 +4,9 @@ namespace _Scripts.Stage.Item
 {
     public enum CarriableType
     {
-        Ingredient = 1 << 0, 
-        Plate = 1 << 1, 
-        Cookware = 1 << 2
+        None = 1 << 0,
+        Ingredient = 1 << 1, 
+        Plate = 1 << 2, 
+        Cookware = 1 << 3
     }
 }

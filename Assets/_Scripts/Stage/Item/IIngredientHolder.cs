@@ -2,10 +2,14 @@
 {
     public interface IIngredientHolder
     {
-        public bool IsFull { get; }
         public bool HasIngredient { get; }
+<<<<<<< Updated upstream
 
         public bool TryAdd(Carriable carriable);
+=======
+        public bool CanHold(Ingredient.Ingredient ingredient, out string rejectMessage);
+        public void Hold(Ingredient.Ingredient ingredient);
+>>>>>>> Stashed changes
         public void ClearHolder();
     }
 }

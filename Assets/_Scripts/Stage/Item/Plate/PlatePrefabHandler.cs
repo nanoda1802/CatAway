@@ -19,7 +19,9 @@ namespace _Scripts.Stage.Item.Plate
 
         public void Destroy(NetworkObject networkObject)
         {
-            if (networkObject.TryGetComponent(out Plate plate))
+            var plate = networkObject.GetComponentInChildren<Plate>();
+
+            if (plate != null)
             {
                 _provider.ReleasePlate(plate);
             }
