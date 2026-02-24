@@ -118,45 +118,15 @@ namespace _Scripts.Stage.Player.Behaviour
             if (!_interactStatus.IsInteractAvailable) return;
             if (ctx.interaction is not HoldInteraction) return;
             
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-            TryInteractionRpc();
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
             TryInteractRpc();
             _interactStatus.UpdateLastInteractTime();
->>>>>>> Stashed changes
         }
     
         private void OnInteractCanceled(InputAction.CallbackContext ctx)
         {
             if (ctx.interaction is not HoldInteraction) return;
             
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-            CancelInteractionRpc();
-            _interactStatus.UpdateLastInteractTime();
-=======
             CancelRpc();
->>>>>>> Stashed changes
-=======
-            CancelRpc();
->>>>>>> Stashed changes
-=======
-            CancelRpc();
->>>>>>> Stashed changes
-=======
-            CancelRpc();
->>>>>>> Stashed changes
         }
     
         private void SubscribeInputEvents()

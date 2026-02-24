@@ -95,9 +95,15 @@ namespace _Scripts.Stage.Table.Placable
                 return false;
             }
 
-            if (item is not Plate)
+            if (item is not Plate plate)
             {
                 rejectMessage = "Plate가 아닌 아이템은 Place할 수 없습니다.";
+                return false;
+            }
+            
+            if (plate.HasIngredient)
+            {
+                rejectMessage = "빈 Plate만 Place할 수 있습니다.";
                 return false;
             }
 

@@ -157,7 +157,8 @@ namespace _Scripts.Stage.Table.Contactable
         {
             OnFinished?.Invoke();
 
-            _stageHub.FetchPlacable<PlateRackTable>()?.Place(_targetPlate);
+            var plateRack = _stageHub.FetchPlacable<PlateRackTable>();
+            plateRack.Place(_targetPlate);
         }
         #endregion
         

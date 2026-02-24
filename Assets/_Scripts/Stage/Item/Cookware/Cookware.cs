@@ -81,26 +81,7 @@ namespace _Scripts.Stage.Item.Cookware
                 rejectMessage = "더 이상 조리할 수 없는 Ingredient는 Hold할 수 없습니다.";
                 return false;
             }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
             
-<<<<<<< Updated upstream
-            if (carriable.IsAttach) carriable.Detach();
-            
-            _holdingQueue.Enqueue(carriable);
-            carriable.Attach(pivot);
-=======
->>>>>>> Stashed changes
-=======
-            
->>>>>>> Stashed changes
-=======
-            
->>>>>>> Stashed changes
-=======
-            
->>>>>>> Stashed changes
             return true;
         }
 
@@ -118,45 +99,12 @@ namespace _Scripts.Stage.Item.Cookware
         public void ClearHolder()
         {
             if (!HasAuthority || !HasIngredient) return;
-            
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-            ClearCookwareRpc();
-        }
-
-        public Carriable TakeOutCarriable()
-        {
-            return _holdingQueue.TryDequeue(out var carriable) ? carriable : null;
-        }
-
-        [Rpc(SendTo.Everyone)]
-        private void ClearCookwareRpc()
-        {
-            // 뭐 모델 동기화라든지... 해줄 거 있으면 해주기
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+ 
             var ingredient = HeldIngredient;
             if (ingredient.IsCarrying) ingredient.Detach();
             
             _ingredientProvider.ReleaseIngredient(ingredient);
             ingredient.NetworkObject.Despawn(false);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         }
         #endregion
     }

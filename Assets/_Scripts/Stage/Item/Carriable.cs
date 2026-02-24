@@ -94,32 +94,10 @@ namespace _Scripts.Stage.Item
 
         private void OnDetached()
         {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-            _rb.isKinematic = false;
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
             ItemRb.isKinematic = false;
             this.gameObject.layer = _defaultLayerMask;
             
             if (HasAuthority) ItemCollider.enabled = true;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         }
 
         private void SyncWithNetObjPosition()

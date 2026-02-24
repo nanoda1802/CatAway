@@ -10,33 +10,30 @@ namespace _Scripts.Stage.Table
     {
         public BrokerResult AcceptCase(CarrierBehaviour carrier, IPlacable table)
         {
-            var carriedItemType = GetItemType(carrier.CarriedItem);
-            var placedItemType = GetItemType(table.PlacedItem);
-
-            switch (carriedItemType,placedItemType)
+            switch (carrier.CarriedItem, table.PlacedItem)
             {
-                case (CarriableType.None,CarriableType.Ingredient):
-                case (CarriableType.None,CarriableType.Plate):
-                case (CarriableType.None,CarriableType.Cookware):
+                case (null,Ingredient)
+                or (null,Plate)
+                or (null,Cookware):
                     return HandlePickCase(carrier, table);
                 
-                case (CarriableType.Ingredient,CarriableType.None):
-                case (CarriableType.Plate,CarriableType.None):
-                case (CarriableType.Cookware,CarriableType.None):
+                case (Ingredient,null)
+                or (Plate,null)
+                or (Cookware,null):
                     return HandlePlaceCase(carrier.CarriedItem, table);
                 
-                case (CarriableType.Ingredient, CarriableType.Plate):
-                case (CarriableType.Ingredient, CarriableType.Cookware):
+                case (Ingredient, Plate)
+                or (Ingredient, Cookware):
                     return HandleHoldCase(carrier.CarriedItem, table.PlacedItem);
                 
-                case (CarriableType.Plate, CarriableType.Ingredient):
-                case (CarriableType.Cookware, CarriableType.Ingredient):
+                case (Plate, Ingredient)
+                or (Cookware, Ingredient):
                     return HandleHoldCase(table.PlacedItem, carrier.CarriedItem);
                 
-                case (CarriableType.Plate, CarriableType.Cookware):
+                case (Plate, Cookware):
                     return HandleHolderToHolderCase(carrier.CarriedItem, table.PlacedItem);
                 
-                case (CarriableType.Cookware, CarriableType.Plate):
+                case (Cookware, Plate):
                     return HandleHolderToHolderCase(table.PlacedItem,carrier.CarriedItem);
                     
                 default:
@@ -46,28 +43,20 @@ namespace _Scripts.Stage.Table
 
         public BrokerResult AcceptCase(Ingredient ingredient, IPlacable table)
         {
-            var placedItemType = GetItemType(table.PlacedItem);
-
-            switch (placedItemType)
+            switch (table.PlacedItem)
             {
-                case (CarriableType.None):
+                case null:
                     return HandlePlaceCase(ingredient, table);
                 
-                case (CarriableType.Ingredient):
+                case Ingredient:
                     return new BrokerResult(false, "이미 Place된 Ingredient가 있습니다.");
                 
-                case (CarriableType.Plate):
-                case (CarriableType.Cookware):
+                case Plate or Cookware:
                     return HandleHoldCase(ingredient, table.PlacedItem);
                 
                 default:
                     return new BrokerResult(false, "Broker가 처리할 수 없는 상황입니다.");
             }
-        }
-
-        private CarriableType GetItemType(Carriable item)
-        {
-            return item == null ? CarriableType.None : item.ItemType;
         }
 
         private BrokerResult HandlePickCase(CarrierBehaviour carrier, IPlacable table)

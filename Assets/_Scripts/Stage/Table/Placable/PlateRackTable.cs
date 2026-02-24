@@ -101,7 +101,7 @@ namespace _Scripts.Stage.Table.Placable
                 return false;
             }
 
-            if (!plate.IsWellPrepped)
+            if (!plate.IsWellPrepped || plate.HasIngredient)
             {
                 rejectMessage = "깨끗한 Plate만 Place할 수 있습니다.";
                 return false;

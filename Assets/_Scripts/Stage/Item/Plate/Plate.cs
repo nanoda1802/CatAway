@@ -138,30 +138,7 @@ namespace _Scripts.Stage.Item.Plate
             if (!HasAuthority) return;
             
             _curProgress = 0;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-            _prepState = PrepState.Raw;
-            ClearPlatingRpc();
-        }
-
-        public void InitStatus()
-        {
-            _curProgress = 1;
-            _prepState = PrepState.WellDone;
-=======
             _curState = PrepState.Raw;
->>>>>>> Stashed changes
-=======
-            _curState = PrepState.Raw;
->>>>>>> Stashed changes
-=======
-            _curState = PrepState.Raw;
->>>>>>> Stashed changes
-=======
-            _curState = PrepState.Raw;
->>>>>>> Stashed changes
             
             _platingMask = 0;
             _platingList.Clear();
