@@ -94,6 +94,7 @@ namespace _Scripts.Stage.Player.Behaviour
          }
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
          
          [Rpc(SendTo.Server)]
          private void PickRpc()
@@ -181,12 +182,87 @@ namespace _Scripts.Stage.Player.Behaviour
             if (!carriable.TryGetComponent(out Throwable throwable)) return;
 =======
          private void ThrowRpc()
+=======
+         #endregion
+
+         #region Carrier 관련 메서드
+         [Rpc(SendTo.Server)]
+         private void BehaveOnEmptyHandRpc()
+         {
+            if (_detectStatus.DetectItem(out var item))
+            {
+               this.Pick(item);
+               return;
+            }
+            
+            if (!_detectStatus.DetectTable(out var table)) return;
+            
+            AssignToBroker(table);
+         }
+
+         [Rpc(SendTo.Server)]
+         private void BehaveOnCarryingHandRpc()
+         {
+            if (!_detectStatus.DetectTable(out var table))
+            {
+               this.Drop();
+               return;
+            }
+
+            AssignToBroker(table);
+         }
+         
+         [Rpc(SendTo.Server)]
+         private void ThrowRpc()
+         {
+            if (CarriedItem is not Ingredient ingredient) return;
+            
+            ingredient.Throw(throwPoint.position, throwPoint.rotation,throwPoint.forward).Forget();
+            ingredient.Detach();
+         }
+         
+         public void Pick(Carriable item)
+         {
+            if (item.IsCarrying) item.Detach();
+            item.Attach(this);
+         }
+
+         private void Drop()
+         {
+            this.CarriedItem?.Detach();
+         }
+
+         private void AssignToBroker(NetworkObject table)
+         {
+            var result = default(BrokerResult);
+            
+            if (table.TryGetComponent(out IPlacable placable))
+            {
+               result = _placementBroker.AcceptCase(this, placable);
+               if (result.IsSuccess) return;
+            }
+            
+            if (table.TryGetComponent(out IContactable contactable))
+            {
+               result = _contactBroker.AcceptCase(this, contactable);
+               if (result.IsSuccess) return;
+            }
+            
+            if (result.Reason is not null)
+               Debug.LogWarning($"{result.Reason} [Player{this.OwnerClientId} + {table.name}]");
+         }
+         #endregion
+
+         #region Input 관련 메서드
+         private void OnCarryStarted(InputAction.CallbackContext ctx)
+>>>>>>> Stashed changes
          {
             if (CarriedItem is not Ingredient ingredient) return;
 >>>>>>> Stashed changes
 =======
          #endregion
 
+<<<<<<< Updated upstream
          #region Carrier 관련 메서드
          [Rpc(SendTo.Server)]
          private void BehaveOnEmptyHandRpc()
@@ -271,6 +347,10 @@ namespace _Scripts.Stage.Player.Behaviour
 <<<<<<< Updated upstream
 >>>>>>> Stashed changes
 =======
+>>>>>>> Stashed changes
+=======
+            if (CarriedItem == null) BehaveOnEmptyHandRpc();
+            else BehaveOnCarryingHandRpc();
 >>>>>>> Stashed changes
          }
       

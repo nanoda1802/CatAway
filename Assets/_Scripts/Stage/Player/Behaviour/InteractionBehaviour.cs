@@ -120,8 +120,11 @@ namespace _Scripts.Stage.Player.Behaviour
             
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             TryInteractionRpc();
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
             TryInteractRpc();
@@ -135,8 +138,12 @@ namespace _Scripts.Stage.Player.Behaviour
             
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             CancelInteractionRpc();
             _interactStatus.UpdateLastInteractTime();
+=======
+            CancelRpc();
+>>>>>>> Stashed changes
 =======
             CancelRpc();
 >>>>>>> Stashed changes

@@ -345,7 +345,10 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: cf779876436fe05439d028af85f284d9, type: 3}
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 --- !u!1 &351009277 stripped
@@ -415,6 +418,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 12ae7c75dc8368649b52781f742c20e3, type: 2}
   plateData: {fileID: 11400000, guid: 749ad60dbb51d2447bfb495837ccdbda, type: 2}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

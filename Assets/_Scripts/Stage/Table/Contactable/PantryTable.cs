@@ -5,6 +5,10 @@ using _Scripts.Stage.Player.Behaviour;
 using Unity.Netcode;
 using UnityEngine;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+using VContainer;
+>>>>>>> Stashed changes
 =======
 using VContainer;
 >>>>>>> Stashed changes
@@ -14,6 +18,7 @@ namespace _Scripts.Stage.Table.Contactable
 {
     public class PantryTable : NetworkBehaviour, IContactable
     {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream:Assets/_Scripts/Stage/Table/PantryTable.cs
         [SF] private IngredientType ingredientType;
@@ -28,6 +33,8 @@ namespace _Scripts.Stage.Table.Contactable
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         // Data
         [SF] private IngredientType ingredientType;
         // Dependency
@@ -38,7 +45,10 @@ namespace _Scripts.Stage.Table.Contactable
         
         [Inject]
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes:Assets/_Scripts/Stage/Table/Contactable/PantryTable.cs
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         private void Construct(IngredientProvider provider)
@@ -51,8 +61,13 @@ namespace _Scripts.Stage.Table.Contactable
             (Mesh mesh, Vector3 scale) = _ingredientProvider.GetModelInfo(ingredientType);
                 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             sampleFilter.sharedMesh = mesh;
             sampleTr.localScale = scale;
+=======
+            sampleMeshFilter.sharedMesh = mesh;
+            sampleTransform.localScale = scale;
+>>>>>>> Stashed changes
 =======
             sampleMeshFilter.sharedMesh = mesh;
             sampleTransform.localScale = scale;
@@ -61,6 +76,7 @@ namespace _Scripts.Stage.Table.Contactable
             base.OnNetworkSpawn();
         }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream:Assets/_Scripts/Stage/Table/PantryTable.cs
         public bool TryPlace(Carriable carriable)
@@ -79,12 +95,17 @@ namespace _Scripts.Stage.Table.Contactable
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         #region Contactable 관련 메서드
         public bool TryContact(Carriable item, out string failMessage)
         {
             failMessage = null;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes:Assets/_Scripts/Stage/Table/Contactable/PantryTable.cs
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
             
