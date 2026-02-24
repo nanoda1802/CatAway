@@ -10,9 +10,12 @@ namespace _Scripts.Stage.Table
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         public bool TryPlace(Carriable carriable);
         public bool TryDisplace(CarrierBehaviour carrier, out Carriable carriable);
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -23,6 +26,9 @@ namespace _Scripts.Stage.Table
         public bool CanDisPlace(out string rejectMessage);
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

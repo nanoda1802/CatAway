@@ -83,6 +83,7 @@ namespace _Scripts.Stage.Item.Cookware
             }
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             
 <<<<<<< Updated upstream
             if (carriable.IsAttach) carriable.Detach();
@@ -90,6 +91,9 @@ namespace _Scripts.Stage.Item.Cookware
             _holdingQueue.Enqueue(carriable);
             carriable.Attach(pivot);
 =======
+>>>>>>> Stashed changes
+=======
+            
 >>>>>>> Stashed changes
 =======
             
@@ -118,6 +122,7 @@ namespace _Scripts.Stage.Item.Cookware
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             ClearCookwareRpc();
         }
 
@@ -135,6 +140,8 @@ namespace _Scripts.Stage.Item.Cookware
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
             var ingredient = HeldIngredient;
             if (ingredient.IsCarrying) ingredient.Detach();
             
@@ -142,6 +149,9 @@ namespace _Scripts.Stage.Item.Cookware
             ingredient.NetworkObject.Despawn(false);
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

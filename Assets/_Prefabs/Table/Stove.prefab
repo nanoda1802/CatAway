@@ -178,10 +178,16 @@ MonoBehaviour:
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   pivot: {fileID: 358735392986046896}
   indicatorPrefab: {fileID: 0}
   movableCanvas: {fileID: 0}
   indicatorOffsetY: 1.2
+=======
+  dirtinessThreshold: 0.005
+  preWarnDelay: 5
+  warnDuration: 10
+>>>>>>> Stashed changes
 =======
   dirtinessThreshold: 0.005
   preWarnDelay: 5
