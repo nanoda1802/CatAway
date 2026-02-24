@@ -81,6 +81,7 @@ namespace _Scripts.Stage.Item.Cookware
                 rejectMessage = "더 이상 조리할 수 없는 Ingredient는 Hold할 수 없습니다.";
                 return false;
             }
+<<<<<<< Updated upstream
             
 <<<<<<< Updated upstream
             if (carriable.IsAttach) carriable.Detach();
@@ -88,6 +89,9 @@ namespace _Scripts.Stage.Item.Cookware
             _holdingQueue.Enqueue(carriable);
             carriable.Attach(pivot);
 =======
+>>>>>>> Stashed changes
+=======
+            
 >>>>>>> Stashed changes
             return true;
         }
@@ -108,6 +112,7 @@ namespace _Scripts.Stage.Item.Cookware
             if (!HasAuthority || !HasIngredient) return;
             
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             ClearCookwareRpc();
         }
 
@@ -121,11 +126,16 @@ namespace _Scripts.Stage.Item.Cookware
         {
             // 뭐 모델 동기화라든지... 해줄 거 있으면 해주기
 =======
+=======
+>>>>>>> Stashed changes
             var ingredient = HeldIngredient;
             if (ingredient.IsCarrying) ingredient.Detach();
             
             _ingredientProvider.ReleaseIngredient(ingredient);
             ingredient.NetworkObject.Despawn(false);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         }
         #endregion

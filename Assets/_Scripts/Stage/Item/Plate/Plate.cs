@@ -139,6 +139,7 @@ namespace _Scripts.Stage.Item.Plate
             
             _curProgress = 0;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             _prepState = PrepState.Raw;
             ClearPlatingRpc();
         }
@@ -147,6 +148,9 @@ namespace _Scripts.Stage.Item.Plate
         {
             _curProgress = 1;
             _prepState = PrepState.WellDone;
+=======
+            _curState = PrepState.Raw;
+>>>>>>> Stashed changes
 =======
             _curState = PrepState.Raw;
 >>>>>>> Stashed changes

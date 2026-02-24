@@ -119,8 +119,11 @@ namespace _Scripts.Stage.Player.Behaviour
             if (ctx.interaction is not HoldInteraction) return;
             
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             TryInteractionRpc();
 =======
+=======
+>>>>>>> Stashed changes
             TryInteractRpc();
             _interactStatus.UpdateLastInteractTime();
 >>>>>>> Stashed changes
@@ -131,8 +134,12 @@ namespace _Scripts.Stage.Player.Behaviour
             if (ctx.interaction is not HoldInteraction) return;
             
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             CancelInteractionRpc();
             _interactStatus.UpdateLastInteractTime();
+=======
+            CancelRpc();
+>>>>>>> Stashed changes
 =======
             CancelRpc();
 >>>>>>> Stashed changes

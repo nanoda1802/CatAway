@@ -93,6 +93,7 @@ namespace _Scripts.Stage.Player.Behaviour
             _carryStatus.UpdateLastCarryTime();
          }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
          
          [Rpc(SendTo.Server)]
          private void PickRpc()
@@ -183,6 +184,41 @@ namespace _Scripts.Stage.Player.Behaviour
          {
             if (CarriedItem is not Ingredient ingredient) return;
 >>>>>>> Stashed changes
+=======
+         #endregion
+
+         #region Carrier 관련 메서드
+         [Rpc(SendTo.Server)]
+         private void BehaveOnEmptyHandRpc()
+         {
+            if (_detectStatus.DetectItem(out var item))
+            {
+               this.Pick(item);
+               return;
+            }
+            
+            if (!_detectStatus.DetectTable(out var table)) return;
+            
+            AssignToBroker(table);
+         }
+
+         [Rpc(SendTo.Server)]
+         private void BehaveOnCarryingHandRpc()
+         {
+            if (!_detectStatus.DetectTable(out var table))
+            {
+               this.Drop();
+               return;
+            }
+
+            AssignToBroker(table);
+         }
+         
+         [Rpc(SendTo.Server)]
+         private void ThrowRpc()
+         {
+            if (CarriedItem is not Ingredient ingredient) return;
+>>>>>>> Stashed changes
             
             ingredient.Throw(throwPoint.position, throwPoint.rotation,throwPoint.forward).Forget();
             ingredient.Detach();
@@ -232,6 +268,9 @@ namespace _Scripts.Stage.Player.Behaviour
 
             if (CarriedItem == null) BehaveOnEmptyHandRpc();
             else BehaveOnCarryingHandRpc();
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
          }
       

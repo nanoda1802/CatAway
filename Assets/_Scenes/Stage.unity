@@ -588,6 +588,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d022412243c43f69480ed3b0ecf2e16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.UI.Widget.PlatingIcon.PlatingIconProvider
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 --- !u!1 &1142735818
 GameObject:
