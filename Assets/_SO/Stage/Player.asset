@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f65f6bc80d46f68b4a55135b2459ee, type: 3}
+  m_Name: Player
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Player.PlayerData
+  moveSpeed: 4
+  rotSpeed: 25
+  dashSpeed: 6
+  dashDuration: 0.22
+  minSpeedMultiplier: 1
+  maxSpeedMultiplier: 1.65
+  knockBackImpact: 3
+  knockBackDuration: 0.25
+  dashInterval: 0.5
+  carryInterval: 0.1
+  interactInterval: 0.1
+  tableLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  rayDistance: 1.2
+  itemLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  maxDetectionCount: 5
+  overlapBoxSize: {x: 0.7, y: 0.5, z: 0.5}
+  overlapBoxOffset: 0.5

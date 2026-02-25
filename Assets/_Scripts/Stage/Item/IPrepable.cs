@@ -2,8 +2,8 @@
 {
     public interface IPrepable
     {
-        public bool IsReady { get; }
+        public bool IsWellPrepped { get; }
         public float Prepare(int multiplier);
-        public void OnPrepFinished();
+        public void OnPrepCompleted();
     }
 }

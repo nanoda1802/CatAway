@@ -1,6 +1,5 @@
-﻿using _Scripts.Stage.UI.Movable;
+﻿using _Scripts.Stage.Table;
 using _Scripts.Stage.UI.Widget;
-using _Scripts.Stage.UI.Widget.ProgressBar;
 using MessagePipe;
 using VContainer;
 using VContainer.Unity;
@@ -11,10 +10,16 @@ namespace _Scripts.Stage
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.RegisterEntryPoint<StageHub>().AsSelf();
+            
+            builder.Register<PlacementBroker>(Lifetime.Scoped);
+            builder.Register<ContactBroker>(Lifetime.Scoped);
+            
             var msgOptions = builder.RegisterMessagePipe();
             
-            builder.RegisterMessageBroker<ProgressBarProvider>(msgOptions);
-            // 다른 Provider들도 추가
+            builder.RegisterMessageBroker<IPlacable>(msgOptions);
+            builder.RegisterMessageBroker<IProvider>(msgOptions);
+            builder.RegisterMessageBroker<PublishRequestMessage>(msgOptions);
             
             base.Configure(builder);
         }

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5124246763674500397}
-  - component: {fileID: 5923237435208711314}
+  - component: {fileID: 4229478483724353017}
   - component: {fileID: 4858129479079171475}
   - component: {fileID: 6423714866767554610}
   - component: {fileID: 1272528223881563906}
@@ -36,7 +36,7 @@ Transform:
   - {fileID: 2265809326568999049}
   m_Father: {fileID: 5308449195566083431}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5923237435208711314
+--- !u!114 &4229478483724353017
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,18 +45,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1087830194884916526}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39d3298881b548ee938b26917cd57f92, type: 3}
+  m_Script: {fileID: 11500000, guid: c2be32d5b0c74f5697be326cd824da59, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.Carriable
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.Cookware.Cookware
   ShowTopMostFoldoutHeaderGroup: 1
   AutoDetach: 3
-  ComponentControllers:
-  - name: Pan (Component Controller)
-    AutoTrigger: 3
-    EnableOnAttach: 0
-    ComponentController: {fileID: 5954786601715063792}
-    HasInitialized: 1
-  carriableType: 4
+  ComponentControllers: []
+  itemType: 8
+  holdableIngredientType: 2
 --- !u!33 &4858129479079171475
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -144,7 +140,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2265809326568999049}
-  - component: {fileID: 1020910039714924367}
+  - component: {fileID: 5183734262552246968}
   m_Layer: 7
   m_Name: Pivot
   m_TagString: Untagged
@@ -167,7 +163,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5124246763674500397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1020910039714924367
+--- !u!114 &5183734262552246968
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -176,9 +172,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4765762648162899593}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b870dfbc4cccf6244b4ed1a9b379c701, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c9a95451d4b44ca84590ffcfd62ecd6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::AttachableNode
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Wrapper.AttachableSlot
   ShowTopMostFoldoutHeaderGroup: 1
   DetachOnDespawn: 1
 --- !u!1 &6530758574615387552
@@ -191,8 +187,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5308449195566083431}
   - component: {fileID: 5728861221599045894}
-  - component: {fileID: 5436159422410833530}
-  - component: {fileID: 5954786601715063792}
   - component: {fileID: 3994577863631074444}
   - component: {fileID: 7606199155049518716}
   - component: {fileID: 6578036918155594335}
@@ -231,7 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 202740722
+  GlobalObjectIdHash: 80962278
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -244,42 +238,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &5436159422410833530
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6530758574615387552}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2be32d5b0c74f5697be326cd824da59, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.Cookware.Cookware
-  ShowTopMostFoldoutHeaderGroup: 1
-  pivot: {fileID: 1020910039714924367}
-  availableType: 2
-  maxHoldingCount: 1
---- !u!114 &5954786601715063792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6530758574615387552}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0b25b3f95e5324abc80c09cb29f271, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.ComponentController
-  ShowTopMostFoldoutHeaderGroup: 1
-  StartEnabled: 1
-  Components:
-  - name: Model (Mesh Collider)
-    InvertEnabled: 0
-    EnableDelay: 0
-    DisableDelay: 0
-    Component: {fileID: 1272528223881563906}
 --- !u!114 &3994577863631074444
 MonoBehaviour:
   m_ObjectHideFlags: 0

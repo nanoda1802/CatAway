@@ -1,69 +1,157 @@
-﻿using Unity.Netcode;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
+using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
+using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Item.Ingredient
 {
-    public class Ingredient : NetworkBehaviour, IPrepable
+    public class Ingredient : Carriable, IPrepable
     {
+        // Data
         private IngredientData _data;
-        
+        // Component
         private MeshFilter _meshFilter;
-        private MeshCollider _meshCollider;
-        
-        private Carriable _carriable;
-        private Throwable _throwable;
-        
-        private readonly NetworkVariable<IngredientType> _sharedType = new();
-
+        private NetworkTransform _networkTr;
+        // Status
         private float _curProgress;
-        private PrepState _prepState; // 이걸로 동기화 다시 해야해
-
+        private PrepState _curState;
+        // Caching
+        private CancellationTokenSource _throwCts;
+        // Property
         public IngredientType Type => _data.Type;
-        public bool IsReady => _prepState == PrepState.WellDone;
-
-        // isServer 매개변수가 있는 메서드들은 호출 시점이 스폰 이전이라서 그렇슴
+        public bool IsRaw => _curState == PrepState.Raw;
+        public bool IsWellPrepped => _curState == PrepState.WellDone;
+        public bool IsMaxPrepped => _curState == _data.MaxPrepState;
+        public bool IsThrowing { get; private set; }
         
-        public void InitStatus(bool isServer, IngredientData data, bool isRequiredIngredient)
+        [Inject]
+        public override void Construct()
         {
-            _curProgress = 0;
-            _prepState = isRequiredIngredient? PrepState.WellDone : PrepState.Raw;
+            base.Construct();
             
+            _meshFilter = this.GetComponent<MeshFilter>();
+            _networkTr = this.transform.parent.GetComponent<NetworkTransform>();
+        }
+
+        public void InitData(IngredientData data, bool isRequiredIngredient)
+        {
             _data = data;
-            SetModel(_data.DefaultRenderMesh,_data.DefaultScale,_data.DefaultColliderMesh, isServer);
+            
+            _curProgress = 0;
+            _curState = isRequiredIngredient? PrepState.WellDone : PrepState.Raw;
         }
 
-        public void InitComponents(bool isServer)
+        private void SetModel(Mesh renderMesh, Vector3 scale, Mesh colliderMesh)
         {
-            _meshFilter = this.GetComponentInChildren<MeshFilter>();
-            _meshCollider = this.GetComponentInChildren<MeshCollider>();
+            _meshFilter.sharedMesh = renderMesh;
+            _meshFilter.transform.localScale = scale;
             
-            _meshCollider.isTrigger = !isServer;
-            
-            _carriable = this.GetComponentInChildren<Carriable>();
-            _throwable = this.GetComponentInChildren<Throwable>();
-            
-            var ingredientRb = this.GetComponentInChildren<Rigidbody>();
-            var netTr = this.GetComponentInChildren<NetworkTransform>();
-            
-            ingredientRb.detectCollisions = isServer;
-            
-            _carriable?.Construct(ingredientRb);
-            _throwable?.Construct(ingredientRb, netTr);
+            if (HasAuthority) ItemCollider.sharedMesh = colliderMesh;
         }
-
+        
+        #region NGO 관련 메서드
         public override void OnNetworkSpawn()
         {
             if (HasAuthority)
             {
-                _throwable?.InitStatus(_data);
-                _sharedType.Value = _data.Type;
+                UpdateModelRpc(_curState);
             }
             
             base.OnNetworkSpawn();
         }
 
+        protected override void OnAttaching()
+        {
+            base.OnAttaching();
+            CancelThrowing();
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void UpdateModelRpc(PrepState prepState = PrepState.Raw)
+        {
+            var info = _data.GetModelInfo(prepState);
+            if (!info.IsValid)
+            {
+                Debug.LogError($"갱신할 ModelInfo가 유효하지 않습니다. [{_data.name}] 를 점검하세요.");
+                return;
+            }
+            
+            SetModel(info.RenderMesh, info.Scale, info.ColliderMesh);
+        }
+        #endregion
+
+        #region Throw 관련 메서드
+        private void CancelThrowing()
+        {
+            if (!IsThrowing) return;
+            
+            _throwCts?.Cancel();
+            _throwCts?.Dispose();
+            _throwCts = null;
+            
+            IsThrowing = false;
+        }
+
+        public async UniTaskVoid Throw(Vector3 originPoint, Quaternion originRot, Vector3 throwDir)
+        {
+            if (IsThrowing) return;
+            
+            IsThrowing = true;
+
+            if (_throwCts == null || _throwCts.IsCancellationRequested)
+            {
+                _throwCts?.Dispose();
+                _throwCts = new CancellationTokenSource();
+            }
+
+            _networkTr.Teleport(originPoint, originRot, Vector3.one);
+            
+            await UniTask.WaitUntil(() => !ItemRb.isKinematic, cancellationToken:_throwCts.Token);
+            await Throwing(throwDir, originPoint, _throwCts.Token);
+            await Falling(_throwCts.Token);
+            
+            IsThrowing = false;
+        }
+        
+        private async UniTask Throwing(Vector3 dir, Vector3 origin, CancellationToken token)
+        {
+            if (ItemRb.isKinematic) return;
+            
+            ItemRb.linearVelocity = _data.ThrowForce * dir;
+
+            while (!ShouldApplyDamping(origin) && HasEnoughVelocity(ItemRb.linearVelocity) && !ItemRb.isKinematic)
+            {
+                await UniTask.DelayFrame(5, cancellationToken:token);
+            }
+        }
+
+        private async UniTask Falling(CancellationToken token)
+        {
+            if (ItemRb.isKinematic) return;
+
+            while (ItemRb.linearVelocity.sqrMagnitude > 0.5f && !ItemRb.isKinematic)
+            {
+                ItemRb.linearVelocity *= _data.DampingRatio;
+                await UniTask.DelayFrame(5, cancellationToken:token);
+            }
+        }
+        
+        public bool HasEnoughVelocity(Vector3 velocity)
+        {
+            return velocity.sqrMagnitude > _data.ValidVelocityCutOff;
+        }
+
+        private bool ShouldApplyDamping(Vector3 origin)
+        {
+            var throwDist = (origin - ItemRb.position).sqrMagnitude;
+            return throwDist > _data.DampingThreshold;
+        }
+        #endregion
+        
+        #region Prep 관련 메서드
         public float Prepare(int multiplier)
         {
             if (_curProgress >= _data.MaxProgress) return 1;
@@ -72,29 +160,21 @@ namespace _Scripts.Stage.Item.Ingredient
             return _curProgress / _data.MaxProgress;
         }
 
-        public void OnPrepFinished()
+        public void OnPrepCompleted()
         {
-            _prepState = PrepState.WellDone;
-            UpdateModelRpc();
+            if (!HasAuthority) return;
+            
+            _curState = PrepState.WellDone;
+            UpdateModelRpc(_curState);
         }
 
-        private void SetModel(Mesh renderMesh, Vector3 scale, Mesh colliderMesh, bool isServer)
+        public void OnOverCooked()
         {
-            _meshFilter.sharedMesh = renderMesh;
-            _meshFilter.transform.localScale = scale;
+            if (!HasAuthority) return;
             
-            if (!isServer) return;
-            
-            if (!_meshCollider.convex) _meshCollider.convex = true;
-            _meshCollider.sharedMesh = colliderMesh;
+            _curState = PrepState.OverDone;
+            UpdateModelRpc(_curState);
         }
-
-        [Rpc(SendTo.Everyone)]
-        private void UpdateModelRpc()
-        {
-            // 몰러,,, 매개변수로 WellDone인지, OverDone인지 받기
-            // 그리고 맞는 쪽으로 SetModel
-            SetModel(_data.PreppedRenderMesh,_data.PreppedScale,_data.PreppedColliderMesh, IsServer);
-        }
+        #endregion
     }
 }

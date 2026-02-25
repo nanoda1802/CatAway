@@ -9,8 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5124246763674500397}
-  - component: {fileID: 5923237435208711314}
-  - component: {fileID: 3398697665256146390}
+  - component: {fileID: 3767746840119298833}
   - component: {fileID: 4858129479079171475}
   - component: {fileID: 6423714866767554610}
   - component: {fileID: 1272528223881563906}
@@ -36,7 +35,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5308449195566083431}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5923237435208711314
+--- !u!114 &3767746840119298833
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,31 +44,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1087830194884916526}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39d3298881b548ee938b26917cd57f92, type: 3}
+  m_Script: {fileID: 11500000, guid: 958781026c1d42038cce2067389c1028, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.Carriable
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.Ingredient.Ingredient
   ShowTopMostFoldoutHeaderGroup: 1
   AutoDetach: 3
-  ComponentControllers:
-  - name: Ingredient (Component Controller)
-    AutoTrigger: 3
-    EnableOnAttach: 0
-    ComponentController: {fileID: 5954786601715063792}
-    HasInitialized: 1
-  carriableType: 1
---- !u!114 &3398697665256146390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1087830194884916526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c97c1bf9a6f941828e1905d46e6fe40e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.Ingredient.Throwable
-  ShowTopMostFoldoutHeaderGroup: 1
+  ComponentControllers: []
+  itemType: 2
 --- !u!33 &4858129479079171475
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -158,8 +139,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5308449195566083431}
   - component: {fileID: 5728861221599045894}
-  - component: {fileID: 3610042675145562428}
-  - component: {fileID: 5954786601715063792}
   - component: {fileID: 3994577863631074444}
   - component: {fileID: 7606199155049518716}
   - component: {fileID: 6578036918155594335}
@@ -211,39 +190,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &3610042675145562428
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6530758574615387552}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 958781026c1d42038cce2067389c1028, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.Ingredient
-  ShowTopMostFoldoutHeaderGroup: 1
---- !u!114 &5954786601715063792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6530758574615387552}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0b25b3f95e5324abc80c09cb29f271, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.ComponentController
-  ShowTopMostFoldoutHeaderGroup: 1
-  StartEnabled: 1
-  Components:
-  - name: Model (Mesh Collider)
-    InvertEnabled: 0
-    EnableDelay: 0
-    DisableDelay: 0
-    Component: {fileID: 1272528223881563906}
 --- !u!114 &3994577863631074444
 MonoBehaviour:
   m_ObjectHideFlags: 0

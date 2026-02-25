@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using _Scripts.Stage.Item.Ingredient;
 using AYellowpaper.SerializedCollections;
+using Unity.Netcode;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
@@ -9,6 +10,9 @@ namespace _Scripts.Stage.Item.Plate
     [CreateAssetMenu(fileName = "PlateData", menuName = "SO/Stage/Item/Plate")]
     public class PlateData : ScriptableObject
     {
+        [SF] private NetworkObject tempPrefab;
+        public NetworkObject TempPrefab => tempPrefab;
+        
         [Header("[ Plating ]")]
         [SF] private int maxPlatingCount = 3;
         [SF] private Vector3 platingLocalPos = new Vector3(0,0.08f,0); 

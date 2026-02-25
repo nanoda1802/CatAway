@@ -32,8 +32,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1598625242512189674}
   - {fileID: 2413578822422184170}
+  - {fileID: 1598625242512189674}
   - {fileID: 3688487071833302076}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -75,10 +75,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Table.SinkTable
   ShowTopMostFoldoutHeaderGroup: 1
-  indicatorPrefab: {fileID: 2407144812241940834, guid: 6d09b12b81d438548a09a16ba92265ff, type: 3}
-  movableCanvas: {fileID: 0}
-  indicatorOffsetY: 1.2
-  _plateProvider: {fileID: 0}
+  dirtinessThreshold: 0.005
 --- !u!65 &2023958274270780325
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -109,6 +106,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2413578822422184170}
+  - component: {fileID: 5641538694236174479}
   m_Layer: 0
   m_Name: Pivot
   m_TagString: Untagged
@@ -125,12 +123,26 @@ Transform:
   m_GameObject: {fileID: 8749653212222183014}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.25, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 0.2, z: 0}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7985685425306940570}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5641538694236174479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8749653212222183014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c9a95451d4b44ca84590ffcfd62ecd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Wrapper.AttachableSlot
+  ShowTopMostFoldoutHeaderGroup: 1
+  DetachOnDespawn: 1
 --- !u!1001 &4423077595506071436
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -7,7 +7,9 @@ namespace _Scripts.Stage.Table
     public interface IPlacable
     {
         public Carriable PlacedItem { get; }
-        public bool TryPlace(Carriable item);
-        public bool TryDisplace(CarrierBehaviour carrier, out Carriable displacedItem);
+
+        public void Place(Carriable item);
+        public bool CanPlace(Carriable item, out string rejectMessage);
+        public bool CanDisPlace(out string rejectMessage);
     }
 }

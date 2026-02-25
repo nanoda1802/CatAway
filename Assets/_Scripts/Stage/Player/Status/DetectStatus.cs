@@ -1,5 +1,6 @@
 ﻿using _Scripts.Stage.Item;
 using _Scripts.Stage.Table;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace _Scripts.Stage.Player.Status
@@ -34,7 +35,7 @@ namespace _Scripts.Stage.Player.Status
             for (int i = 0; i < hitCount; i++)
             {
                 if (_detectedItems[i] is null) continue;
-                if (!_detectedItems[i].TryGetComponent<Carriable>(out Carriable item)) continue;
+                if (!_detectedItems[i].TryGetComponent(out Carriable item)) continue;
                 
                 float dist = (_detectPoint.position - _detectedItems[i].transform.position).sqrMagnitude;
                 
@@ -76,14 +77,14 @@ namespace _Scripts.Stage.Player.Status
             }
         }
         
-        public bool DetectTable(out GameObject table)
+        public bool DetectTable(out NetworkObject table)
         {
             bool isHit = Physics.Raycast(_detectPoint.position, _detectPoint.forward, out RaycastHit hit, _data.RayDistance,
                 _data.TableLayer);
             
-            table = isHit ? hit.collider.gameObject : null;
+            table = isHit ? hit.transform.GetComponentInChildren<NetworkObject>() : null;
             
-            return isHit && table is not null;
+            return isHit && table != null;
         }
     }
 }

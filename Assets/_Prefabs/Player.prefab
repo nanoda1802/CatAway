@@ -54,7 +54,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2173378241
+  GlobalObjectIdHash: 295938138
   InScenePlacedSourceGlobalObjectIdHash: 2173378241
   DeferredDespawnTick: 0
   Ownership: 1
@@ -80,7 +80,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Player.PlayerScope
   parentReference:
-    TypeName: 
+    TypeName: _Scripts.Stage.StageScope
   autoRun: 1
   autoInjectGameObjects: []
   playerData: {fileID: 11400000, guid: 46c3a7296a7045d4a94965a86ceeb4b4, type: 2}

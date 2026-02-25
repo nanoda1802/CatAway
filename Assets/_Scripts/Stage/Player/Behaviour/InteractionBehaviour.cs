@@ -10,13 +10,14 @@ namespace _Scripts.Stage.Player.Behaviour
 {
     public class InteractionBehaviour : NetworkBehaviour
     {
+        // Status
         private DetectStatus _detectStatus;
         private InteractStatus _interactStatus;
         private CarryStatus _carryStatus;
         private MoveStatus _moveStatus;
-        
+        // Input
         private InputAction _interactAction;
-
+        // Component
         private Rigidbody _playerRb;
         private Animator _animator;
         
@@ -40,7 +41,8 @@ namespace _Scripts.Stage.Player.Behaviour
             
             _interactAction = inputMap.FindAction("Button2");
         }
-    
+
+        #region NGO 관련 메서드
         public override void OnNetworkSpawn()
         {
             if (!IsLocalPlayer) return;
@@ -52,9 +54,11 @@ namespace _Scripts.Stage.Player.Behaviour
             if (!IsLocalPlayer) return;
             UnsubscribeInputEvents();
         }
+        #endregion
+        
     
         [Rpc(SendTo.Server)]
-        private void TryInteractionRpc()
+        private void TryInteractRpc()
         {
             if (_carryStatus.HasCarriable) return;
             if (!_detectStatus.DetectTable(out var table)) return;
@@ -67,18 +71,18 @@ namespace _Scripts.Stage.Player.Behaviour
         }
     
         [Rpc(SendTo.Server)]
-        public void CancelInteractionRpc()
+        public void CancelRpc()
         {
             if (!_interactStatus.IsInteracting) return;
             
-            _interactStatus.CurInteractable.CancelInteraction(this.OwnerClientId); 
+            _interactStatus.CurInteractable.CancelInteraction(this); 
             
             _interactStatus.CurInteractable = null;
             StopInteractionRpc(RpcTarget.Single(this.OwnerClientId,RpcTargetUse.Temp));
         }
 
         [Rpc(SendTo.Server)]
-        public void FinishInteractionRpc()
+        public void FinishRpc()
         {
             if (!_interactStatus.IsInteracting) return;
             
@@ -107,13 +111,14 @@ namespace _Scripts.Stage.Player.Behaviour
             
             _interactStatus.StopInteractionAnim(_animator);
         }
-    
+
+        #region Input 관련 메서드
         private void OnInteractStarted(InputAction.CallbackContext ctx)
         {
             if (!_interactStatus.IsInteractAvailable) return;
             if (ctx.interaction is not HoldInteraction) return;
             
-            TryInteractionRpc();
+            TryInteractRpc();
             _interactStatus.UpdateLastInteractTime();
         }
     
@@ -121,7 +126,7 @@ namespace _Scripts.Stage.Player.Behaviour
         {
             if (ctx.interaction is not HoldInteraction) return;
             
-            CancelInteractionRpc();
+            CancelRpc();
         }
     
         private void SubscribeInputEvents()
@@ -137,5 +142,6 @@ namespace _Scripts.Stage.Player.Behaviour
             _interactAction.canceled -= OnInteractCanceled;
             _interactAction.Disable();
         }
+        #endregion
     }
 }

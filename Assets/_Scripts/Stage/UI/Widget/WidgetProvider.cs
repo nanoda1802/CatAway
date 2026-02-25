@@ -1,4 +1,4 @@
-﻿using _Scripts.Stage.UI.Movable;
+﻿using System;
 using MessagePipe;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -8,7 +8,7 @@ using VContainer.Unity;
 
 namespace _Scripts.Stage.UI.Widget
 {
-    public class WidgetProvider<T> : MonoBehaviour where T : WidgetBase
+    public class WidgetProvider<T> : MonoBehaviour, IProvider where T : WidgetBase
     {
         private IObjectResolver _container;
         private Canvas _canvas;
@@ -17,12 +17,16 @@ namespace _Scripts.Stage.UI.Widget
         
         private IObjectPool<T> _pool;
 
+        private IDisposable _subscription;
+        
         [Inject]
         private void ConstructBase(
             IObjectResolver container,
             Canvas canvas,
             T prefab,
-            WidgetData<T> data)
+            WidgetData<T> data,
+            IPublisher<IProvider> pub,
+            IBufferedSubscriber<PublishRequestMessage> sub)
         {
             _container = container;
             _canvas = canvas;
@@ -30,9 +34,22 @@ namespace _Scripts.Stage.UI.Widget
             _data = data;
             
             InitPool();
+
+            pub.Publish(this);
+            
+            _subscription = sub.Subscribe(msg =>
+            {
+                if (!msg.IsRequest(this)) return;
+                pub.Publish(this);
+            });
         }
-        
-        private void InitPool()
+
+        private void OnDestroy()
+        {
+            _subscription?.Dispose();
+        }
+
+        public void InitPool()
         {
             _pool = new ObjectPool<T>(
                 CreateWidget

@@ -2,59 +2,58 @@
 using _Scripts.Stage.Item.Ingredient;
 using _Scripts.Stage.Player.Behaviour;
 using _Scripts.Stage.Table;
+using _Scripts.Stage.UI.Widget.PlatingIcon;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Item.Plate
 {
-    public class Plate : NetworkBehaviour, IPrepable, IIngredientHolder
+    public class Plate : Carriable, IPrepable, IIngredientHolder
     {
+        // Data
         private PlateData _data;
+        // Component
+        [SF] private MeshFilter platingModel; // 딱 가져올 방법 없을까?
         private IngredientProvider _ingredientProvider;
-        
-        private readonly List<IngredientType> _platingList = new();
+        private StageHub _stageHub;
+        // Status
         private IngredientType _platingMask = 0;
-        [SF] private MeshFilter platingModel;
-        
         private float _curProgress;
-        private PrepState _prepState; // 이걸로 동기화 다시 해야해
-        
-        public bool IsReady => _prepState == PrepState.WellDone;
-        public bool IsFull => _platingList.Count >= _data.MaxPlatingCount;
+        private PrepState _curState;
+        // Caching
+        private readonly List<IngredientType> _platingList = new();
+        private PlatingIconWidget _activeIconWidget;
+        // Property
+        private bool IsFull => _platingList.Count >= _data.MaxPlatingCount;
+        public bool IsWellPrepped => _curState == PrepState.WellDone;
         public bool HasIngredient => _platingList.Count > 0;
         
-        // [추후 수정] 주입받도록
-        private void Construct(IngredientProvider provider, PlateData data) // 등등
+        [Inject]
+        public void ConstructPlate(
+            PlateData data,
+            IngredientProvider provider, 
+            StageHub stageHub)
         {
+            this._data = data;
             this._ingredientProvider = provider;
+            this._stageHub = stageHub;
         }
 
-        public void InitComponents(bool isServer, PlateData data)
+        #region NGO 관련 메서드
+        public override void OnNetworkSpawn()
         {
-            _data = data;
-            _ingredientProvider = FindFirstObjectByType<IngredientProvider>(); // [임시]
-            
-            var plateCarriable = this.GetComponentInChildren<Carriable>();
-            var plateRb = this.GetComponentInChildren<Rigidbody>();
-
-            plateRb.detectCollisions = isServer;
-            
-            plateCarriable?.Construct(plateRb);
-
-            var plateCollider = this.GetComponentInChildren<Collider>();
-            plateCollider.isTrigger = !isServer;
-
-            if (platingModel == null)
+            if (HasAuthority)
             {
-                platingModel = transform.GetChild(0).GetChild(0).GetComponent<MeshFilter>();
+                UpdatePlatingRpc(_platingMask);
             }
-
-            platingModel.gameObject.SetActive(false);
-            platingModel.transform.localPosition = data.PlatingLocalPos;
-            platingModel.transform.localScale = data.PlatingLocalScale;
+            
+            base.OnNetworkSpawn();
         }
+        #endregion
 
+        #region Prep 관련 메서드
         public float Prepare(int multiplier)
         {
             if (_curProgress >= _data.MaxProgress) return 1;
@@ -63,87 +62,152 @@ namespace _Scripts.Stage.Item.Plate
             return _curProgress / _data.MaxProgress;
         }
 
-        public void OnPrepFinished()
+        public void OnPrepCompleted()
         {
-            InitStatus();
+            if (!HasAuthority) return;
+            
+            _curProgress = 1;
+            _curState = PrepState.WellDone;
+            
+            MakeCleanRpc();
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void MakeCleanRpc()
+        {
+            platingModel.gameObject.SetActive(false);
+        }
+        #endregion
+        
+        #region IngredientHolder 관련 메서드
+        public bool CanHold(Ingredient.Ingredient ingredient, out string rejectMessage)
+        {
+            rejectMessage = null;
+
+            if (ingredient == null || !ingredient.IsSpawned)
+            {
+                rejectMessage = "Item이 null이거나 Spawn되지 않은 상태입니다.";
+                return false;
+            }
+            
+            if (!this.IsWellPrepped || IsFull)
+            {
+                rejectMessage = "Plate가 더럽거나 이미 꽉 찬 상태입니다.";    
+                return false;
+            }
+
+            if (!ingredient.IsWellPrepped)
+            {
+                rejectMessage = "조리되지 않은 Ingredient는 Plating할 수 없습니다.";
+                return false;
+            }
+
+            if (IsAlreadyHeld(ingredient.Type))
+            {
+                rejectMessage = "이미 Plating된 Type의 Ingredient입니다.";
+                return false;
+            }
+
+            if (!CheckRequirement(ingredient.Type))
+            {
+                rejectMessage = "필수 Ingredient가 Plating되지 않았습니다.";
+                return false;
+            }
+            
+            return true;
         }
 
-        public bool TryAdd(Carriable carriable)
+        public void Hold(Ingredient.Ingredient ingredient)
         {
-            if (!IsReady || IsFull) return false;
-            if (!carriable.IsSpawned) return false;
-            if (!carriable.NetworkObject.TryGetComponent(out Ingredient.Ingredient ingredient)) return false;
+            if (ingredient.IsCarrying) ingredient.Detach();
             
-            if (_platingMask.HasFlag(ingredient.Type))  return false;
-            if (!ingredient.IsReady) return false;
-            if (!HasRequiredIngredient(ingredient.Type)) return false;
-            
-            if (carriable.IsAttach) carriable.Detach();
             _ingredientProvider.ReleaseIngredient(ingredient);
             ingredient.NetworkObject.Despawn(false);
+            
+            if (!HasIngredient) ActivateIconRpc();
             
             _platingMask |= ingredient.Type;
             _platingList.Add(ingredient.Type);
             
             UpdatePlatingRpc(_platingMask);
-            
-            return true;
+            UpdateIconRpc(_platingList.Count-1, ingredient.Type);
         }
-
-        private bool HasRequiredIngredient(IngredientType type)
-        {
-            var requiredIngredient = _ingredientProvider.RequiredType;
-            
-            if (_platingMask.HasFlag(requiredIngredient)) return true;
-            if (_platingList.Count < _data.MaxPlatingCount - 1) return true;
-            
-            return type == requiredIngredient;
-        }
-
+        
         public void ClearHolder()
         {
-            if (!IsReady) return;
+            if (!HasAuthority) return;
+            
             _curProgress = 0;
-            _prepState = PrepState.Raw;
-            ClearPlatingRpc();
-        }
-
-        public Carriable TakeOutIngredient()
-        {
-            return null;
-        }
-
-        public void InitStatus()
-        {
-            _curProgress = 1;
-            _prepState = PrepState.WellDone;
+            _curState = PrepState.Raw;
             
             _platingMask = 0;
             _platingList.Clear();
             
-            ResetStatusRpc();
+            MakeDirtyRpc();
+            DeactivateIconRpc();
+        }
+        
+        private bool IsAlreadyHeld(IngredientType type)
+        {
+            return _platingMask.HasFlag(type);
         }
 
+        private bool CheckRequirement(IngredientType type)
+        {
+            var requiredType = _ingredientProvider.RequiredType;
+            
+            if (IsAlreadyHeld(requiredType)) return true;
+            if (_platingList.Count < _data.MaxPlatingCount - 1) return true;
+            
+            return type == requiredType;
+        }
+        
         [Rpc(SendTo.Everyone)]
         private void UpdatePlatingRpc(IngredientType key)
         {
             if (!platingModel.gameObject.activeSelf) platingModel.gameObject.SetActive(true);
             platingModel.sharedMesh = _data.GetMesh(key);
-            platingModel.transform.localScale = _data.PlatingLocalScale;
+            platingModel.transform.localScale = key <= 0 ? _data.FoodWasteLocalScale : _data.PlatingLocalScale;
+            platingModel.transform.localPosition = _data.PlatingLocalPos;
         }
-
+        
         [Rpc(SendTo.Everyone)]
-        private void ClearPlatingRpc()
+        private void MakeDirtyRpc()
         {
             if (!platingModel.gameObject.activeSelf) platingModel.gameObject.SetActive(true);
             platingModel.sharedMesh = _data.FoodWasteMesh;
             platingModel.transform.localScale = _data.FoodWasteLocalScale;
         }
-        
+        #endregion
+
+        #region UI 관련 메서드
         [Rpc(SendTo.Everyone)]
-        private void ResetStatusRpc()
+        private void ActivateIconRpc()
         {
-            platingModel.gameObject.SetActive(false);
+            if (_activeIconWidget != null) return;
+
+            var provider = _stageHub.FetchProvider<PlatingIconProvider>();
+            _activeIconWidget = provider.GetWidget(this.transform.position);
+            _activeIconWidget.ConnectWith(this.transform);
         }
+
+        [Rpc(SendTo.Everyone)]
+        private void UpdateIconRpc(int idx, IngredientType type)
+        {
+            if (_activeIconWidget == null) return;
+            
+            _activeIconWidget.AddIcon(idx, type);
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void DeactivateIconRpc()
+        {
+            if (_activeIconWidget == null) return;
+            
+            var provider = _stageHub.FetchProvider<PlatingIconProvider>();
+            provider.ReleaseWidget(_activeIconWidget);
+            _activeIconWidget = null;
+        }
+        #endregion
     }
 }

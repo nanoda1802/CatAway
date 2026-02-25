@@ -1,6 +1,6 @@
-﻿using _Scripts.Stage.UI.Movable.TableStatus;
-using _Scripts.Stage.UI.Widget.PlatingIcon;
+﻿using _Scripts.Stage.UI.Widget.PlatingIcon;
 using _Scripts.Stage.UI.Widget.ProgressBar;
+using _Scripts.Stage.UI.Widget.TableAlert;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -16,10 +16,12 @@ namespace _Scripts.Stage.UI.Widget
         
         [Header("[ Data ]")]
         [SF] private ProgressBarData progressBarData;
+        [SF] private TableAlertData tableAlertData;
+        [SF] private PlatingIconData platingIconData;
         [Header("[ Prefab ]")]
         [SF] private ProgressBarWidget progressBarPrefab;
+        [SF] private TableAlertWidget tableAlertPrefab;
         [SF] private PlatingIconWidget platingIconPrefab;
-        [SF] private TableStatusWidget tableStatusPrefab;
         
         protected override void Awake()
         {
@@ -42,8 +44,6 @@ namespace _Scripts.Stage.UI.Widget
         
         protected override void Configure(IContainerBuilder builder)
         {
-            Debug.Log($"WidgetUiScope, Parent : {this.Parent.name}");
-            
             builder.RegisterComponent(_widgetCanvas);
             builder.RegisterComponent(_canvasRectTr);
             builder.RegisterComponent(_mainCam);
@@ -51,6 +51,16 @@ namespace _Scripts.Stage.UI.Widget
             builder.RegisterInstance(progressBarPrefab);
             builder.RegisterInstance(progressBarData)
                 .As<WidgetData<ProgressBarWidget>>()
+                .AsSelf();
+            
+            builder.RegisterInstance(tableAlertPrefab);
+            builder.RegisterInstance(tableAlertData)
+                .As<WidgetData<TableAlertWidget>>()
+                .AsSelf();
+            
+            builder.RegisterInstance(platingIconPrefab);
+            builder.RegisterInstance(platingIconData)
+                .As<WidgetData<PlatingIconWidget>>()
                 .AsSelf();
             
             base.Configure(builder);

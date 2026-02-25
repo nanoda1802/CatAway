@@ -7,9 +7,9 @@ namespace _Scripts.Stage.UI.Widget.ProgressBar
 {
     public class ProgressBarWidget : WidgetBase
     {
-        private ProgressBarData _data;
-        
         [SF] private Image fillBarImg;
+        
+        private ProgressBarData _data;
 
         [Inject]
         private void Construct(ProgressBarData data)
