@@ -24,7 +24,6 @@ namespace _Scripts.Stage.Table.Contactable
         // Dependency
         private AttachableSlot _tableSlot;
         private StageHub _stageHub;
-        private PlateProvider _plateProvider;
         // Caching
         private Plate _targetPlate;
         private ProgressBarWidget _activeBarWidget;
@@ -37,11 +36,8 @@ namespace _Scripts.Stage.Table.Contactable
         public bool IsInteracting => _interactorList.Count > 0 && _targetPlate != null;
 
         [Inject]
-        private void Construct(
-            PlateProvider plateProvider,
-            StageHub stageHub)
+        private void Construct(StageHub stageHub)
         {
-            _plateProvider = plateProvider;
             _stageHub = stageHub;
             
             _tableSlot = GetComponentInChildren<AttachableSlot>();
@@ -120,7 +116,8 @@ namespace _Scripts.Stage.Table.Contactable
         public void RespondTo(Plate plate)
         {
             if (plate.IsCarrying) plate.Detach();
-            _plateProvider.ReleasePlate(plate);
+            var provider = _stageHub.FetchProvider<PlateProvider>();
+            provider.ReleasePlate(plate);
             plate.NetworkObject.Despawn(false);
         }
         #endregion
@@ -132,9 +129,10 @@ namespace _Scripts.Stage.Table.Contactable
             
             if (_targetPlate == null)
             {
-                if (!_plateProvider.HasInactivePlate) return false;
+                var provider = _stageHub.FetchProvider<PlateProvider>();
+                if (!provider.HasInactivePlate) return false;
                 
-                _targetPlate = _plateProvider.GetPlate(transform.position);
+                _targetPlate = provider.GetPlate(transform.position);
                 _targetPlate.NetworkObject.Spawn();
                 _targetPlate.Attach(_tableSlot);
             }

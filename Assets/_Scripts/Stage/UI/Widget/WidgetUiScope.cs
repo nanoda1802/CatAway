@@ -14,15 +14,6 @@ namespace _Scripts.Stage.UI.Widget
         private RectTransform _canvasRectTr;
         private Camera _mainCam;
         
-        [Header("[ Data ]")]
-        [SF] private ProgressBarData progressBarData;
-        [SF] private TableAlertData tableAlertData;
-        [SF] private PlatingIconData platingIconData;
-        [Header("[ Prefab ]")]
-        [SF] private ProgressBarWidget progressBarPrefab;
-        [SF] private TableAlertWidget tableAlertPrefab;
-        [SF] private PlatingIconWidget platingIconPrefab;
-        
         protected override void Awake()
         {
             _widgetCanvas = GetComponent<Canvas>();
@@ -47,21 +38,6 @@ namespace _Scripts.Stage.UI.Widget
             builder.RegisterComponent(_widgetCanvas);
             builder.RegisterComponent(_canvasRectTr);
             builder.RegisterComponent(_mainCam);
-
-            builder.RegisterInstance(progressBarPrefab);
-            builder.RegisterInstance(progressBarData)
-                .As<WidgetData<ProgressBarWidget>>()
-                .AsSelf();
-            
-            builder.RegisterInstance(tableAlertPrefab);
-            builder.RegisterInstance(tableAlertData)
-                .As<WidgetData<TableAlertWidget>>()
-                .AsSelf();
-            
-            builder.RegisterInstance(platingIconPrefab);
-            builder.RegisterInstance(platingIconData)
-                .As<WidgetData<PlatingIconWidget>>()
-                .AsSelf();
             
             base.Configure(builder);
         }

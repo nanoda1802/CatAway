@@ -107,6 +107,12 @@ namespace _Scripts.Stage.Table.Placable
                 return false;
             }
 
+            if (PlacedItem is Plate { HasIngredient: true })
+            {
+                rejectMessage = "최상단 접시에 재료가 플레이팅 돼있습니다.";
+                return false;
+            }
+
             return true;
         }
 

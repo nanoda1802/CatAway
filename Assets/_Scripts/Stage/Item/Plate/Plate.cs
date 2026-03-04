@@ -16,7 +16,6 @@ namespace _Scripts.Stage.Item.Plate
         private PlateData _data;
         // Component
         [SF] private MeshFilter platingModel; // 딱 가져올 방법 없을까?
-        private IngredientProvider _ingredientProvider;
         private StageHub _stageHub;
         // Status
         private IngredientType _platingMask = 0;
@@ -29,15 +28,14 @@ namespace _Scripts.Stage.Item.Plate
         private bool IsFull => _platingList.Count >= _data.MaxPlatingCount;
         public bool IsWellPrepped => _curState == PrepState.WellDone;
         public bool HasIngredient => _platingList.Count > 0;
+        public IngredientType Plating => _platingMask;
         
         [Inject]
         public void ConstructPlate(
             PlateData data,
-            IngredientProvider provider, 
             StageHub stageHub)
         {
             this._data = data;
-            this._ingredientProvider = provider;
             this._stageHub = stageHub;
         }
 
@@ -121,7 +119,8 @@ namespace _Scripts.Stage.Item.Plate
         {
             if (ingredient.IsCarrying) ingredient.Detach();
             
-            _ingredientProvider.ReleaseIngredient(ingredient);
+            var provider = _stageHub.FetchProvider<IngredientProvider>();
+            provider.ReleaseIngredient(ingredient);
             ingredient.NetworkObject.Despawn(false);
             
             if (!HasIngredient) ActivateIconRpc();
@@ -154,7 +153,8 @@ namespace _Scripts.Stage.Item.Plate
 
         private bool CheckRequirement(IngredientType type)
         {
-            var requiredType = _ingredientProvider.RequiredType;
+            var provider = _stageHub.FetchProvider<IngredientProvider>();
+            var requiredType = provider.RequiredType;
             
             if (IsAlreadyHeld(requiredType)) return true;
             if (_platingList.Count < _data.MaxPlatingCount - 1) return true;

@@ -2,16 +2,24 @@
 using _Scripts.Stage.Item.Plate;
 using _Scripts.Stage.Player.Behaviour;
 using _Scripts.Stage.Table.Placable;
+using _Scripts.Stage.UI.Board;
+using _Scripts.Stage.UI.Board.Order;
+using _Scripts.Stage.UI.Board.Score;
+using MessagePipe;
 using Unity.Netcode;
+using UnityEngine;
 using VContainer;
+using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Table.Contactable
 {
     public class ServingTable : NetworkBehaviour, IContactable
     {
+        [SF] private Team team;
+
         // Dependency
         private StageHub _stageHub;
-
+        
         [Inject]
         private void Construct(StageHub stageHub)
         {
@@ -34,7 +42,9 @@ namespace _Scripts.Stage.Table.Contactable
 
         public void RespondTo(Plate plate)
         {
-            // [추가] OrderPresenter에 platingList를 제출
+            var orderPresenter = _stageHub.FetchOrderPresenter(team);
+            
+            if (!orderPresenter.CheckRecipe(plate.Plating)) return;
             
             plate.ClearHolder();
             

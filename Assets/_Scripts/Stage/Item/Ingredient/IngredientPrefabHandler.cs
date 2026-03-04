@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Scripts.Stage.Item.Ingredient
 {
-    public class IngredientPrefabHandler : NetworkPrefabInstanceHandlerWithData<IngredientTypeNetData>
+    public class IngredientPrefabHandler : NetworkPrefabInstanceHandlerWithData<IngredientTypePacket>
     {
         private readonly IngredientProvider _provider;
 
@@ -16,7 +16,7 @@ namespace _Scripts.Stage.Item.Ingredient
             ulong ownerClientId,
             Vector3 position,
             Quaternion rotation,
-            IngredientTypeNetData instantiationData)
+            IngredientTypePacket instantiationData)
         {
             var type = instantiationData.IngredientType;
             return _provider.GetIngredient(type, position).NetworkObject;

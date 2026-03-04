@@ -1,0 +1,5 @@
+C:/Users/home/Documents/GitHub/PartTimeCat/.utmp/RelWithDebInfo/xa3g74d2/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/home/Documents/GitHub/PartTimeCat/.utmp/RelWithDebInfo/xa3g74d2/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/home/Documents/GitHub/PartTimeCat/.utmp/RelWithDebInfo/xa3g74d2/arm64-v8a/GameActivity/CMakeFiles/game.dir
+C:/Users/home/Documents/GitHub/PartTimeCat/.utmp/RelWithDebInfo/xa3g74d2/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+C:/Users/home/Documents/GitHub/PartTimeCat/.utmp/RelWithDebInfo/xa3g74d2/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir

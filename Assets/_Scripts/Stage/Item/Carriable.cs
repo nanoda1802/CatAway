@@ -9,15 +9,12 @@ namespace _Scripts.Stage.Item
 {
     public class Carriable : AttachableBehaviour, INetworkUpdateSystem
     {
-        [SF] private CarriableType itemType;
-        
         protected Rigidbody ItemRb;
         protected MeshCollider ItemCollider;
         
         private int _defaultLayerMask;
         private int _ignoreRayCastLayerMask;
         
-        public CarriableType ItemType => itemType;
         public bool IsCarrying => m_AttachState is AttachState.Attaching or AttachState.Attached;
         
         [Inject]
@@ -98,12 +95,6 @@ namespace _Scripts.Stage.Item
             this.gameObject.layer = _defaultLayerMask;
             
             if (HasAuthority) ItemCollider.enabled = true;
-        }
-
-        public void AttachTo(AttachableNode node)
-        {
-            if (this.IsAttach) this.Detach();
-            this.Attach(node);
         }
 
         private void SyncWithNetObjPosition()

@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e272fc650af04a5da918cce3ddf5d139, type: 3}
+  m_Name: ProviderData
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.ProviderData
+  ingredientProviderInfo:
+    prefab: {fileID: 5728861221599045894, guid: 7c68e747e58a6bc4eba8a59e0b3802cb, type: 3}
+    objNamePrefix: Ingredient
+    defaultCount: 30
+    maxCount: 50
+  plateProviderInfo:
+    prefab: {fileID: 5728861221599045894, guid: 2a42b133ea32d984ca29c189d47fc767, type: 3}
+    objNamePrefix: Plate
+    defaultCount: 6
+    maxCount: 10
+  cookwareProviderInfo:
+    prefab: {fileID: 5728861221599045894, guid: 96b6c5c01d3f1c74ea3664cae87d8b3c, type: 3}
+    objNamePrefix: Pan
+    defaultCount: 4
+    maxCount: 10
+  platingIconProviderInfo:
+    prefab: {fileID: 574453353277575220, guid: b63c8aca8d31de74aa0eb50b024e3928, type: 3}
+    objNamePrefix: PlatingIcon
+    defaultCount: 10
+    maxCount: 20
+  progressBarProviderInfo:
+    prefab: {fileID: 8444988827954037735, guid: 6d09b12b81d438548a09a16ba92265ff, type: 3}
+    objNamePrefix: ProgressBar
+    defaultCount: 10
+    maxCount: 20
+  tableAlertProviderInfo:
+    prefab: {fileID: 1176422696686833915, guid: 2947ea61700ed204b82838f13d4be079, type: 3}
+    objNamePrefix: TableAlert
+    defaultCount: 6
+    maxCount: 10

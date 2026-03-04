@@ -13,9 +13,6 @@ namespace _Scripts.Stage
 {
     public class LevelScope : LifetimeScope
     {
-        [Header("[ Provider ]")]
-        [SF] private PlateProvider plateProvider;
-        [SF] private IngredientProvider ingredientProvider;
         [Header("[ Data ]")]
         [SF] private IngredientData[] ingredientDataList;
         [SF] private PlateData plateData;
@@ -42,11 +39,6 @@ namespace _Scripts.Stage
         
         protected override void Configure(IContainerBuilder builder)
         {
-            // builder.RegisterEntryPoint<StageHub>().AsSelf();
-
-            builder.RegisterComponent(plateProvider);
-            builder.RegisterComponent(ingredientProvider);
-            
             builder.RegisterInstance(ingredientDataList);
             builder.RegisterInstance(plateData);
             

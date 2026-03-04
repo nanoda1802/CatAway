@@ -51,7 +51,6 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   AutoDetach: 3
   ComponentControllers: []
-  itemType: 4
   platingModel: {fileID: 3416620770755554160}
 --- !u!33 &4858129479079171475
 MeshFilter:
@@ -179,7 +178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3030815879
+  GlobalObjectIdHash: 4131412703
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -218,7 +217,7 @@ MonoBehaviour:
   ScaleMaxInterpolationTime: 0.1
   AuthorityMode: 0
   TickSyncChildren: 0
-  UseUnreliableDeltas: 0
+  UseUnreliableDeltas: 1
   SyncPositionX: 1
   SyncPositionY: 1
   SyncPositionZ: 1
@@ -228,8 +227,8 @@ MonoBehaviour:
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
+  PositionThreshold: 0.05
+  RotAngleThreshold: 0.1
   ScaleThreshold: 0.01
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0

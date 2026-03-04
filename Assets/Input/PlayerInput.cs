@@ -186,12 +186,78 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""11dd4fac-681f-47d2-b334-4473696ab947"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""aca538d9-0f71-40ae-a897-1d0f8b791442"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamePad"",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""2b8ef67e-9e9c-4916-9b27-a62a88db971a"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamePad"",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""5307713a-4836-4d71-a55b-f9954c7bb8f0"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamePad"",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""e7c0bd88-c4c7-44e4-9109-2ac12f263072"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamePad"",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": """",
                     ""id"": ""6af26363-0446-4a6b-b616-cecad31efd6d"",
                     ""path"": ""<Keyboard>/z"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";PC"",
+                    ""action"": ""Button0"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""10beb157-f751-4590-bd77-cc9da3091a65"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamePad"",
                     ""action"": ""Button0"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -209,11 +275,33 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""0ef82f66-3660-4f97-b365-17a9ee68c950"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamePad"",
+                    ""action"": ""Button1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""53cabd2f-eac9-4cd3-a87f-48c580e67abe"",
                     ""path"": ""<Keyboard>/c"",
                     ""interactions"": ""Hold,Press(behavior=1)"",
                     ""processors"": """",
                     ""groups"": "";PC"",
+                    ""action"": ""Button2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f3f0cda2-875e-47ef-9722-9da24afcb0eb"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": ""Hold,Press(behavior=1)"",
+                    ""processors"": """",
+                    ""groups"": "";GamePad"",
                     ""action"": ""Button2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -233,6 +321,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""devicePath"": ""<Mouse>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""GamePad"",
+            ""bindingGroup"": ""GamePad"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Gamepad>"",
                     ""isOptional"": false,
                     ""isOR"": false
                 }
@@ -462,6 +561,19 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         {
             if (m_PCSchemeIndex == -1) m_PCSchemeIndex = asset.FindControlSchemeIndex("PC");
             return asset.controlSchemes[m_PCSchemeIndex];
+        }
+    }
+    private int m_GamePadSchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme GamePadScheme
+    {
+        get
+        {
+            if (m_GamePadSchemeIndex == -1) m_GamePadSchemeIndex = asset.FindControlSchemeIndex("GamePad");
+            return asset.controlSchemes[m_GamePadSchemeIndex];
         }
     }
     /// <summary>

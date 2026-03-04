@@ -13,16 +13,17 @@ namespace _Scripts.Stage.Item.Cookware
         [SF] private IngredientType holdableIngredientType = IngredientType.Patty;
         // Component
         private AttachableSlot _holderSlot;
-        private IngredientProvider _ingredientProvider;
+        // Dependency
+        private StageHub _stageHub;
         // Property
         public bool HasIngredient => _holderSlot.HasAttachments && HeldIngredient is not null;
         public AttachableSlot HolderSlot => _holderSlot;
         public Ingredient.Ingredient HeldIngredient { get; private set; }
 
         [Inject]
-        public void ConstructCookware(IngredientProvider provider)
+        public void ConstructCookware(StageHub stageHub)
         {
-            this._ingredientProvider = provider;
+            _stageHub = stageHub;
 
             _holderSlot = GetComponentInChildren<AttachableSlot>();
             
@@ -103,7 +104,8 @@ namespace _Scripts.Stage.Item.Cookware
             var ingredient = HeldIngredient;
             if (ingredient.IsCarrying) ingredient.Detach();
             
-            _ingredientProvider.ReleaseIngredient(ingredient);
+            var provider = _stageHub.FetchProvider<IngredientProvider>();
+            provider.ReleaseIngredient(ingredient);
             ingredient.NetworkObject.Despawn(false);
         }
         #endregion

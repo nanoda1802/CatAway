@@ -12,8 +12,8 @@ namespace _Scripts.Stage.UI.Widget
     {
         private IObjectResolver _container;
         private Canvas _canvas;
-        private T _prefab;
-        private WidgetData<T> _data;
+
+        private ProviderInfo<T> _info;
         
         private IObjectPool<T> _pool;
 
@@ -23,15 +23,14 @@ namespace _Scripts.Stage.UI.Widget
         private void ConstructBase(
             IObjectResolver container,
             Canvas canvas,
-            T prefab,
-            WidgetData<T> data,
+            ProviderData providerData,
             IPublisher<IProvider> pub,
             IBufferedSubscriber<PublishRequestMessage> sub)
         {
             _container = container;
             _canvas = canvas;
-            _prefab = prefab;
-            _data = data;
+            
+            _info = providerData.GetWidgetProviderInfo<T>();
             
             InitPool();
 
@@ -57,10 +56,10 @@ namespace _Scripts.Stage.UI.Widget
                 , OnReleaseWidget
                 , OnDestroyWidget,
                 true,
-                _data.DefaultCount,
-                _data.MaxCount);
+                _info.DefaultCount,
+                _info.MaxCount);
 
-            for (int i = 0; i < _data.DefaultCount; i++)
+            for (int i = 0; i < _info.DefaultCount; i++)
             {
                 var widget = CreateWidget();
                 ReleaseWidget(widget);
@@ -69,7 +68,7 @@ namespace _Scripts.Stage.UI.Widget
         
         private T CreateWidget()
         {
-            var widget = _container.Instantiate(_prefab, _canvas.transform);
+            var widget = _container.Instantiate(_info.Prefab, _canvas.transform);
             return widget;
         }
 

@@ -11,17 +11,10 @@ namespace _Scripts.Stage.UI.Widget.TableAlert
         [SF] private Image alertImg;
         [SF] private RectTransform rectTr; // [임시]
         
-        private TableAlertData _data;
-        
+        [SF] private Vector3 offset = new Vector3(0, 1f, 0);
         private float _scaleModifier; // [임시]
         private float _speed = 0.8f; // [임시]
         
-        [Inject]
-        private void Construct(TableAlertData data)
-        {
-            _data = data;
-        }
-
         private void Update()
         {
             float pingPong = Mathf.PingPong(Time.time * _speed, 0.4f);
@@ -48,7 +41,7 @@ namespace _Scripts.Stage.UI.Widget.TableAlert
 
         public override void UpdatePosition(Vector3 worldPos)
         {
-            base.UpdatePosition(worldPos + _data.Offset);
+            base.UpdatePosition(worldPos + offset);
         }
     }
 }

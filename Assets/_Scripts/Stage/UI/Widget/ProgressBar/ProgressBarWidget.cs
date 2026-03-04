@@ -9,14 +9,8 @@ namespace _Scripts.Stage.UI.Widget.ProgressBar
     {
         [SF] private Image fillBarImg;
         
-        private ProgressBarData _data;
-
-        [Inject]
-        private void Construct(ProgressBarData data)
-        {
-            _data = data;
-        }
-
+        [SF] private Vector3 offset = new Vector3(0,1.2f,0);
+       
         public override void Show()
         {
             base.Show();
@@ -30,7 +24,7 @@ namespace _Scripts.Stage.UI.Widget.ProgressBar
 
         public override void UpdatePosition(Vector3 worldPos)
         {
-            base.UpdatePosition(worldPos + _data.Offset);
+            base.UpdatePosition(worldPos + offset);
         }
 
         public void UpdateProgress(float prevValue, float newValue)

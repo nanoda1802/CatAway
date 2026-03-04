@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using _Scripts.Stage.Item.Ingredient;
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -11,16 +13,11 @@ namespace _Scripts.Stage.UI.Widget.PlatingIcon
     {
         [SF] private Image[] icons;
         
-        private PlatingIconData _data;
+        [SF] private Vector3 offset = new Vector3(0,0.5f,0);
 
+        [SF] private SerializedDictionary<IngredientType, Sprite> iconSpriteDic;
         private Transform _plateTr;
-
-        [Inject]
-        private void Construct(PlatingIconData data)
-        {
-            _data = data;
-        }
-
+        
         private void LateUpdate() // [임시]
         {
             if (_plateTr is null) return;
@@ -58,7 +55,7 @@ namespace _Scripts.Stage.UI.Widget.PlatingIcon
         {
             var icon = icons[idx];
             icon.enabled = true;
-            icon.sprite = _data.GetSprite(type);
+            icon.sprite = this.GetSprite(type);
         }
 
         public override void UpdatePosition(Vector3 worldPos)
@@ -66,7 +63,13 @@ namespace _Scripts.Stage.UI.Widget.PlatingIcon
             // [임시]
             // Dirty 체크 해서 불필요한 갱신 막기
             // prevWorldPos 캐싱해두고 새 worldPos와 sprMagnitude 비교, dirtyThreshold 보다 커야 갱신
-            base.UpdatePosition(worldPos + _data.Offset);
+            base.UpdatePosition(worldPos + offset);
         }
+        
+        public Sprite GetSprite(IngredientType key)
+        {
+            return iconSpriteDic.GetValueOrDefault(key, null); // [수정] default sprite 정해주기
+        }
+
     }
 }

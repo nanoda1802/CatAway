@@ -14,27 +14,28 @@ namespace _Scripts.Stage.Table.Contactable
         // Data
         [SF] private IngredientType ingredientType;
         // Dependency
-        private IngredientProvider _ingredientProvider;
+        private StageHub _stageHub;
         // Component
         [SF] private MeshFilter sampleMeshFilter;
         [SF] private Transform sampleTransform;
         
         [Inject]
-        private void Construct(IngredientProvider provider)
+        private void Construct(StageHub stageHub)
         {
-            _ingredientProvider = provider;
+            _stageHub = stageHub;
         }
 
-        public override void OnNetworkSpawn()
+        protected override void OnNetworkPostSpawn()
         {
-            (Mesh mesh, Vector3 scale) = _ingredientProvider.GetModelInfo(ingredientType);
+            var provider = _stageHub.FetchProvider<IngredientProvider>();
+            (Mesh mesh, Vector3 scale) = provider.GetModelInfo(ingredientType);
             
             sampleMeshFilter.sharedMesh = mesh;
             sampleTransform.localScale = scale;
-
-            base.OnNetworkSpawn();
+            
+            base.OnNetworkPostSpawn();
         }
-        
+
         #region Contactable 관련 메서드
         public bool TryContact(Carriable item, out string failMessage)
         {
@@ -51,8 +52,9 @@ namespace _Scripts.Stage.Table.Contactable
 
         public void RespondTo(CarrierBehaviour carrier)
         {
-            var ingredient = _ingredientProvider.GetIngredient(ingredientType, transform.position);
-            NetworkManager.PrefabHandler.SetInstantiationData(ingredient.NetworkObject,new IngredientTypeNetData(ingredientType));
+            var provider = _stageHub.FetchProvider<IngredientProvider>();
+            var ingredient = provider.GetIngredient(ingredientType, transform.position);
+            NetworkManager.PrefabHandler.SetInstantiationData(ingredient.NetworkObject,new IngredientTypePacket(ingredientType));
             ingredient.NetworkObject.Spawn();
             
             carrier.Pick(ingredient);

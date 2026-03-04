@@ -11,17 +11,17 @@ namespace _Scripts.Stage.Table.Contactable
     public class BinTable : NetworkBehaviour, IContactable
     {
         // Dependency
-        private IngredientProvider _ingredientProvider;
+        private StageHub _stageHub;
         private ContactBroker _contactBroker;
         // Caching
         private TagHandle _itemTag;
         
         [Inject]
         private void Construct(
-            IngredientProvider provider,
+            StageHub stageHub,
             ContactBroker contactBroker)
         {
-            _ingredientProvider = provider;
+            _stageHub =  stageHub;
             _contactBroker = contactBroker;
             
             _itemTag = TagHandle.GetExistingTag("Item");
@@ -65,7 +65,9 @@ namespace _Scripts.Stage.Table.Contactable
         public void RespondTo(Ingredient ingredient)
         {
             if (ingredient.IsCarrying) ingredient.Detach();
-            _ingredientProvider.ReleaseIngredient(ingredient);
+            
+            var provider = _stageHub.FetchProvider<IngredientProvider>();
+            provider.ReleaseIngredient(ingredient);
             ingredient.NetworkObject.Despawn(false);
         }
 

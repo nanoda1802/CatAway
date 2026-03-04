@@ -20,9 +20,9 @@ MonoBehaviour:
   maxSpeedMultiplier: 1.65
   knockBackImpact: 3
   knockBackDuration: 0.25
-  dashInterval: 0.5
-  carryInterval: 0.1
-  interactInterval: 0.1
+  dashInterval: 0.1
+  carryInterval: 0.07
+  interactInterval: 0.07
   tableLayer:
     serializedVersion: 2
     m_Bits: 64

@@ -330,6 +330,19 @@ MonoBehaviour:
   - {fileID: 4861754628961437533}
   - {fileID: 6313827667789989447}
   - {fileID: 3678759347974366152}
+  offset: {x: 0, y: 0.5, z: 0}
+  iconSpriteDic:
+    _serializedList:
+    - Key: 1
+      Value: {fileID: 21300000, guid: 3bc9fda6451d5294ca0d8013c2aebb93, type: 3}
+    - Key: 2
+      Value: {fileID: 21300000, guid: f0a6adf6a224799499408936340fc3ff, type: 3}
+    - Key: 4
+      Value: {fileID: 21300000, guid: 5cdb15df5868891449dc260f0050a296, type: 3}
+    - Key: 8
+      Value: {fileID: 21300000, guid: 4e040103ea303904fb3a640477a3bc15, type: 3}
+    - Key: 16
+      Value: {fileID: 21300000, guid: 2a45f918f03398e44af0a2e8aa381c85, type: 3}
 --- !u!222 &6932140972865221617
 CanvasRenderer:
   m_ObjectHideFlags: 0

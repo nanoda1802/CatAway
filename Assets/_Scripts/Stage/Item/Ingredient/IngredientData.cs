@@ -7,9 +7,6 @@ namespace _Scripts.Stage.Item.Ingredient
     [CreateAssetMenu(fileName = "IngredientData", menuName = "SO/Stage/Item/Ingredient")]
     public class IngredientData : ScriptableObject
     {
-        [SF] private NetworkObject tempPrefab;
-        public NetworkObject TempPrefab => tempPrefab;
-        
         [SF] private IngredientType type;
         public IngredientType Type => type;
         
