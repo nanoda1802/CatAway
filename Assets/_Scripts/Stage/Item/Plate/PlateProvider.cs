@@ -42,7 +42,7 @@ namespace _Scripts.Stage.Item.Plate
     
     // public class PlateProvider : NetworkBehaviour, IProvider
     // {
-    //     private IObjectResolver _container;
+    //     private IObjectResolver _resolver;
     //     private NetworkObject _prefab;
     //     
     //     private IObjectPool<Plate> _pool;
@@ -59,7 +59,7 @@ namespace _Scripts.Stage.Item.Plate
     //         IPublisher<IProvider> pub,
     //         IBufferedSubscriber<PublishRequestMessage> sub)
     //     {
-    //         _container = container;
+    //         _resolver = container;
     //         _data = data;
     //         _prefab = data.TempPrefab;
     //         
@@ -111,7 +111,7 @@ namespace _Scripts.Stage.Item.Plate
     //     
     //     private Plate CreatePlate()
     //     {
-    //         var netObj = _container.Instantiate(_prefab,this.transform);
+    //         var netObj = _resolver.Instantiate(_prefab,this.transform);
     //         netObj.name = $"Plate_{netObj.GetHashCode()}"; 
     //         return netObj.GetComponentInChildren<Plate>();
     //     }

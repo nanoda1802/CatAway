@@ -81,6 +81,9 @@ namespace _Scripts.Stage
             
             _placableDic.Clear();
             _providerDic.Clear();
+            
+            _scorePresenterDic.Clear();
+            _orderPresenterDic.Clear();
         }
     }
 }

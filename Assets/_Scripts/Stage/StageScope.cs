@@ -23,7 +23,7 @@ namespace _Scripts.Stage
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterEntryPoint<StageHub>().AsSelf();
+            builder.RegisterEntryPoint<StageHub>(Lifetime.Singleton).AsSelf();
             
             builder.Register<PlacementBroker>(Lifetime.Scoped);
             builder.Register<ContactBroker>(Lifetime.Scoped);

@@ -10,7 +10,7 @@ namespace _Scripts.Stage.UI.Widget
 {
     public class WidgetProvider<T> : MonoBehaviour, IProvider where T : WidgetBase
     {
-        private IObjectResolver _container;
+        private IObjectResolver _resolver;
         private Canvas _canvas;
 
         private ProviderInfo<T> _info;
@@ -27,7 +27,7 @@ namespace _Scripts.Stage.UI.Widget
             IPublisher<IProvider> pub,
             IBufferedSubscriber<PublishRequestMessage> sub)
         {
-            _container = container;
+            _resolver = container;
             _canvas = canvas;
             
             _info = providerData.GetWidgetProviderInfo<T>();
@@ -68,7 +68,7 @@ namespace _Scripts.Stage.UI.Widget
         
         private T CreateWidget()
         {
-            var widget = _container.Instantiate(_info.Prefab, _canvas.transform);
+            var widget = _resolver.Instantiate(_info.Prefab, _canvas.transform);
             return widget;
         }
 

@@ -10,7 +10,7 @@ namespace _Scripts.Stage.Item
 {
     public class ItemProvider<T> : NetworkBehaviour, IProvider where T : Carriable
     {
-        private IObjectResolver _container;
+        private IObjectResolver _resolver;
         
         protected IObjectPool<T> Pool;
 
@@ -25,7 +25,7 @@ namespace _Scripts.Stage.Item
             IPublisher<IProvider> pub,
             IBufferedSubscriber<PublishRequestMessage> sub)
         {
-            _container = container;
+            _resolver = container;
             Info = data.GetItemProviderInfo<T>();
             
             pub.Publish(this);
@@ -66,7 +66,7 @@ namespace _Scripts.Stage.Item
         
         private T CreateItem()
         {
-            var item = _container.Instantiate(Info.Prefab,this.transform);
+            var item = _resolver.Instantiate(Info.Prefab,this.transform);
             item.name = $"{Info.ObjNamePrefix}_{item.GetHashCode()}";
             return item.GetComponentInChildren<T>();
         }

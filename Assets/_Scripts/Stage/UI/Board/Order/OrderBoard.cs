@@ -21,7 +21,7 @@ namespace _Scripts.Stage.UI.Board.Order
         [SF] private Team team;
         [SF] private RectTransform rectTr;
         // Dependency
-        private IObjectResolver _container;
+        private IObjectResolver _resolver;
         // Caching
         private CancellationTokenSource _tweenCts = new();
         private readonly List<Sprite> _requiredSprites = new(5);
@@ -44,7 +44,7 @@ namespace _Scripts.Stage.UI.Board.Order
             _stageData = stageData;
             _cardData = cardData;
             _prefab = prefab;
-            _container = container;
+            _resolver = container;
 
             addSub.Subscribe(Apply, new TeamMessageFilter<AddOrderMessage>(team)).AddTo(_disposableBag);
             removeSub.Subscribe(Apply, new TeamMessageFilter<RemoveOrderMessage>(team)).AddTo(_disposableBag);
@@ -143,7 +143,7 @@ namespace _Scripts.Stage.UI.Board.Order
 
         private OrderCard CreateCard()
         {
-            var card = _container.Instantiate(_prefab, this.transform);
+            var card = _resolver.Instantiate(_prefab, this.transform);
             card.name = $"OrderCard_{card.GetHashCode()}";
             card.gameObject.SetActive(false);
             return card;

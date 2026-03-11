@@ -83,7 +83,7 @@ namespace _Scripts.Stage.Item.Ingredient
     //     [SF] private int maxPoolSize = 40;
     //     [SF] private IngredientType requiredType;
     //     
-    //     private IObjectResolver _container;
+    //     private IObjectResolver _resolver;
     //     private NetworkObject _prefab;
     //     
     //     private IObjectPool<Ingredient> _pool;
@@ -100,7 +100,7 @@ namespace _Scripts.Stage.Item.Ingredient
     //         IPublisher<IProvider> pub,
     //         IBufferedSubscriber<PublishRequestMessage> sub)
     //     {
-    //         _container = container;
+    //         _resolver = container;
     //
     //         foreach (var data in dataList)
     //         {
@@ -174,8 +174,8 @@ namespace _Scripts.Stage.Item.Ingredient
     //     {
     //         var o = _prefab.transform.root;
     //         
-    //         var netObj = _container.Instantiate(o,this.transform);
-    //         // var netObj = _container.Instantiate(_prefab,this.transform);
+    //         var netObj = _resolver.Instantiate(o,this.transform);
+    //         // var netObj = _resolver.Instantiate(_prefab,this.transform);
     //         netObj.name = $"Ingredient_{netObj.GetHashCode()}";
     //         return netObj.GetComponentInChildren<Ingredient>();
     //     }
