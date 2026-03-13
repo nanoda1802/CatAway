@@ -60,8 +60,9 @@ namespace _Scripts.Lobby.UI.Room
             
             // 모바일은 다르대 
             // UniCliBoard 라는 패키지로 쉽게 할 수 있다는데?
-            
-            _noticePub.Publish(new NoticeMessage("The code copy to clipboard."));
+
+            var msg = new NoticeMessage("The code copy to clipboard.");
+            _noticePub.Publish(msg);
         }
     }
 }

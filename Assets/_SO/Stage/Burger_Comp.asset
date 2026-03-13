@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d62858895dd487690ba047e4730f90e, type: 3}
   m_Name: Burger_Comp
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.StageData
-  id: burger
+  id: 0
   mode: 1
+  thumbnail: {fileID: 7953811026854691559, guid: 4f4a93aec386690478cd867df2d7c25b, type: 3}
   description: 
   duration: 5940
   orderInfo:

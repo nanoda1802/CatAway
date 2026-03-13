@@ -65,33 +65,35 @@ namespace _Scripts.Lobby.UI
         private void OnClickCreate()
         {
             var cts = new CancellationTokenSource();
-            
-            _dialogPub.Publish(new DialogMessage(
+            var popUpMsg = new PopUpMessage(typeof(DialogPop));
+            var createRoomReq = new CreateRoomRequest(cts.Token);
+            var diaologMsg = new DialogMessage(
                 "Create Room",
                 "Waiting For Respond...",
-                string.Empty, 
+                string.Empty,
                 DialogButtonType.Cancel,
                 cts
-                ));
+            );
             
-            _popUpPub.Publish(new PopUpMessage(typeof(DialogPop)));
-
-            _createRoomPub.Publish(new CreateRoomRequest(cts.Token));
+            _dialogPub.Publish(diaologMsg);
+            _popUpPub.Publish(popUpMsg);
+            _createRoomPub.Publish(createRoomReq);
         }
 
         private void OnClickJoin()
         {
             var cts = new CancellationTokenSource();
-            
-            _dialogPub.Publish(new DialogMessage(
+            var popUpMsg = new PopUpMessage(typeof(DialogPop));
+            var dialogMsg = new DialogMessage(
                 "Join Room",
-                string.Empty, 
+                string.Empty,
                 "Please type the code...",
                 DialogButtonType.Submit | DialogButtonType.Cancel,
                 cts
-            ));
+            );
             
-            _popUpPub.Publish(new PopUpMessage(typeof(DialogPop)));
+            _dialogPub.Publish(dialogMsg);
+            _popUpPub.Publish(popUpMsg);
         }
     }
 }

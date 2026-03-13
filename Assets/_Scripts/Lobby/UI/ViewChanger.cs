@@ -50,6 +50,7 @@ namespace _Scripts.Lobby.UI
         {
             _cts?.Cancel();
             _cts?.Dispose();
+            _cts = null;
             _disposableBagBuilder?.Build().Dispose();
         }
 

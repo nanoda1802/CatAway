@@ -1,23 +1,24 @@
 ﻿using _Scripts.Stage;
 using Unity.Collections;
+using UnityEngine;
 
 namespace _Scripts.Lobby.UI.Messages.Room
 {
     public readonly struct InitRoomMessage
     {
         private readonly FixedString32Bytes _code;
-        private readonly StageMode _mode;
-        private readonly bool _isHostPlayer;
-        
-        public string Code => _code.Value;
-        public StageMode Mode => _mode;
-        public bool IsHostPlayer => _isHostPlayer;
 
-        public InitRoomMessage(string code, StageMode mode, bool isHostPlayer)
+        public string Code => _code.Value;
+        public StageMode Mode { get; }
+        public int StageIndex { get; }
+        public bool IsHostPlayer { get; }
+
+        public InitRoomMessage(string code, StageMode mode, int stageIndex, bool isHostPlayer)
         {
             _code = code;
-            _mode = mode;
-            _isHostPlayer = isHostPlayer;
+            Mode = mode;
+            StageIndex = stageIndex;
+            IsHostPlayer = isHostPlayer;
         }
     }
 }

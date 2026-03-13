@@ -15,6 +15,7 @@ namespace _Scripts.Lobby.UI.Room
         {
             _cts?.Cancel();
             _cts?.Dispose();
+            _cts = null;
             
             DisposableBagBuilder?.Build().Dispose();
         }

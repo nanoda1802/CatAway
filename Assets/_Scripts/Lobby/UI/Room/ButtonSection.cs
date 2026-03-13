@@ -129,7 +129,8 @@ namespace _Scripts.Lobby.UI.Room
 
         private void OnClickReadyBtn()
         {
-            _switchReadyPub.Publish(new SwitchReadyRequest());
+            var req = new SwitchReadyRequest();
+            _switchReadyPub.Publish(req);
         }
         
         private void OnClickStartBtn()

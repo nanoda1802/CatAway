@@ -128,7 +128,8 @@ namespace _Scripts.Lobby.Room
         
         private void OnPeerDisconnect(ulong targetId)
         {
-            _hideCardPub.Publish(new HideMemberCardMessage(targetId));
+            var msg = new HideMemberCardMessage(targetId);
+            _hideCardPub.Publish(msg);
         }
         
         [Rpc(SendTo.SpecifiedInParams)]

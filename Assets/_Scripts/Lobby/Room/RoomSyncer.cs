@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Lobby.UI.Messages.Room;
 using _Scripts.Stage;
+using _Scripts.Stage.Data;
 using MessagePipe;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -14,19 +15,21 @@ namespace _Scripts.Lobby.Room
 {
     public class RoomSyncer : NetworkBehaviour
     {
-             
         private readonly RoomMember[] _members = new RoomMember[4];
-        
-        private readonly NetworkVariable<StageMode> _sharedStageMode = new(StageMode.Coop);
 
+        private StageListData _stageList;
         private IPublisher<SwitchStartMessage> _switchStartPub;
         private IPublisher<SwitchModeRespond> _switchModePub;
+        private IPublisher<SelectStageRespond> _selectStagePub;
+        
+        private readonly NetworkVariable<StageSelection> _sharedStageSelection = new();
         
         private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
         
         public bool IsFull => _members.All(mem => mem != null);
         public IEnumerable<RoomMember> ActiveMembers => _members.Where(mem => mem != null);
-        public StageMode CurMode => _sharedStageMode.Value;
+        public StageMode CurMode => _sharedStageSelection.Value.SelectedMode;
+        public int CurStageIndex => _sharedStageSelection.Value.SelectedStageIndex;
         public bool CanStartStage
         {
             get
@@ -54,12 +57,21 @@ namespace _Scripts.Lobby.Room
         
         [Inject]
         private void Construct(
+            StageListData stageList,
             IPublisher<SwitchStartMessage> switchStartPub,
+            IPublisher<SelectStageRespond> selectStagePub,
+            ISubscriber<SelectStageRequest> selectStageSub,
             IPublisher<SwitchModeRespond> switchModePub,
             ISubscriber<SwitchModeRequest> switchModeSub)
         {
+            _stageList = stageList;
             _switchStartPub = switchStartPub;
+            _selectStagePub = selectStagePub;
             _switchModePub = switchModePub;
+            
+            selectStageSub
+                .Subscribe(SelectStage)
+                .AddTo(_disposableBagBuilder);
             
             switchModeSub
                 .Subscribe(SwitchStageMode)
@@ -68,14 +80,14 @@ namespace _Scripts.Lobby.Room
 
         public override void OnNetworkSpawn()
         {
-            _sharedStageMode.OnValueChanged = OnModeChanged;
+            _sharedStageSelection.OnValueChanged = OnSelectionChanged;
             
             base.OnNetworkSpawn();
         }
 
-        public override void OnNetworkPreDespawn()
+        public override void OnNetworkDespawn()
         {
-            _sharedStageMode.OnValueChanged = null;
+            _sharedStageSelection.OnValueChanged = null;
             
             Array.Clear(_members, 0, _members.Length);
             
@@ -87,6 +99,11 @@ namespace _Scripts.Lobby.Room
             _disposableBagBuilder?.Build().Dispose();
             
             base.OnDestroy();
+        }
+
+        public void InitStageSelection()
+        {
+            _sharedStageSelection.Value = default;
         }
 
         private void ReportStatus()
@@ -107,8 +124,8 @@ namespace _Scripts.Lobby.Room
             
             _members[newMemIdx] = newMember.AssignTo(this);
 
-            ReportStatus();
-            _switchStartPub.Publish(new SwitchStartMessage(CurMode == StageMode.Coop && newMemIdx == 0));
+            var msg = new SwitchStartMessage(CurMode == StageMode.Coop && newMemIdx == 0);
+            _switchStartPub.Publish(msg);
             
             return newMemIdx;
         }
@@ -121,8 +138,8 @@ namespace _Scripts.Lobby.Room
                 
                 _members[i] = null;
                 
-                ReportStatus();
-                _switchStartPub.Publish(new SwitchStartMessage(CanStartStage));
+                var msg = new SwitchStartMessage(this.CanStartStage);
+                _switchStartPub.Publish(msg);
                 
                 return;
             }
@@ -156,16 +173,25 @@ namespace _Scripts.Lobby.Room
         {
             if (!IsServer) return;
             
-            _sharedStageMode.Value = CurMode switch
-            {
-                StageMode.Coop => StageMode.Comp,
-                StageMode.Comp => StageMode.Coop,
-                _ => throw new Exception("[Room.SwitchMode] 구현되지 않은 타입의 Mode입니다.")
-            };
-
+            var newSelection = _sharedStageSelection.Value.SwitchMode().SetStage(0);
+            _sharedStageSelection.Value = newSelection;
+            
             InitReadyStates();
             
-            _switchStartPub.Publish(new SwitchStartMessage(CanStartStage));
+            var msg = new SwitchStartMessage(this.CanStartStage);
+            _switchStartPub.Publish(msg);
+        }
+
+        private void SelectStage(SelectStageRequest req)
+        {
+            if (!IsServer) return;
+            
+            var sideIdx = req.ToLeft 
+                ? _stageList.GetLeftIndex(CurMode,CurStageIndex)
+                :  _stageList.GetRightIndex(CurMode,CurStageIndex);
+            
+            var newSelection = _sharedStageSelection.Value.SetStage(sideIdx);
+            _sharedStageSelection.Value = newSelection;
         }
 
         private void InitReadyStates()
@@ -177,12 +203,21 @@ namespace _Scripts.Lobby.Room
             }
         }
 
-        private void OnModeChanged(StageMode prevMode, StageMode newMode)
+        private void OnSelectionChanged(StageSelection prev, StageSelection cur)
         {
-            if (prevMode == newMode) return;
-            
-            var msg = new SwitchModeRespond(newMode);
-            _switchModePub.Publish(msg);
+            if (cur.IsModeDirty(prev))
+            {
+                var res = new SwitchModeRespond(cur.SelectedMode);
+                _switchModePub.Publish(res);
+                return;
+            }
+
+            if (cur.IsIndexDirty(prev))
+            {
+                bool toLeft = cur.SelectedStageIndex == _stageList.GetLeftIndex(CurMode, prev.SelectedStageIndex);
+                var res = new SelectStageRespond(CurMode, cur.SelectedStageIndex, toLeft);
+                _selectStagePub.Publish(res);
+            }
         }
     }
 }

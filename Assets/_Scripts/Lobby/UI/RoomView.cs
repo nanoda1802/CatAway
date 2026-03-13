@@ -108,7 +108,7 @@ namespace _Scripts.Lobby.UI
                         codeSection.InitElements(msg.Code);
                         break;
                     case SelectionSection selectionSection:
-                        selectionSection.InitElements(msg.Mode, msg.IsHostPlayer);
+                        selectionSection.InitElements(msg.Mode, msg.StageIndex, msg.IsHostPlayer);
                         break;
                     case ButtonSection buttonSection:
                         buttonSection.InitElements(msg.Mode, msg.IsHostPlayer);

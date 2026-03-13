@@ -89,8 +89,9 @@ namespace _Scripts.Lobby.Room
             {
                 NetworkManager.ConnectionApprovalCallback = ApprovalCheck;
             }
-            
-            _initRoomPub.Publish(new InitRoomMessage(Code, _roomSyncer.CurMode, IsHost));
+
+            var msg = new InitRoomMessage(Code, _roomSyncer.CurMode, _roomSyncer.CurStageIndex, IsHost);
+            _initRoomPub.Publish(msg);
             
             base.OnNetworkSpawn();
         }
@@ -117,6 +118,9 @@ namespace _Scripts.Lobby.Room
             await UniTask.Delay(2000, cancellationToken : req.Ct); // 릴레이에서 방 생성하고 코드 받기
             
             Code = $"{Random.Range(0, 256)}.{Random.Range(0, 256)}.{Random.Range(0, 256)}.{Random.Range(0, 256)}";
+            
+            _roomSyncer.InitStageSelection();
+            
             var networkStarted = NetworkManager.StartHost();
 
             // 인터넷이 되거나, networkManger나 Utp가 정상인 한 이게 false가 될 일이 없어서...
@@ -156,7 +160,7 @@ namespace _Scripts.Lobby.Room
 
             if (IsHost)
             {
-                AlertHostDisconnectRpc(); // 이거 먼저보내야하네 생각해보니
+                NotifyHostLeftRpc(); // 이거 먼저보내야하네 생각해보니
                 
                 foreach (var mem in _roomSyncer.ActiveMembers)
                 {
@@ -172,8 +176,9 @@ namespace _Scripts.Lobby.Room
             {
                 LeaveRpc(req.ClientId);
             }
-            
-            _changeViewPub.Publish(new ChangeViewRequest(typeof(TitleView)));
+
+            var msg = new ChangeViewRequest(typeof(TitleView));
+            _changeViewPub.Publish(msg);
         }
 
         private void ApprovalCheck(
@@ -189,7 +194,7 @@ namespace _Scripts.Lobby.Room
                 return;
             }
             
-            if (NetworkManager.ConnectedClients.Count >= 2) // [임시] 테스트용! 잊지말고 수정해주기
+            if (NetworkManager.ConnectedClients.Count >= 4) // [임시] 테스트용! 잊지말고 수정해주기
             {
                 res.Reason = "Max Clients connected.";
                 return;
@@ -249,13 +254,15 @@ namespace _Scripts.Lobby.Room
                 Debug.LogWarning($"[RoomConnector.OnConnected] This Connection is not Approved!"); 
                 return;
             }
-            
-            _changeViewPub.Publish(new ChangeViewRequest(typeof(RoomView)));
+
+            var msg = new ChangeViewRequest(typeof(RoomView));
+            _changeViewPub.Publish(msg);
         }
 
         private void OnDisconnectedInClient(bool approved, string reason)
         {
             // if (isApproved) return;
+            // [수정] 왜 거절 당했는지 Dialog에 표시...!
             
             Debug.LogWarning($"[RoomConnector.OnDisconnected] Approval? {approved} / reason? {reason}");
         }
@@ -268,15 +275,17 @@ namespace _Scripts.Lobby.Room
         }
 
         [Rpc(SendTo.NotServer)]
-        private void AlertHostDisconnectRpc()
+        private void NotifyHostLeftRpc()
         {
-            _dialogPub.Publish(new DialogMessage(
-                "Disconnect",
+            var popUpMsg = new PopUpMessage(typeof(DialogPop));
+            var dialogMsg = new DialogMessage(
+                "Notice",
                 "Host left this room!",
                 null,
-                DialogButtonType.Return));
+                DialogButtonType.Return);
             
-            _popUpPub.Publish(new PopUpMessage(typeof(DialogPop)));
+            _dialogPub.Publish(dialogMsg);
+            _popUpPub.Publish(popUpMsg);
         }
     }
 }

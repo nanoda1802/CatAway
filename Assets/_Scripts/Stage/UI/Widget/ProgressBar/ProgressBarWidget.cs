@@ -27,10 +27,10 @@ namespace _Scripts.Stage.UI.Widget.ProgressBar
             base.UpdatePosition(worldPos + offset);
         }
 
-        public void UpdateProgress(float prevValue, float newValue)
+        public void UpdateProgress(float prevValue, float curValue)
         {
-            if (prevValue >= newValue) return;
-            fillBarImg.fillAmount = Mathf.Lerp(0,1,newValue);
+            if (prevValue >= curValue) return;
+            fillBarImg.fillAmount = Mathf.Lerp(0,1,curValue);
         }
 
         private void ResetProgress()

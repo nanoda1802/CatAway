@@ -1,4 +1,5 @@
 ﻿using System;
+using _Scripts.Lobby.UI.Messages;
 using _Scripts.Lobby.UI.Messages.Member;
 using _Scripts.Lobby.UI.Messages.Room;
 using MessagePipe;
@@ -10,33 +11,48 @@ namespace _Scripts.Lobby.Room
 {
     public class RoomMember : NetworkBehaviour
     {
+        // Components
+        private SkinnedMeshRenderer _renderer;
+        // Dependency
+        private AvatarData _avatarData;
         private RoomSyncer _assignedRoom;
-
-        private readonly NetworkVariable<bool> _sharedReadyState 
-            = new (writePerm : NetworkVariableWritePermission.Owner);
-        
         private IPublisher<SwitchStartMessage> _startSwitchPub;
         private IPublisher<SwitchReadyRespond> _readyRespondPub;
-        private IDisposable _subscription;
-
+        // Network
+        private readonly NetworkVariable<int> _sharedAvatarIndex 
+            = new (-1, writePerm : NetworkVariableWritePermission.Owner);
+        private readonly NetworkVariable<bool> _sharedReadyState 
+            = new (writePerm : NetworkVariableWritePermission.Owner);
+        // Caching
+        private MaterialPropertyBlock _matPropBlock;
+        private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
+        // Property
         public bool IsHostMember => IsOwnedByServer;
         public bool IsReady => _sharedReadyState.Value; 
         public Vector3 CurPos => transform.position;
 
         [Inject]
         private void Construct(
+            AvatarData avatarData,
             IPublisher<SwitchStartMessage> startSwitchPub,
             IPublisher<SwitchReadyRespond> readyRespondPub,
-            ISubscriber<SwitchReadyRequest> readyRequestSub)
+            ISubscriber<SwitchReadyRequest> readyRequestSub,
+            ISubscriber<AvatarMessage> avatarSub)
         {
+            _renderer = GetComponentInChildren<SkinnedMeshRenderer>();
+            _matPropBlock = new MaterialPropertyBlock();
+            
+            _avatarData = avatarData;
             _startSwitchPub = startSwitchPub;
             _readyRespondPub = readyRespondPub;
             
-           _subscription = readyRequestSub.Subscribe(req =>
-           {
-               if (req.CancelReady) SetReadyState(false);
-               else SetReadyState(!IsReady);
-           });
+           readyRequestSub
+               .Subscribe(SetReadyState)
+               .AddTo(_disposableBagBuilder);
+           
+           avatarSub
+               .Subscribe(SetAvatar)
+               .AddTo(_disposableBagBuilder);
         }
 
         public override void OnNetworkSpawn()
@@ -48,6 +64,9 @@ namespace _Scripts.Lobby.Room
             }
             
             if (!IsHostMember) _sharedReadyState.OnValueChanged = OnReadyStateChanged;
+            _sharedAvatarIndex.OnValueChanged = OnAvatarIndexChanged;
+            
+            _avatarData.ChangeAvatar(_renderer, _matPropBlock, _sharedAvatarIndex.Value); // 여기도 명시적으로 한 번 바꿔주기
             
             base.OnNetworkSpawn();
         }
@@ -55,7 +74,9 @@ namespace _Scripts.Lobby.Room
         public override void OnNetworkDespawn()
         {
             _sharedReadyState.OnValueChanged = null;
-            _subscription?.Dispose();
+            _sharedAvatarIndex.OnValueChanged = null;
+            
+            _disposableBagBuilder?.Build().Dispose();
             
             base.OnNetworkDespawn();
         }
@@ -66,19 +87,34 @@ namespace _Scripts.Lobby.Room
             return this;
         }
 
-        private void SetReadyState(bool isReady)
+        private void SetAvatar(AvatarMessage msg)
+        {
+            if (!IsOwner) return;
+
+            _sharedAvatarIndex.Value = msg.AvatarIndex;
+        }
+
+        private void OnAvatarIndexChanged(int prevIdx, int newIdx)
+        {
+            if (newIdx == prevIdx) return;
+            _avatarData.ChangeAvatar(_renderer, _matPropBlock, newIdx);
+        }
+
+        private void SetReadyState(SwitchReadyRequest req)
         {
             if (!IsOwner || IsHostMember) return;
-            
-            _sharedReadyState.Value = isReady;
+
+            var newReadyState = req.CancelReady ? false : !IsReady;
+            _sharedReadyState.Value = newReadyState;
         }
 
         private void OnReadyStateChanged(bool prevState, bool newState)
         {
             if (prevState == newState) return;
             if (IsServer) _startSwitchPub.Publish(new SwitchStartMessage(_assignedRoom.CanStartStage));
-            
-            _readyRespondPub.Publish(new SwitchReadyRespond(this.OwnerClientId, newState, IsOwner));
+
+            var res = new SwitchReadyRespond(this.OwnerClientId, newState, IsOwner);
+            _readyRespondPub.Publish(res);
 
         }
 

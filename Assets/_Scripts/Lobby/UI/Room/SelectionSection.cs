@@ -3,6 +3,7 @@ using System.Threading;
 using _Scripts.Lobby.UI.Messages;
 using _Scripts.Lobby.UI.Messages.Room;
 using _Scripts.Stage;
+using _Scripts.Stage.Data;
 using AYellowpaper.SerializedCollections;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
@@ -27,17 +28,18 @@ namespace _Scripts.Lobby.UI.Room
         [SF] private Image stageImg;
         [SF] private Button prevBtn;
         [SF] private Button nextBtn;
-
-        private RoomViewUiData _data;
+        [SF] private StageThumbnailBoard stageThumbnailBoard;
+        
+        private RoomViewUiData _viewData;
         private IPublisher<SwitchModeRequest> _switchModPub;
         
         [Inject]
         private void Construct(
-            RoomViewUiData data,
+            RoomViewUiData viewData,
             IPublisher<SwitchModeRequest> switchModPub,
             ISubscriber<SwitchModeRespond> switchModSub)
         {
-            _data = data;
+            _viewData = viewData;
             _switchModPub = switchModPub;
             
             switchModSub
@@ -53,18 +55,26 @@ namespace _Scripts.Lobby.UI.Room
             
             modeBtn.onClick.RemoveAllListeners();
             modeBtn.onClick.AddListener(OnClickMode);
+            
+            prevBtn.onClick.RemoveAllListeners();
+            prevBtn.onClick.AddListener(stageThumbnailBoard.PublishLeftSign);
+            
+            nextBtn.onClick.RemoveAllListeners();
+            nextBtn.onClick.AddListener(stageThumbnailBoard.PublishRightSign);
         }
 
         public override async UniTask Hide(CancellationToken token)
         {
             modeBtn.onClick.RemoveAllListeners();
+            prevBtn.onClick.RemoveAllListeners();
+            nextBtn.onClick.RemoveAllListeners();
             
             await UniTask.Yield(token);
 
             this.gameObject.SetActive(false);
         }
 
-        public void InitElements(StageMode mode, bool isHost)
+        public void InitElements(StageMode mode, int stageIndex, bool isHost)
         {
             ApplyTheme(mode);
             
@@ -72,16 +82,20 @@ namespace _Scripts.Lobby.UI.Room
             switchIconImg.enabled = isHost;
             nextBtn.gameObject.SetActive(isHost);
             prevBtn.gameObject.SetActive(isHost);
+            
+            stageThumbnailBoard.InitSwipeFunction(isHost);
+            stageThumbnailBoard.InitThumbnails(mode, stageIndex);
         }
 
         private void OnClickMode()
         {
-            _switchModPub.Publish(new SwitchModeRequest());
+            var req = new SwitchModeRequest();
+            _switchModPub.Publish(req);
         }
 
         private void ApplyTheme(StageMode mode)
         {
-            selectionBgImg.color = modeBtnImg.color = _data.GetThemeColor(mode);
+            selectionBgImg.color = modeBtnImg.color = _viewData.GetThemeColor(mode);
             modeBtnTxt.text = mode.ToString().ToUpper();
         }
         
@@ -92,6 +106,7 @@ namespace _Scripts.Lobby.UI.Room
             await this.Hide(token);
             
             ApplyTheme(msg.Mode);
+            stageThumbnailBoard.InitThumbnails(msg.Mode);
             
             await this.Show(token);
         }

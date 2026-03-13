@@ -64,7 +64,8 @@ namespace _Scripts.Lobby.UI.Pop
         #region OnClick 메서드
         private void OnClickReturnBtn()
         {
-            _changeViewPub.Publish(new ChangeViewRequest(typeof(TitleView)));
+            var req = new ChangeViewRequest(typeof(TitleView));
+            _changeViewPub.Publish(req);
         }
 
         private void OnClickCancelBtn()
@@ -79,8 +80,8 @@ namespace _Scripts.Lobby.UI.Pop
         private void OnClickSubmitBtn()
         {
             var roomCode = inputField.text.Replace(" ","");
-            
-            _joinRoomPub.Publish(new JoinRoomRequest(roomCode, _cts.Token));
+            var req = new JoinRoomRequest(roomCode, _cts.Token);
+            _joinRoomPub.Publish(req);
         }
 
         private void OnClickConfirmBtn()
@@ -88,7 +89,8 @@ namespace _Scripts.Lobby.UI.Pop
             PopDown();
             
             var clientId = NetworkManager.Singleton.LocalClientId;
-            _leaveRoomPub.Publish(new LeaveRoomRequest(clientId));
+            var req = new LeaveRoomRequest(clientId);
+            _leaveRoomPub.Publish(req);
         }
         #endregion
         
@@ -136,6 +138,7 @@ namespace _Scripts.Lobby.UI.Pop
 
         private void RefreshTokenSource(CancellationTokenSource cts)
         {
+            _cts?.Cancel();
             _cts?.Dispose();
             _cts = cts;
         }

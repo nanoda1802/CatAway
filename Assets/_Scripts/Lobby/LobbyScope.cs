@@ -2,9 +2,11 @@
 using _Scripts.Lobby.UI.Messages;
 using _Scripts.Lobby.UI.Messages.Member;
 using _Scripts.Lobby.UI.Messages.Room;
+using _Scripts.Stage.Data;
 using MessagePipe;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using SF = UnityEngine.SerializeField;
@@ -13,13 +15,17 @@ namespace _Scripts.Lobby
 {
     public class LobbyScope : LifetimeScope
     {
+        [Header("[ Components ]")]
         [SF] private NetworkManager networkManager;
         [SF] private UnityTransport transport;
         [SF] private RoomConnector roomConnector;
         [SF] private RoomSyncer roomSyncer;
         [SF] private MemberSyncer memberSyncer;
-         
+        
+        [Header("[ Data ]")]
         [SF] private RoomMember roomMemberPrefab;
+        [SF] private AvatarData avatarData;
+        [SF] private StageListData stageListData;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -32,6 +38,10 @@ namespace _Scripts.Lobby
             builder.RegisterComponent(memberSyncer);
             
             builder.RegisterInstance(roomMemberPrefab);
+            builder.RegisterInstance(avatarData);
+            builder.RegisterInstance(stageListData)
+                .AsImplementedInterfaces()
+                .AsSelf();
             
             var msgOptions = builder.RegisterMessagePipe();
 
@@ -42,6 +52,7 @@ namespace _Scripts.Lobby
             
             builder.RegisterMessageBroker<DialogMessage>(msgOptions);
             builder.RegisterMessageBroker<NoticeMessage>(msgOptions);
+            builder.RegisterMessageBroker<AvatarMessage>(msgOptions);
             
             builder.RegisterMessageBroker<CreateRoomRequest>(msgOptions);
             builder.RegisterMessageBroker<JoinRoomRequest>(msgOptions);
@@ -50,6 +61,8 @@ namespace _Scripts.Lobby
             builder.RegisterMessageBroker<InitRoomMessage>(msgOptions);
             builder.RegisterMessageBroker<SwitchModeRequest>(msgOptions);
             builder.RegisterMessageBroker<SwitchModeRespond>(msgOptions);
+            builder.RegisterMessageBroker<SelectStageRequest>(msgOptions);
+            builder.RegisterMessageBroker<SelectStageRespond>(msgOptions);
             builder.RegisterMessageBroker<SwitchStartMessage>(msgOptions);
             
             builder.RegisterMessageBroker<ShowMemberCardMessage>(msgOptions);

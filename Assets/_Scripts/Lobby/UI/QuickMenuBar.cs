@@ -67,32 +67,41 @@ namespace _Scripts.Lobby.UI
 
         private void OnClickLeave()
         {
-            _dialogPub.Publish(new DialogMessage(
+            var popUpMsg = new PopUpMessage(typeof(DialogPop));
+            var dialogMsg = new DialogMessage(
                 "Leave Room",
                 "Return to Title?",
-                string.Empty, 
+                string.Empty,
                 DialogButtonType.Confirm | DialogButtonType.Cancel
-            ));
+            );
             
-            _popUpPub.Publish(new PopUpMessage(typeof(DialogPop)));
+            _dialogPub.Publish(dialogMsg);
+            _popUpPub.Publish(popUpMsg);
         }
 
         private void OnClickSetting()
         {
             Debug.Log("Pop Up Setting");
-            _switchReadyPub.Publish(new SwitchReadyRequest(true));
+            var req = new SwitchReadyRequest(true);
+            _switchReadyPub.Publish(req);
         }
 
         private void OnClickTutorial()
         {
-            _popUpPub.Publish(new PopUpMessage(typeof(TutorialPop)));
-            _switchReadyPub.Publish(new SwitchReadyRequest(true));
+            var popUpMsg = new PopUpMessage(typeof(TutorialPop));
+            var switchReadyReq = new SwitchReadyRequest(true);
+            
+            _popUpPub.Publish(popUpMsg);
+            _switchReadyPub.Publish(switchReadyReq);
         }
         
         private void OnClickCustomize()
         {
-            _popUpPub.Publish(new PopUpMessage(typeof(CustomizePop)));
-            _switchReadyPub.Publish(new SwitchReadyRequest(true));
+            var popUpMsg = new PopUpMessage(typeof(CustomizePop));
+            var switchReadyReq = new SwitchReadyRequest(true);
+            
+            _popUpPub.Publish(popUpMsg);
+            _switchReadyPub.Publish(switchReadyReq);
         }
         #endregion
     }

@@ -1,4 +1,5 @@
 ﻿using _Scripts.Stage;
+using UnityEngine;
 
 namespace _Scripts.Lobby.UI.Messages.Room
 {

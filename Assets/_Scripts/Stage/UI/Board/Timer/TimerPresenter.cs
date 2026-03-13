@@ -68,15 +68,15 @@ namespace _Scripts.Stage.UI.Board.Timer
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
         }
 
-        private void OnTimerChanged(float prev, float next)
+        private void OnTimerChanged(float prev, float cur)
         {
             // board.Apply(next);
-            _pub.Publish(next);
+            _pub.Publish(cur);
         }
 
-        private bool CheckDirtiness(in float prev, in float next)
+        private bool CheckDirtiness(in float prev, in float cur)
         {
-            return Mathf.Abs(prev - next) > dirtyThreshold;
+            return Mathf.Abs(prev - cur) > dirtyThreshold;
         }
     }
 }
