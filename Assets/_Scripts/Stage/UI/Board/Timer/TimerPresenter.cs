@@ -1,4 +1,6 @@
-﻿using _Scripts.Stage.UI.Board.Order;
+﻿using _Scripts.Messages.Stage;
+using _Scripts.Stage.Data;
+using _Scripts.Stage.UI.Board.Order;
 using MessagePipe;
 using Unity.Netcode;
 using UnityEngine;
@@ -16,16 +18,26 @@ namespace _Scripts.Stage.UI.Board.Timer
         [SF] private float dirtyThreshold = 0.005f;
 
         private IPublisher<float> _pub;
+        private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
         
         private readonly NetworkVariable<float> _sharedTimer = new();
 
         [Inject]
         private void Construct(
             StageData stageData,
-            IPublisher<float> pub)
+            IPublisher<float> pub,
+            ISubscriber<StartStageMessage> startSub)
         {
             _stageData = stageData;
             _pub = pub;
+
+            startSub
+                .Subscribe(msg => 
+                {
+                    if (!IsServer) return;
+                    BeginTimer();
+                })
+                .AddTo(_disposableBagBuilder);
         }
 
         public override void OnNetworkSpawn()
@@ -57,8 +69,16 @@ namespace _Scripts.Stage.UI.Board.Timer
             _sharedTimer.Value = _remainingTime;
         }
 
+        public override void OnDestroy()
+        {
+            _disposableBagBuilder?.Build().Dispose();
+            base.OnDestroy();
+        }
+
         public void BeginTimer()
         {
+            if (!IsServer) return;
+            
             _remainingTime = _stageData.Duration;
             this.RegisterNetworkUpdate(NetworkUpdateStage.Update);
         }

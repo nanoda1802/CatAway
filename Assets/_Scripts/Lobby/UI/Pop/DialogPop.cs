@@ -1,6 +1,6 @@
 ﻿using System.Threading;
-using _Scripts.Lobby.UI.Messages;
-using _Scripts.Lobby.UI.Messages.Room;
+using _Scripts.Messages;
+using _Scripts.Messages.Room;
 using AYellowpaper.SerializedCollections;
 using MessagePipe;
 using TMPro;

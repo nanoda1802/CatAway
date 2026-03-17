@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using _Scripts.Stage.Item;
 using _Scripts.Stage.Item.Ingredient;
 using AYellowpaper.SerializedCollections;
-using Unity.Netcode;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-namespace _Scripts.Stage.Item.Plate
+namespace _Scripts.Stage.Data.Item
 {
     [CreateAssetMenu(fileName = "PlateData", menuName = "SO/Stage/Item/Plate")]
     public class PlateData : ScriptableObject

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using _Scripts.Lobby.UI.Messages;
-using _Scripts.Lobby.UI.Messages.Member;
-using _Scripts.Lobby.UI.Messages.Room;
 using _Scripts.Lobby.UI.Room;
+using _Scripts.Messages.Room;
 using _Scripts.Stage;
 using Cysharp.Threading.Tasks;
 using MessagePipe;

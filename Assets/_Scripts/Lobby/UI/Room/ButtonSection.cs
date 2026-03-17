@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading;
-using _Scripts.Lobby.UI.Messages;
-using _Scripts.Lobby.UI.Messages.Member;
-using _Scripts.Lobby.UI.Messages.Room;
+using _Scripts.Messages.Room;
 using _Scripts.Stage;
+using _Scripts.Stage.Data;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
 using TMPro;
@@ -33,17 +32,20 @@ namespace _Scripts.Lobby.UI.Room
 
         private RoomViewUiData _data;
 
+        private IPublisher<LoadStageMessage> _startStagePub;
         private IPublisher<SwitchReadyRequest> _switchReadyPub;
         
         [Inject]
         private void Construct(
             RoomViewUiData data,
+            IPublisher<LoadStageMessage> startStagePub,
             IPublisher<SwitchReadyRequest> switchReadyPub,
             ISubscriber<SwitchModeRespond> switchModeSub,
             ISubscriber<SwitchReadyRespond> switchReadySub,
             ISubscriber<SwitchStartMessage> switchStartSub)
         {
             _data = data;
+            _startStagePub = startStagePub;
             _switchReadyPub = switchReadyPub;
             
             switchReadySub
@@ -135,10 +137,8 @@ namespace _Scripts.Lobby.UI.Room
         
         private void OnClickStartBtn()
         {
-            // 플레이어가 최소 2인이고
-            // 경쟁모드라면 각 팀에 최소 1인 씩 있고
-            // 모든 참가자가 레디 상태라면
-            // 스타트 버튼 활성화 메세지 받음
+            var msg = new LoadStageMessage();
+            _startStagePub.Publish(msg);
         }
     }
 }

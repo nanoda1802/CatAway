@@ -1,7 +1,7 @@
 ﻿using System;
 using SF = UnityEngine.SerializeField;
 
-namespace _Scripts.Stage
+namespace _Scripts.Stage.Data
 {
     [Serializable]
     public class ProviderInfo<T> : IProviderInfo

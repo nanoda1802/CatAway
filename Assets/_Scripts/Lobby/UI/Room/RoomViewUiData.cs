@@ -1,4 +1,5 @@
 ﻿using _Scripts.Stage;
+using _Scripts.Stage.Data;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;

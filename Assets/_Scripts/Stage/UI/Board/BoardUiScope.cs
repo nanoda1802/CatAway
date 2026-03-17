@@ -1,4 +1,5 @@
-﻿using _Scripts.Stage.UI.Board.Order;
+﻿using _Scripts.Stage.Data.UI;
+using _Scripts.Stage.UI.Board.Order;
 using _Scripts.Stage.UI.Board.Score;
 using MessagePipe;
 using UnityEngine;

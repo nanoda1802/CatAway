@@ -1,4 +1,5 @@
 ﻿using System;
+using _Scripts.Stage.Data;
 using MessagePipe;
 using UnityEngine;
 using UnityEngine.Pool;

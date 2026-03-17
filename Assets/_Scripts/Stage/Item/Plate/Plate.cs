@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Scripts.Stage.Data.Item;
 using _Scripts.Stage.Item.Ingredient;
 using _Scripts.Stage.Player.Behaviour;
 using _Scripts.Stage.Table;

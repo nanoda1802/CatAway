@@ -1,4 +1,5 @@
-﻿using _Scripts.Stage.Item;
+﻿using _Scripts.Stage.Data;
+using _Scripts.Stage.Item;
 using _Scripts.Stage.Item.Plate;
 using _Scripts.Stage.Player.Behaviour;
 using _Scripts.Stage.Table.Placable;
@@ -16,7 +17,6 @@ namespace _Scripts.Stage.Table.Contactable
     public class ServingTable : NetworkBehaviour, IContactable
     {
         [SF] private Team team;
-
         // Dependency
         private StageHub _stageHub;
         

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
-using _Scripts.Lobby.UI.Messages;
-using _Scripts.Lobby.UI.Messages.Room;
+using _Scripts.Messages;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
 using TMPro;

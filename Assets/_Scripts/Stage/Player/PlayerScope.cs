@@ -11,11 +11,14 @@ namespace _Scripts.Stage.Player
     public class PlayerScope : LifetimeScope
     {
         [SF] private PlayerData playerData;
+        [SF] private AvatarData avatarData;
         
         [SF] private Rigidbody playerRb;
+        [SF] private SkinnedMeshRenderer playerMeshRenderer;
         [SF] private Animator animator;
         [SF] private Transform detectPoint;
          
+        [SF] private PlayerSyncer playerSyncer;
         [SF] private MovementBehaviour movementBehaviour;
         [SF] private InteractionBehaviour interactionBehaviour;
         [SF] private CarrierBehaviour carrierBehaviour;
@@ -32,11 +35,14 @@ namespace _Scripts.Stage.Player
             builder.Register<InteractStatus>(Lifetime.Scoped);
 
             builder.RegisterInstance(playerData);
+            builder.RegisterInstance(avatarData);
 
             builder.RegisterComponent(playerRb);
+            builder.RegisterInstance(playerMeshRenderer);
             builder.RegisterComponent(animator);
             builder.RegisterComponent(detectPoint);
             
+            builder.RegisterComponent(playerSyncer);
             builder.RegisterComponent(movementBehaviour);
             builder.RegisterComponent(interactionBehaviour);
             builder.RegisterComponent(carrierBehaviour);

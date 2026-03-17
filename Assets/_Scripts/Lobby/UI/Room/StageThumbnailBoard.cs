@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using _Scripts.Lobby.UI.Messages.Room;
+using _Scripts.Messages.Room;
 using _Scripts.Stage;
 using _Scripts.Stage.Data;
 using _Scripts.Wrapper;
@@ -22,7 +22,7 @@ namespace _Scripts.Lobby.UI.Room
         [SF] private float swipeDotThreshold = 0.8f;
         // Components
         private RectTransform _boardRectTr;
-        private readonly List<CardUi> _thumbnails = new (5); // 여유있게 지정해야
+        private readonly List<Thumbnail> _thumbnails = new (5); // 여유있게 지정해야
         private float _offsetX;
         // Dependency
         private StageListData _stageList;
@@ -51,7 +51,7 @@ namespace _Scripts.Lobby.UI.Room
 
             for (int i = 0; i < this.transform.childCount; i++)
             {
-                var card = this.transform.GetChild(i).GetComponent<CardUi>();
+                var card = this.transform.GetChild(i).GetComponent<Thumbnail>();
                 _thumbnails.Add(card);
             }
         }
@@ -114,14 +114,14 @@ namespace _Scripts.Lobby.UI.Room
             _selectStagePub.Publish(msg);
         }
 
-        public void InitSwipeFunction(bool active)
+        public void EnableSwipeBy(bool active)
         {
             _isDragActive = active;
         }
 
         public void InitThumbnails(StageMode mode, int idx = 0)
         {
-            (_thumbnails[0].CardImg.sprite, _thumbnails[1].CardImg.sprite, _thumbnails[2].CardImg.sprite)
+            (_thumbnails[0].Image.sprite, _thumbnails[1].Image.sprite, _thumbnails[2].Image.sprite)
                 = _stageList.GetThumbnails(mode, idx);
             
             for (int i = 0; i < _thumbnails.Count; i++)
@@ -137,19 +137,19 @@ namespace _Scripts.Lobby.UI.Room
             
             var idxToShift = res.ToLeft ? 0 : _thumbnails.Count - 1;
             
-            var targetCard = _thumbnails[idxToShift];
+            var shifted = _thumbnails[idxToShift];
             _thumbnails.RemoveAt(idxToShift);
             
-            if (res.ToLeft) _thumbnails.Add(targetCard);
-            else _thumbnails.Insert(0, targetCard);
+            if (res.ToLeft) _thumbnails.Add(shifted);
+            else _thumbnails.Insert(0, shifted);
 
-            (_thumbnails[0].CardImg.sprite, _thumbnails[1].CardImg.sprite, _thumbnails[2].CardImg.sprite)
+            (_thumbnails[0].Image.sprite, _thumbnails[1].Image.sprite, _thumbnails[2].Image.sprite)
                 = _stageList.GetThumbnails(res.CurMode, res.CurStageIndex);
             
-            SlideCard(targetCard, token).Forget();
+            SlideThumbnails(shifted, token).Forget();
         }
 
-        private async UniTaskVoid SlideCard(CardUi shifted, CancellationToken token)
+        private async UniTaskVoid SlideThumbnails(Thumbnail shifted, CancellationToken token)
         {
             for (int i = 0; i < _thumbnails.Count; i++)
             {

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using _Scripts.Lobby.UI.Messages.Room;
+using _Scripts.Messages.Room;
 using _Scripts.Stage;
 using _Scripts.Stage.Data;
 using MessagePipe;
@@ -16,20 +16,37 @@ namespace _Scripts.Lobby.Room
     public class RoomSyncer : NetworkBehaviour
     {
         private readonly RoomMember[] _members = new RoomMember[4];
-
+        
         private StageListData _stageList;
         private IPublisher<SwitchStartMessage> _switchStartPub;
         private IPublisher<SwitchModeRespond> _switchModePub;
         private IPublisher<SelectStageRespond> _selectStagePub;
         
-        private readonly NetworkVariable<StageSelection> _sharedStageSelection = new();
+        private readonly NetworkVariable<SelectedStageInfo> _sharedSelectedStage = new();
         
         private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
         
         public bool IsFull => _members.All(mem => mem != null);
         public IEnumerable<RoomMember> ActiveMembers => _members.Where(mem => mem != null);
-        public StageMode CurMode => _sharedStageSelection.Value.SelectedMode;
-        public int CurStageIndex => _sharedStageSelection.Value.SelectedStageIndex;
+        public StageData CurStageData => _stageList.GetStageData(CurMode, CurStageIndex);
+        public StageMode CurMode => _sharedSelectedStage.Value.Mode;
+        public int CurStageIndex => _sharedSelectedStage.Value.Index;
+        public MemberInfo[] MemberInfos
+        {
+            get
+            {
+                MemberInfo[] infos = new MemberInfo[_members.Length];
+
+                for (int i = 0; i < _members.Length; i++)
+                {
+                    var mem = _members[i];
+                    if (mem == null) continue;
+                    infos[i] = new MemberInfo(mem.OwnerClientId, mem.AvatarIndex);
+                }
+                
+                return infos;
+            }
+        }
         public bool CanStartStage
         {
             get
@@ -80,14 +97,14 @@ namespace _Scripts.Lobby.Room
 
         public override void OnNetworkSpawn()
         {
-            _sharedStageSelection.OnValueChanged = OnSelectionChanged;
+            _sharedSelectedStage.OnValueChanged = OnSelectionChanged;
             
             base.OnNetworkSpawn();
         }
 
         public override void OnNetworkDespawn()
         {
-            _sharedStageSelection.OnValueChanged = null;
+            _sharedSelectedStage.OnValueChanged = null;
             
             Array.Clear(_members, 0, _members.Length);
             
@@ -103,7 +120,7 @@ namespace _Scripts.Lobby.Room
 
         public void InitStageSelection()
         {
-            _sharedStageSelection.Value = default;
+            _sharedSelectedStage.Value = default;
         }
 
         private void ReportStatus()
@@ -173,8 +190,8 @@ namespace _Scripts.Lobby.Room
         {
             if (!IsServer) return;
             
-            var newSelection = _sharedStageSelection.Value.SwitchMode().SetStage(0);
-            _sharedStageSelection.Value = newSelection;
+            var newSelection = _sharedSelectedStage.Value.SwitchMode().SetStage(0);
+            _sharedSelectedStage.Value = newSelection;
             
             InitReadyStates();
             
@@ -190,8 +207,8 @@ namespace _Scripts.Lobby.Room
                 ? _stageList.GetLeftIndex(CurMode,CurStageIndex)
                 :  _stageList.GetRightIndex(CurMode,CurStageIndex);
             
-            var newSelection = _sharedStageSelection.Value.SetStage(sideIdx);
-            _sharedStageSelection.Value = newSelection;
+            var newSelection = _sharedSelectedStage.Value.SetStage(sideIdx);
+            _sharedSelectedStage.Value = newSelection;
         }
 
         private void InitReadyStates()
@@ -203,19 +220,19 @@ namespace _Scripts.Lobby.Room
             }
         }
 
-        private void OnSelectionChanged(StageSelection prev, StageSelection cur)
+        private void OnSelectionChanged(SelectedStageInfo prev, SelectedStageInfo cur)
         {
             if (cur.IsModeDirty(prev))
             {
-                var res = new SwitchModeRespond(cur.SelectedMode);
+                var res = new SwitchModeRespond(cur.Mode);
                 _switchModePub.Publish(res);
                 return;
             }
 
             if (cur.IsIndexDirty(prev))
             {
-                bool toLeft = cur.SelectedStageIndex == _stageList.GetLeftIndex(CurMode, prev.SelectedStageIndex);
-                var res = new SelectStageRespond(CurMode, cur.SelectedStageIndex, toLeft);
+                bool toLeft = cur.Index == _stageList.GetLeftIndex(CurMode, prev.Index);
+                var res = new SelectStageRespond(CurMode, cur.Index, toLeft);
                 _selectStagePub.Publish(res);
             }
         }

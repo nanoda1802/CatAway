@@ -1,4 +1,6 @@
 ﻿using System;
+using _Scripts.Stage.Data;
+using _Scripts.Stage.Data.UI;
 using MessagePipe;
 using TMPro;
 using UnityEngine;

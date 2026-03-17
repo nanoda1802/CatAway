@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Scripts.Stage.Data;
 using _Scripts.Stage.Table;
 using _Scripts.Stage.UI.Board.Order;
 using _Scripts.Stage.UI.Board.Score;
@@ -14,6 +15,8 @@ namespace _Scripts.Stage
 {
     public class StageHub : IInitializable, IDisposable
     {
+        private readonly IBufferedPublisher<PublishRequestMessage> _requestPub;
+        
         private readonly Dictionary<Type, IPlacable> _placableDic = new();
         private readonly Dictionary<Type, IProvider> _providerDic = new();
         
@@ -22,8 +25,7 @@ namespace _Scripts.Stage
         
         private readonly DisposableBagBuilder _disposableBag = DisposableBag.CreateBuilder();
         
-        [Inject]
-        private void Construct(
+        public StageHub(
             ISubscriber<IPlacable> placableSub,
             ISubscriber<IProvider> providerSub,
             ISubscriber<ScorePresenter> scorePresenterSub,
@@ -46,11 +48,7 @@ namespace _Scripts.Stage
                 .Subscribe(presenter => _orderPresenterDic.TryAdd(presenter.Team, presenter))
                 .AddTo(_disposableBag);
             
-            requestPub.Publish(new PublishRequestMessage(
-                typeof(IPlacable),
-                typeof(IProvider),
-                typeof(ScorePresenter),
-                typeof(OrderPresenter)));
+            _requestPub = requestPub;
         }
         
         public IPlacable FetchPlacable<T>() where T : IPlacable
@@ -73,7 +71,16 @@ namespace _Scripts.Stage
             return _orderPresenterDic.GetValueOrDefault(team, null);
         }
 
-        public void Initialize() { } // 그저 가장 먼저 Subscriber들을 열어두기 위한...
+        public void Initialize()
+        {
+            var req = new PublishRequestMessage(
+                typeof(IPlacable),
+                typeof(IProvider),
+                typeof(ScorePresenter),
+                typeof(OrderPresenter));
+            
+            _requestPub.Publish(req);
+        }
 
         public void Dispose()
         {

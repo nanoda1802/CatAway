@@ -6,12 +6,10 @@ namespace _Scripts.Stage.Item.Cookware
     public class CookwareProvider : ItemProvider<Cookware>
     {
         public override void OnNetworkSpawn()
-        {
-            InitPool();
+        { 
+            base.OnNetworkSpawn();
             
             NetworkManager.PrefabHandler.AddHandler(Info.Prefab, new CookwarePrefabHandler(this));
-            
-            base.OnNetworkSpawn();
         }
     
         public Cookware GetCookware(Vector3 pos)

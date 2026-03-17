@@ -1,5 +1,8 @@
-﻿using _Scripts.Stage.Item.Ingredient;
+﻿using _Scripts.Lobby;
+using _Scripts.Stage.Data.Item;
+using _Scripts.Stage.Item.Ingredient;
 using _Scripts.Stage.Item.Plate;
+using _Scripts.Stage.Player;
 using _Scripts.Stage.Table;
 using _Scripts.Stage.Table.Placable;
 using MessagePipe;
@@ -39,12 +42,10 @@ namespace _Scripts.Stage
         
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.RegisterEntryPoint<LevelInitiator>();
+            
             builder.RegisterInstance(ingredientDataList);
             builder.RegisterInstance(plateData);
-            
-            // var msgOptions = this.Parent.Container.Resolve<MessagePipeOptions>(); // 핵심!!
-            // builder.RegisterMessageBroker<PlateRackTable>(msgOptions);
-            // builder.RegisterMessageBroker<PlateReturnTable>(msgOptions);
             
             base.Configure(builder);
         }

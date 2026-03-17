@@ -67,12 +67,19 @@ namespace _Scripts.Stage.Table.Placable
             var result = _placementBroker.AcceptCase(ingredient, this);
             if (result.Reason is not null) Debug.LogWarning($"{result.Reason} [StoveTable{this.NetworkObjectId}_OnTrigger]");
         }
-
+        
         #region NGO 관련 메서드
         public override void OnNetworkSpawn()
         {
             _sharedProgress.CheckExceedsDirtinessThreshold = CheckDirtiness;
             base.OnNetworkSpawn();
+        }
+
+        protected override void OnNetworkPostSpawn()
+        {
+            if (IsServer) AttachWithSpawn().Forget();
+            
+            base.OnNetworkPostSpawn();
         }
 
         public override void OnNetworkPreDespawn()
@@ -191,6 +198,16 @@ namespace _Scripts.Stage.Table.Placable
             }
 
             return true;
+        }
+        
+        private async UniTaskVoid AttachWithSpawn()
+        {
+            var provider = _stageHub.FetchProvider<CookwareProvider>();
+            var cookware = provider.GetCookware(this.transform.position);
+            cookware.NetworkObject.Spawn();
+            
+            await UniTask.Yield();
+            this.Place(cookware);
         }
         #endregion
         

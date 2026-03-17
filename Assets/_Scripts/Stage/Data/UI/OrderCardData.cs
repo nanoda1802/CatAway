@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using _Scripts.Stage.Item.Ingredient;
+﻿using _Scripts.Stage.Item.Ingredient;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-namespace _Scripts.Stage.UI.Board.Order
+namespace _Scripts.Stage.Data.UI
 {
     [CreateAssetMenu(fileName = "OrderCardData", menuName = "SO/Stage/UI/OrderCard")]
     public class OrderCardData : ScriptableObject

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-namespace _Scripts.Stage.UI.Board
+namespace _Scripts.Stage.Data.UI
 {
     [CreateAssetMenu(fileName = "BoardUiData", menuName = "SO/Stage/UI/Board")]
     public class BoardUiData : ScriptableObject

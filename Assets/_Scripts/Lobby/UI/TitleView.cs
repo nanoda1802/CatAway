@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using _Scripts.Lobby.UI.Messages;
-using _Scripts.Lobby.UI.Messages.Room;
 using _Scripts.Lobby.UI.Pop;
+using _Scripts.Messages;
+using _Scripts.Messages.Room;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
 using UnityEngine;

@@ -1,4 +1,4 @@
-﻿using _Scripts.Lobby.UI.Messages;
+﻿using _Scripts.Messages;
 using MessagePipe;
 using UnityEngine;
 using UnityEngine.UI;

@@ -2,6 +2,7 @@
 using _Scripts.Stage.Item.Ingredient;
 using _Scripts.Stage.Item.Plate;
 using _Scripts.Stage.Player.Behaviour;
+using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
@@ -12,12 +13,16 @@ namespace _Scripts.Stage.Table.Contactable
     public class PantryTable : NetworkBehaviour, IContactable
     {
         // Data
-        [SF] private IngredientType ingredientType;
+        [SF] private IngredientType presetType;
         // Dependency
         private StageHub _stageHub;
         // Component
         [SF] private MeshFilter sampleMeshFilter;
         [SF] private Transform sampleTransform;
+        
+        private readonly NetworkVariable<IngredientType> _sharedIngredientType = new();
+
+        public IngredientType PresetType => presetType;
         
         [Inject]
         private void Construct(StageHub stageHub)
@@ -27,13 +32,20 @@ namespace _Scripts.Stage.Table.Contactable
 
         protected override void OnNetworkPostSpawn()
         {
+            presetType = _sharedIngredientType.Value;
+            
             var provider = _stageHub.FetchProvider<IngredientProvider>();
-            (Mesh mesh, Vector3 scale) = provider.GetModelInfo(ingredientType);
+            (Mesh mesh, Vector3 scale) = provider.GetModelInfo(_sharedIngredientType.Value);
             
             sampleMeshFilter.sharedMesh = mesh;
             sampleTransform.localScale = scale;
             
             base.OnNetworkPostSpawn();
+        }
+
+        public void SetAs(IngredientType type)
+        {
+            _sharedIngredientType.Value = type;
         }
 
         #region Contactable 관련 메서드
@@ -52,11 +64,17 @@ namespace _Scripts.Stage.Table.Contactable
 
         public void RespondTo(CarrierBehaviour carrier)
         {
+            AttachWithSpawn(carrier).Forget();
+        }
+
+        private async UniTaskVoid AttachWithSpawn(CarrierBehaviour carrier)
+        {
             var provider = _stageHub.FetchProvider<IngredientProvider>();
-            var ingredient = provider.GetIngredient(ingredientType, transform.position);
-            NetworkManager.PrefabHandler.SetInstantiationData(ingredient.NetworkObject,new IngredientTypePacket(ingredientType));
+            var ingredient = provider.GetIngredient(presetType, transform.position);
+            NetworkManager.PrefabHandler.SetInstantiationData(ingredient.NetworkObject,new IngredientTypePacket(presetType));
             ingredient.NetworkObject.Spawn();
             
+            await UniTask.Yield();
             carrier.Pick(ingredient);
         }
         #endregion

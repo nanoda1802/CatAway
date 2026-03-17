@@ -1,8 +1,9 @@
-﻿using Unity.Netcode;
+﻿using _Scripts.Stage.Item;
+using _Scripts.Stage.Item.Ingredient;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-namespace _Scripts.Stage.Item.Ingredient
+namespace _Scripts.Stage.Data.Item
 {
     [CreateAssetMenu(fileName = "IngredientData", menuName = "SO/Stage/Item/Ingredient")]
     public class IngredientData : ScriptableObject

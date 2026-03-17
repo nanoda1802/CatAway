@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using _Scripts.Stage.Data;
+using Unity.Netcode;
 
 namespace _Scripts.Stage.UI.Board.Score
 {

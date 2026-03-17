@@ -1,7 +1,6 @@
 ﻿using _Scripts.Lobby.Room;
-using _Scripts.Lobby.UI.Messages;
-using _Scripts.Lobby.UI.Messages.Member;
-using _Scripts.Lobby.UI.Messages.Room;
+using _Scripts.Messages;
+using _Scripts.Messages.Room;
 using _Scripts.Stage.Data;
 using MessagePipe;
 using Unity.Netcode;
@@ -21,6 +20,7 @@ namespace _Scripts.Lobby
         [SF] private RoomConnector roomConnector;
         [SF] private RoomSyncer roomSyncer;
         [SF] private MemberSyncer memberSyncer;
+        [SF] private StageLoader stageLoader;
         
         [Header("[ Data ]")]
         [SF] private RoomMember roomMemberPrefab;
@@ -36,6 +36,7 @@ namespace _Scripts.Lobby
             builder.RegisterComponent(roomConnector);
             builder.RegisterComponent(roomSyncer);
             builder.RegisterComponent(memberSyncer);
+            builder.RegisterComponent(stageLoader);
             
             builder.RegisterInstance(roomMemberPrefab);
             builder.RegisterInstance(avatarData);
@@ -59,6 +60,7 @@ namespace _Scripts.Lobby
             builder.RegisterMessageBroker<LeaveRoomRequest>(msgOptions);
             
             builder.RegisterMessageBroker<InitRoomMessage>(msgOptions);
+            builder.RegisterMessageBroker<LoadStageMessage>(msgOptions);
             builder.RegisterMessageBroker<SwitchModeRequest>(msgOptions);
             builder.RegisterMessageBroker<SwitchModeRespond>(msgOptions);
             builder.RegisterMessageBroker<SelectStageRequest>(msgOptions);

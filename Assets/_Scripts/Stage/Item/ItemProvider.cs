@@ -1,4 +1,5 @@
 ﻿using System;
+using _Scripts.Stage.Data;
 using MessagePipe;
 using Unity.Netcode;
 using UnityEngine;
@@ -36,7 +37,14 @@ namespace _Scripts.Stage.Item
                 pub.Publish(this);
             });
         }
-        
+
+        public override void OnNetworkSpawn()
+        {
+            InitPool();
+
+            base.OnNetworkSpawn();
+        }
+
         public override void OnNetworkDespawn()
         {
             NetworkManager.PrefabHandler.RemoveHandler(Info.Prefab);

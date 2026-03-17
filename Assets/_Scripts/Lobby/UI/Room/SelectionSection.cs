@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
-using _Scripts.Lobby.UI.Messages;
-using _Scripts.Lobby.UI.Messages.Room;
+using _Scripts.Messages.Room;
 using _Scripts.Stage;
 using _Scripts.Stage.Data;
 using AYellowpaper.SerializedCollections;
@@ -83,7 +82,7 @@ namespace _Scripts.Lobby.UI.Room
             nextBtn.gameObject.SetActive(isHost);
             prevBtn.gameObject.SetActive(isHost);
             
-            stageThumbnailBoard.InitSwipeFunction(isHost);
+            stageThumbnailBoard.EnableSwipeBy(isHost);
             stageThumbnailBoard.InitThumbnails(mode, stageIndex);
         }
 

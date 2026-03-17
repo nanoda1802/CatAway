@@ -1,5 +1,5 @@
-﻿using _Scripts.Lobby.UI.Messages.Member;
-using _Scripts.Lobby.UI.Room;
+﻿using _Scripts.Lobby.UI.Room;
+using _Scripts.Messages.Room;
 using MessagePipe;
 using Unity.Netcode;
 using UnityEngine;

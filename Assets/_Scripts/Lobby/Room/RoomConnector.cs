@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Linq;
 using _Scripts.Lobby.UI;
-using _Scripts.Lobby.UI.Messages;
-using _Scripts.Lobby.UI.Messages.Room;
 using _Scripts.Lobby.UI.Pop;
+using _Scripts.Messages;
+using _Scripts.Messages.Room;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
 using Unity.Collections;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using VContainer;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace _Scripts.Lobby.Room
@@ -69,7 +71,20 @@ namespace _Scripts.Lobby.Room
                 .Subscribe(req => LeaveRoom(req).Forget())
                 .AddTo(_disposableBagBuilder);
         }
-        
+
+        private void Awake()
+        {
+            var objects = FindObjectsByType<RoomConnector>(FindObjectsSortMode.None);
+            
+            if (objects.Length > 1)
+            {
+                Destroy(this.gameObject);
+                return; 
+            }
+            
+            DontDestroyOnLoad(this.gameObject);
+        }
+
         private void OnEnable()
         {
             Debug.Log("RoomConnector Enabled : Relay Connect Request");
@@ -135,10 +150,10 @@ namespace _Scripts.Lobby.Room
 
         private async UniTask JoinRoom(JoinRoomRequest req)
         {
-            var code = req.Code;
+            var code = string.IsNullOrEmpty(req.Code) ? "127.0.0.1" : req.Code;
 
             // 릴레이에서 방 찾아서 RelayData 갱신
-            _utp.SetConnectionData("127.0.0.1",7777);
+            _utp.SetConnectionData(code,7777);
             
             await UniTask.Delay(1000, cancellationToken : req.Ct);  // 릴레이에 코드 보내서 방 찾고 UTP 설정 하기
             

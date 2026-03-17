@@ -9,8 +9,6 @@ namespace _Scripts.Stage.Player.Behaviour
 {
     public class MovementBehaviour : NetworkBehaviour, INetworkUpdateSystem
     {
-        private PlayerInput _inputMap;  // [임시]
-        
         private MoveStatus _moveStatus;
         private InteractStatus _interactStatus;
     
@@ -32,8 +30,6 @@ namespace _Scripts.Stage.Player.Behaviour
             Rigidbody playerRb,
             Animator playerAnimator)
         {
-            _inputMap =  inputMap; // [임시]
-            
             _moveStatus = moveStatus;
             _interactStatus = interactStatus;
             
@@ -48,7 +44,6 @@ namespace _Scripts.Stage.Player.Behaviour
         {
             if (!IsLocalPlayer) return;
             
-            _inputMap.Enable(); // [임시]
             this.RegisterNetworkUpdate(NetworkUpdateStage.FixedUpdate);
             SubscribeInputEvents();
         }
@@ -57,7 +52,6 @@ namespace _Scripts.Stage.Player.Behaviour
         {
             if (!IsLocalPlayer) return;
             
-            _inputMap.Disable(); // [임시]
             this.UnregisterNetworkUpdate(NetworkUpdateStage.FixedUpdate);
             UnsubscribeInputEvents();
         }

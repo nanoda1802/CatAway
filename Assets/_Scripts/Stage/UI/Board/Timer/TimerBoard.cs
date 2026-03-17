@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using _Scripts.Stage.Data;
+using _Scripts.Stage.Data.UI;
 using MessagePipe;
 using TMPro;
 using UnityEngine;

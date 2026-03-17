@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
-namespace _Scripts.Stage
+namespace _Scripts.Stage.Data
 {
     [Serializable]
     public struct TeamTheme

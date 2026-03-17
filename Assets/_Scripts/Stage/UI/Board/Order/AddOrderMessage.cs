@@ -1,4 +1,5 @@
-﻿using _Scripts.Stage.Item.Ingredient;
+﻿using _Scripts.Stage.Data;
+using _Scripts.Stage.Item.Ingredient;
 using Unity.Netcode;
 
 namespace _Scripts.Stage.UI.Board.Order

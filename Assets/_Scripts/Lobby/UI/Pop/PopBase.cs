@@ -1,4 +1,4 @@
-﻿using _Scripts.Lobby.UI.Messages;
+﻿using _Scripts.Messages;
 using MessagePipe;
 using UnityEngine;
 using VContainer;
@@ -24,11 +24,16 @@ namespace _Scripts.Lobby.UI.Pop
 
             popUpSub.Subscribe(msg =>
             {
-                if (msg.IsRequested(this)) this.PopUp();
+                if (!msg.IsRequested(this)) return; 
+                this.PopUp();
             }).AddTo(DisposableBag);
             
             popDownSub
-                .Subscribe(msg => PopDown())
+                .Subscribe(msg =>
+                {
+                    if (!this.isActiveAndEnabled) return;
+                    PopDown();
+                })
                 .AddTo(DisposableBag);
         }
 

@@ -1,4 +1,6 @@
-﻿namespace _Scripts.Stage.UI.Board
+﻿using _Scripts.Stage.Data;
+
+namespace _Scripts.Stage.UI.Board
 {
     public interface ITeamMessage
     {

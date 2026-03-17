@@ -1,7 +1,7 @@
 ﻿using System;
-using _Scripts.Lobby.UI.Messages;
-using _Scripts.Lobby.UI.Messages.Member;
 using _Scripts.Lobby.UI.Pop;
+using _Scripts.Messages;
+using _Scripts.Messages.Room;
 using AYellowpaper.SerializedCollections;
 using MessagePipe;
 using UnityEngine;

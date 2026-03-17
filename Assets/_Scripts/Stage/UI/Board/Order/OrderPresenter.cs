@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Scripts.Messages.Stage;
+using _Scripts.Stage.Data;
 using _Scripts.Stage.Item.Ingredient;
 using _Scripts.Stage.UI.Board.Score;
 using MessagePipe;
@@ -22,7 +24,7 @@ namespace _Scripts.Stage.UI.Board.Order
         private IPublisher<AddOrderMessage> _addPub;
         private IPublisher<RemoveOrderMessage> _removePub;
         private readonly Stack<OrderStatus> _inactiveOrderStack = new();
-        private IDisposable _subscription;
+        private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
         // Status
         private readonly List<OrderStatus> _activeOrderList = new();
         private int _nextOrderId;
@@ -38,7 +40,8 @@ namespace _Scripts.Stage.UI.Board.Order
             IPublisher<AddOrderMessage> addPub,
             IPublisher<RemoveOrderMessage> removePub,
             IPublisher<OrderPresenter> presenterPub,
-            IBufferedSubscriber<PublishRequestMessage> requestSub)
+            IBufferedSubscriber<PublishRequestMessage> requestSub,
+            ISubscriber<StartStageMessage> startSub)
         {
             _stageData = stageData;
             _stageHub = stageHub;
@@ -47,11 +50,21 @@ namespace _Scripts.Stage.UI.Board.Order
 
             presenterPub.Publish(this);
             
-            _subscription = requestSub.Subscribe(msg =>
-            {
-                if (!msg.IsRequest(this)) return;
-                presenterPub.Publish(this);
-            });
+            requestSub
+                .Subscribe(msg =>
+                {
+                    if (!msg.IsRequest(this)) return;
+                    presenterPub.Publish(this);
+                    
+                }).AddTo(_disposableBagBuilder);
+            
+            startSub
+                .Subscribe(msg =>
+                {
+                    if (!IsServer) return;
+                    BeginOrder();
+                })
+                .AddTo(_disposableBagBuilder);
           
             _nextOrderId = 0;
             
@@ -69,7 +82,6 @@ namespace _Scripts.Stage.UI.Board.Order
 
         public override void OnNetworkPreDespawn()
         {
-            _subscription?.Dispose();
             this.UnregisterAllNetworkUpdates();
             base.OnNetworkPreDespawn();
         }
@@ -91,8 +103,15 @@ namespace _Scripts.Stage.UI.Board.Order
             }
         }
 
+        public override void OnDestroy()
+        {
+            _disposableBagBuilder?.Build().Dispose();
+            base.OnDestroy();
+        }
+        
         public void BeginOrder()
         {
+            if (!IsServer) return;
             this.RegisterNetworkUpdate(NetworkUpdateStage.Update);
         }
 
@@ -154,6 +173,8 @@ namespace _Scripts.Stage.UI.Board.Order
             int rndIdx = Random.Range(0, _stageData.OrderInfo.MenuList.Length);
             var randomMenu = _stageData.OrderInfo.MenuList[rndIdx];
 
+            Debug.Log($"[new order - {team}] {randomMenu}");
+            
             var orderStatus = _inactiveOrderStack.Pop().InitStatus(_nextOrderId, randomMenu);
             _activeOrderList.Add(orderStatus);
             

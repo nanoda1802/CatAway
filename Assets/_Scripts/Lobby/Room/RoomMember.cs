@@ -1,7 +1,6 @@
 ﻿using System;
-using _Scripts.Lobby.UI.Messages;
-using _Scripts.Lobby.UI.Messages.Member;
-using _Scripts.Lobby.UI.Messages.Room;
+using _Scripts.Messages;
+using _Scripts.Messages.Room;
 using MessagePipe;
 using Unity.Netcode;
 using UnityEngine;
@@ -30,6 +29,7 @@ namespace _Scripts.Lobby.Room
         public bool IsHostMember => IsOwnedByServer;
         public bool IsReady => _sharedReadyState.Value; 
         public Vector3 CurPos => transform.position;
+        public int AvatarIndex => _sharedAvatarIndex.Value;
 
         [Inject]
         private void Construct(

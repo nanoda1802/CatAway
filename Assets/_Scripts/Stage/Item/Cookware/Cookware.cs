@@ -85,7 +85,7 @@ namespace _Scripts.Stage.Item.Cookware
             
             return true;
         }
-
+        
         public void Hold(Ingredient.Ingredient ingredient)
         {
             if (ingredient.IsCarrying) ingredient.Detach();

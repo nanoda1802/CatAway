@@ -1,14 +1,4 @@
-﻿
-
-using System;
-using _Scripts.Stage.Item.Ingredient;
-using AYellowpaper.SerializedCollections;
-using MessagePipe;
-using Unity.Netcode;
-using UnityEngine;
-using UnityEngine.Pool;
-using VContainer;
-using VContainer.Unity;
+﻿using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Stage.Item.Plate
@@ -19,11 +9,9 @@ namespace _Scripts.Stage.Item.Plate
         
         public override void OnNetworkSpawn()
         {
-            InitPool();
+            base.OnNetworkSpawn();
             
             NetworkManager.PrefabHandler.AddHandler(Info.Prefab, new PlatePrefabHandler(this));
-            
-            base.OnNetworkSpawn();
         }
     
         public Plate GetPlate(Vector3 pos)

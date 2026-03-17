@@ -32,7 +32,7 @@ namespace _Scripts.Stage.UI.Board.Order
 
         private void Update()
         {
-            if (!HasValidInfo) return;
+            if (!HasValidInfo || !this.isActiveAndEnabled) return;
             UpdateFillBar();
         }
 
@@ -87,6 +87,7 @@ namespace _Scripts.Stage.UI.Board.Order
 
         private void UpdateFillBar() // [수정] Dirty 체크하기
         {
+            if (NetworkManager.Singleton == null) return;
             var curServerTime = NetworkManager.Singleton.ServerTime.TimeAsFloat;
             var ratio = (_duration - (curServerTime - _orderTime)) / _duration;
             

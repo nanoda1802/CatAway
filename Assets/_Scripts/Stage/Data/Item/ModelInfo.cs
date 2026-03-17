@@ -2,7 +2,7 @@
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-namespace _Scripts.Stage.Item.Ingredient
+namespace _Scripts.Stage.Data.Item
 {
     [Serializable]
     public struct ModelInfo

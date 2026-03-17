@@ -12,7 +12,7 @@ using Unity.Netcode;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-namespace _Scripts.Stage
+namespace _Scripts.Stage.Data
 {
     [CreateAssetMenu(fileName = "ProviderData", menuName = "SO/Stage/Provider")]
     public class ProviderData : ScriptableObject

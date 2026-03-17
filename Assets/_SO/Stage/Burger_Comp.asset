@@ -17,6 +17,7 @@ MonoBehaviour:
   thumbnail: {fileID: 7953811026854691559, guid: 4f4a93aec386690478cd867df2d7c25b, type: 3}
   description: 
   duration: 5940
+  tableSpawnInfos: []
   orderInfo:
     maxActiveOrderCount: 3
     newOrderInterval: 3

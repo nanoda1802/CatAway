@@ -1,5 +1,4 @@
 ﻿using System;
-using _Scripts.Lobby.UI.Messages;
 using AYellowpaper.SerializedCollections;
 using MessagePipe;
 using TMPro;

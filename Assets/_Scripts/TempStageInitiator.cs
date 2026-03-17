@@ -1,4 +1,6 @@
 ﻿using System;
+using _Scripts.Stage;
+using _Scripts.Stage.Data;
 using _Scripts.Stage.UI.Board.Order;
 using _Scripts.Stage.UI.Board.Timer;
 using Unity.Netcode;
@@ -20,6 +22,21 @@ namespace _Scripts
         private void Start()
         {
             btn.onClick.AddListener(Initiate);
+
+            timerPresenter ??= FindAnyObjectByType<TimerPresenter>();
+
+            foreach (var op in FindObjectsByType<OrderPresenter>(FindObjectsSortMode.None))
+            {
+                if (op.Team == Team.Red)
+                {
+                    orderPresenterRed = op;
+                }
+                else
+                {
+                    orderPresenterBlue = op;
+                }
+            }
+            
         }
 
         private void Initiate()

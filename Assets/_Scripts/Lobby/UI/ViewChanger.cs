@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using _Scripts.Lobby.UI.Messages;
+using _Scripts.Messages;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
 using VContainer.Unity;

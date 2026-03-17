@@ -332,6 +332,7 @@ GameObject:
   - component: {fileID: 429908469}
   - component: {fileID: 429908468}
   - component: {fileID: 429908467}
+  - component: {fileID: 429908470}
   m_Layer: 0
   m_Name: Room
   m_TagString: Untagged
@@ -422,6 +423,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1da3106290154a28b0a07694747c63f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Lobby.Session.RoomConnector
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &429908470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 429908464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5199706c65f4ccb936c246190daf936, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Lobby.StageLoader
   ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &566333112 stripped
 GameObject:
@@ -538,6 +552,7 @@ MonoBehaviour:
   roomConnector: {fileID: 429908469}
   roomSyncer: {fileID: 429908468}
   memberSyncer: {fileID: 429908467}
+  stageLoader: {fileID: 429908470}
   roomMemberPrefab: {fileID: 7134513745776378644, guid: 6c64f6d1a229db64598db93a1ce31827, type: 3}
   avatarData: {fileID: 11400000, guid: 31e8416fadb69ff40b9f453ac95e326e, type: 2}
   stageListData: {fileID: 11400000, guid: ca12079aa27ef2a41bcc9530ec0a9613, type: 2}

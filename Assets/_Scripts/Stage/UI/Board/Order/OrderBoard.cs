@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using _Scripts.Stage.Data;
+using _Scripts.Stage.Data.UI;
 using _Scripts.Stage.Item.Ingredient;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
@@ -146,7 +148,7 @@ namespace _Scripts.Stage.UI.Board.Order
             var card = _resolver.Instantiate(_prefab, this.transform);
             card.name = $"OrderCard_{card.GetHashCode()}";
             card.gameObject.SetActive(false);
-            return card;
+            return card.InitStatus();
         }
         
         private void ActivateCard(AddOrderMessage msg)
@@ -168,8 +170,10 @@ namespace _Scripts.Stage.UI.Board.Order
         {
             if (!_activeCardDic.Remove(targetId, out var targetCard)) return;
 
-            targetCard.InitStatus()
-                .Hide(_tweenCts.Token).Forget(); // [임시]
+            targetCard
+                .InitStatus()
+                .Hide(_tweenCts.Token)
+                .Forget(); // [임시]
 
             _inactiveCardQueue.Enqueue(targetCard);
         }
