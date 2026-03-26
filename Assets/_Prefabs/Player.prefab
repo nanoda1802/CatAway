@@ -81,7 +81,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Player.PlayerScope
   parentReference:
-    TypeName: _Scripts.Stage.StageScope
+    TypeName: _Scripts.Scene_Stage.StageScope
   autoRun: 1
   autoInjectGameObjects: []
   playerData: {fileID: 11400000, guid: 46c3a7296a7045d4a94965a86ceeb4b4, type: 2}

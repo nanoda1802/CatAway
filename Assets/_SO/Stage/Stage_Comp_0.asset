@@ -16,7 +16,7 @@ MonoBehaviour:
   mode: 1
   thumbnail: {fileID: 5971803184347593088, guid: cde9988b545ddbe48a9aaa8b5578f82d, type: 3}
   description: 
-  duration: 3000
+  duration: 30
   playerSpawnPoints:
   - {x: -2, y: 0, z: 0}
   - {x: 2, y: 0, z: 0}

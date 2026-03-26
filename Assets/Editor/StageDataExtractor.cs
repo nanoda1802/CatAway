@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using _Scripts.Stage;
-using _Scripts.Stage.Data;
-using _Scripts.Stage.Item.Ingredient;
-using _Scripts.Stage.Table.Contactable;
+using _Scripts.Scene_Stage.Data;
+using _Scripts.Scene_Stage.Data.Level;
+using _Scripts.Scene_Stage.Enums;
+using _Scripts.Scene_Stage.Table.Contactable;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;

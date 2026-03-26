@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de224140f95481eac404c4f6c43935c, type: 3}
+  m_Name: ResultView
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Result.Data.ResultViewData
+  duration: 100
+  spareTimeAfterSkip: 5
+  timerFormat: '{0:D2}'
+  checkIcon: {fileID: 21300000, guid: a455e0901347f9d4783640818c1c88f3, type: 3}
+  crossIcon: {fileID: 21300000, guid: 0deadde77c9afe544a0534f91adc39b3, type: 3}
+  checkColor: {r: 1, g: 0.8745098, b: 0.35686275, a: 1}
+  crossColor: {r: 0.41960785, g: 0.41960785, b: 0.41960785, a: 1}
+  offsetY: 1
+  defaultCount: 5
+  maxCount: 10
+  namePlateColors:
+    _serializedList:
+    - Key: 0
+      Value: {r: 1, g: 0.87843144, b: 0.43921572, a: 1}
+    - Key: 1
+      Value: {r: 0.43921572, g: 0.7294118, b: 1, a: 1}
+    - Key: 2
+      Value: {r: 1, g: 0.5254902, b: 0.43921572, a: 1}

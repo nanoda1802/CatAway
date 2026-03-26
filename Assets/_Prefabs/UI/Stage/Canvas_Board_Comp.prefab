@@ -57,7 +57,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.UI.Board.BoardUiScope
   parentReference:
-    TypeName: _Scripts.Stage.StageScope
+    TypeName: _Scripts.Scene_Stage.StageScope
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 808962441488020299}

@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5477157919862357856}
+  - component: {fileID: 2192950309437410989}
   - component: {fileID: 3669242713406420036}
   - component: {fileID: 8444123587405646739}
-  - component: {fileID: 2192950309437410989}
   - component: {fileID: 419406795057895544}
   - component: {fileID: 7074590815389051091}
   - component: {fileID: 3964545193734026777}
@@ -41,6 +41,23 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &2192950309437410989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5904354007598352272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e75fcb649bc840de993f72c99473636c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.UI.Widget.WidgetUiScope
+  parentReference:
+    TypeName: _Scripts.Scene_Stage.StageScope
+  autoRun: 1
+  autoInjectGameObjects:
+  - {fileID: 5904354007598352272}
 --- !u!223 &3669242713406420036
 Canvas:
   m_ObjectHideFlags: 0
@@ -87,23 +104,6 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 0
---- !u!114 &2192950309437410989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5904354007598352272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e75fcb649bc840de993f72c99473636c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.UI.Widget.WidgetUiScope
-  parentReference:
-    TypeName: _Scripts.Stage.StageScope
-  autoRun: 1
-  autoInjectGameObjects:
-  - {fileID: 5904354007598352272}
 --- !u!114 &419406795057895544
 MonoBehaviour:
   m_ObjectHideFlags: 0
