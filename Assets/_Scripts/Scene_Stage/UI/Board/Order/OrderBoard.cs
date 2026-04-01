@@ -13,10 +13,11 @@ using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Stage.UI.Board.Order
 {
-    public class OrderBoard : MonoBehaviour, IBoard<AddOrderMessage>, IBoard<RemoveOrderMessage>
+    public class OrderBoard: MonoBehaviour, IBoard<AddOrderMessage>, IBoard<RemoveOrderMessage>
     {
         // Data
         private StageData _stageData;
+        private BoardUiData _boardData;
         private OrderCardData _cardData;
         private OrderCard _prefab;
         // Component
@@ -27,6 +28,8 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
         // Caching
         private CancellationTokenSource _tweenCts = new();
         private readonly List<Sprite> _requiredSprites = new(5);
+        private float[] _cardOffsetX;
+        private float _showCardStartX;
         // Status
         private Vector2 _firstCardPos;
         private Vector2 _cardSize;
@@ -36,6 +39,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
         [Inject]
         private void Construct(
             StageData stageData,
+            BoardUiData boardUiData,
             OrderCardData cardData,
             OrderCard prefab,
             IObjectResolver container,
@@ -45,6 +49,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
             DisposableBagBuilder disposableBagBuilder)
         {
             _stageData = stageData;
+            _boardData = boardUiData;
             _cardData = cardData;
             _prefab = prefab;
             _resolver = container;
@@ -60,40 +65,8 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
             endSub
                 .Subscribe(DeactivateBoard)
                 .AddTo(disposableBagBuilder);
-        }
 
-        private void OnRectTransformDimensionsChange()
-        {
-            if (_stageData == null || rectTr == null) return;
-
-            Debug.Log($"[OnDimension] boardWidth: {rectTr.rect.width} / borderHeight: {rectTr.rect.height}");
-
-            var boardWidth = rectTr.rect.width;
-
-            _cardSize = new Vector2(boardWidth / _stageData.OrderInfo.MaxActiveOrderCount, rectTr.rect.height);
-
-            _firstCardPos = (team != Team.Red)
-                ? new Vector2((_cardSize.x - boardWidth) / 2, 0)
-                : new Vector2((boardWidth - _cardSize.x) / 2, 0);
-
-            InitBoard(_cardSize.x, _cardSize.y);
-        }
-
-        private void Start()
-        {
-            if (_stageData == null || rectTr == null) return;
-
-            Debug.Log($"[Start] boardWidth: {rectTr.rect.width} / borderHeight: {rectTr.rect.height}");
-
-            var boardWidth = rectTr.rect.width;
-
-            _cardSize = new Vector2(boardWidth / _stageData.OrderInfo.MaxActiveOrderCount, rectTr.rect.height);
-
-            _firstCardPos = (team != Team.Red)
-                ? new Vector2((_cardSize.x - boardWidth) / 2, 0)
-                : new Vector2((boardWidth - _cardSize.x) / 2, 0);
-
-            InitBoard(_cardSize.x, _cardSize.y);
+            InitBoard();
         }
 
         private void OnDestroy()
@@ -102,29 +75,39 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
             _tweenCts?.Dispose();
         }
 
-        private void InitBoard(float cardWidth, float cardHeight)
+        private void InitBoard()
         {
-            if (this.transform.childCount > 0)
+            int maxOrder = _stageData.OrderInfo.MaxActiveOrderCount;
+            float cardWidth = _prefab.GetComponent<RectTransform>().rect.width;
+            
+            _cardOffsetX = new float[maxOrder];
+            
+            this.rectTr.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,cardWidth * maxOrder);
+            
+            float adjustment = (maxOrder - 1) * 0.5f;
+            bool reversed = team == Team.Red;
+            
+            for (int i = 0; i < _cardOffsetX.Length; i++)
             {
-                foreach (var card in _inactiveCardQueue)
-                {
-                    card.SetCardSize(cardWidth, cardHeight);
-                }
-                return;
+                var offset = (i - adjustment) * cardWidth;
+                _cardOffsetX[i] = reversed ? -offset : offset;
             }
+
+            float sideOffset = _cardOffsetX[_cardOffsetX.Length-1];
+            _showCardStartX = reversed ? sideOffset - cardWidth : sideOffset + cardWidth;
             
             TeamTheme theme = (team) switch
             {
-                Team.None => _cardData.CoopTheme,
-                Team.Blue => _cardData.BlueTheme,
-                Team.Red => _cardData.RedTheme,
-                _ => _cardData.CoopTheme,
+                Team.None => _boardData.CoopTheme,
+                Team.Blue => _boardData.BlueTheme,
+                Team.Red => _boardData.RedTheme,
+                _ => _boardData.CoopTheme,
             };
 
-            for (int i = 0; i < _stageData.OrderInfo.MaxActiveOrderCount; i++)
+            for (int i = 0; i < maxOrder + 2; i++) // +2는 여유분
             {
                 var card = CreateCard()
-                    .SetCardSize(cardWidth, cardHeight)
+                    .InitStatus()
                     .SetTeamTheme(theme.ImageColor, theme.FillOrigin);
 
                 _inactiveCardQueue.Enqueue(card);
@@ -166,33 +149,32 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
             var card = _resolver.Instantiate(_prefab, this.transform);
             card.name = $"OrderCard_{card.GetHashCode()}";
             card.gameObject.SetActive(false);
-            return card.InitStatus();
+            return card;
         }
         
         private void ActivateCard(AddOrderMessage msg)
         {
             var icons = this.GetRequiredIcons(msg.Recipe);
 
-            var targetCard = _inactiveCardQueue.Dequeue()
+            var card = _inactiveCardQueue.Dequeue()
                 .ApplyIconSprites(icons)
                 .ApplyOrderInfo(msg.Duration, msg.OrderTime);
 
-            var pos = this.CalculatePos(targetCard.transform.GetSiblingIndex());
+            var targetX = this.CalculatePosX(_activeCardDic.Count);
 
-            _activeCardDic.Add(msg.Id, targetCard);
+            _activeCardDic.Add(msg.OrderId, card);
 
-            targetCard.Show(pos, _tweenCts.Token).Forget(); // [임시]
+            card.Show(_showCardStartX, targetX);
         }
 
         private void DeactivateCard(int targetId)
         {
             if (!_activeCardDic.Remove(targetId, out var targetCard)) return;
-
-            targetCard
-                .InitStatus()
-                .Hide(_tweenCts.Token)
-                .Forget(); // [임시]
-
+            
+            targetCard.transform.SetAsLastSibling();
+            
+            targetCard.Hide();
+            
             _inactiveCardQueue.Enqueue(targetCard);
         }
 
@@ -200,19 +182,14 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
         {
             foreach (var card in _activeCardDic.Values)
             {
-                var pos = CalculatePos(card.transform.GetSiblingIndex());
-                card.Move(pos, _tweenCts.Token).Forget(); // [임시]
+                float targetX = CalculatePosX(card.transform.GetSiblingIndex());
+                card.Move(targetX);
             }
         }
-
-        private Vector2 CalculatePos(int cardIdx)
+        
+        private float CalculatePosX(int cardIdx)
         {
-            var pos = _firstCardPos;
-            pos += (team != Team.Red)
-                ? Vector2.right * (_cardSize.x * cardIdx)
-                : Vector2.left * (_cardSize.x * cardIdx);
-
-            return pos;
+            return (cardIdx < 0 || cardIdx >= _cardOffsetX.Length) ? 0 : _cardOffsetX[cardIdx];
         }
         
         private List<Sprite> GetRequiredIcons(IngredientType recipe)

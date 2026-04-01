@@ -1,4 +1,6 @@
-﻿using _Scripts.Scene_Stage.Item;
+﻿using _Scripts.Scene_Stage.Data;
+using _Scripts.Scene_Stage.Enums;
+using _Scripts.Scene_Stage.Item;
 using _Scripts.Scene_Stage.Item.Cookware;
 using _Scripts.Scene_Stage.Item.Ingredient;
 using _Scripts.Scene_Stage.Item.Plate;
@@ -11,6 +13,7 @@ namespace _Scripts.Scene_Stage.Table.Contactable
     public class BinTable : NetworkBehaviour, IContactable
     {
         // Dependency
+        private StageData _stageData;
         private StageHub _stageHub;
         private ContactBroker _contactBroker;
         // Caching
@@ -18,9 +21,11 @@ namespace _Scripts.Scene_Stage.Table.Contactable
         
         [Inject]
         private void Construct(
+            StageData stageData,
             StageHub stageHub,
             ContactBroker contactBroker)
         {
+            _stageData = stageData;
             _stageHub =  stageHub;
             _contactBroker = contactBroker;
             
@@ -67,18 +72,18 @@ namespace _Scripts.Scene_Stage.Table.Contactable
             if (ingredient.IsCarrying) ingredient.Detach();
             
             var provider = _stageHub.FetchProvider<IngredientProvider>();
-            provider.ReleaseIngredient(ingredient);
+            provider.Release(ingredient);
             ingredient.NetworkObject.Despawn(false);
         }
 
         public void RespondTo(Plate plate, ulong contactorId)
         {
-            plate.ClearHolder();
+            plate.ClearHolder(_stageData.Mode == StageMode.Comp);
         }
 
         public void RespondTo(Cookware cookware)
         {
-            cookware.ClearHolder();
+            cookware.ClearHolder(_stageData.Mode == StageMode.Comp);
         }
         #endregion
     }

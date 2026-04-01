@@ -6,6 +6,6 @@
         
         public bool CanHold(Ingredient.Ingredient ingredient, out string rejectMessage);
         public void Hold(Ingredient.Ingredient ingredient);
-        public void ClearHolder();
+        public void ClearHolder(bool beClean);
     }
 }

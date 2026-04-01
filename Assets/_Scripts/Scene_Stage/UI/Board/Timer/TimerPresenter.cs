@@ -42,6 +42,8 @@ namespace _Scripts.Scene_Stage.UI.Board.Timer
 
         public void NetworkUpdate(NetworkUpdateStage updateStage)
         {
+            if (!IsSpawned) return;
+            
             var elapsedTime = (NetworkManager.ServerTime.TimeAsFloat - _startTime);
             var remainingTime = _stageData.Duration - elapsedTime;
             _timerPub.Publish(remainingTime);

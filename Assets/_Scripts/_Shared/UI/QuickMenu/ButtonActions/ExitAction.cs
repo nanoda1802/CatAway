@@ -7,6 +7,9 @@ namespace _Scripts._Shared.UI.QuickMenu.ButtonActions
     {
         public QuickMenuButtonType ButtonType => QuickMenuButtonType.Exit;
 
+        private float _lastClickTime;
+        private bool IsValidClick => Time.time - _lastClickTime >= 1f;
+        
         public ExitAction()
         {
             // 주입
@@ -14,6 +17,9 @@ namespace _Scripts._Shared.UI.QuickMenu.ButtonActions
 
         public void OnClick()
         {
+            if (!IsValidClick) return;
+            _lastClickTime = Time.time;
+
             Debug.Log("Exit Game");
         }
     }

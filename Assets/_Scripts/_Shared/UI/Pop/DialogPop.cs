@@ -1,10 +1,12 @@
 ﻿using System.Threading;
+using _Scripts._Helper;
 using _Scripts._Messages.Shared;
 using _Scripts._Shared.Enums;
 using _Scripts.Messages;
 using _Scripts.Messages.Room;
 using AYellowpaper.SerializedCollections;
 using MessagePipe;
+using PrimeTween;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,6 +19,7 @@ namespace _Scripts._Shared.UI.Pop
     public class DialogPop : PopBase
     {
         [Header("[ Components ]")]
+        [SF] private RectTransform rectTr;
         [SF] private TextMeshProUGUI headerTxt;
         [SF] private TextMeshProUGUI msgTxt;
         [SF] private TMP_InputField inputField;
@@ -26,6 +29,11 @@ namespace _Scripts._Shared.UI.Pop
         [SF] private SerializedDictionary<DialogButtonType, Button> buttons;
         [SF] private Image waitingImg;
         
+        [Header("[ Tween Settings ]")]
+        [SF] private TweenSettings<float> popUpSettings;
+        [SF] private TweenSettings<float> popDownSettings;
+        
+        private TweenHandler _tweenHandler;
         private IPublisher<RenameMessage> _renamePub;
         private IPublisher<LoadSceneMessage> _loadScenePub;
         private IPublisher<JoinRoomRequest> _joinRoomPub;
@@ -35,6 +43,7 @@ namespace _Scripts._Shared.UI.Pop
         
         [Inject]
         private void Construct(
+            TweenHandler tweenHandler,
             IPublisher<RenameMessage> renamePub,
             IPublisher<LoadSceneMessage> loadScenePub,
             IPublisher<JoinRoomRequest> roomReqPub,
@@ -42,6 +51,7 @@ namespace _Scripts._Shared.UI.Pop
             ISubscriber<DialogMessage> dialogSub,
             DisposableBagBuilder directorBagBuilder)
         {
+            _tweenHandler = tweenHandler;
             _renamePub = renamePub;
             _loadScenePub = loadScenePub;
             _joinRoomPub = roomReqPub;
@@ -55,6 +65,7 @@ namespace _Scripts._Shared.UI.Pop
         protected override void PopUp()
         {
             base.PopUp();
+            CurSequence = _tweenHandler.ScaleY(PopGroup,rectTr,popUpSettings,popUpSettings);
         }
 
         protected override void PopDown()
@@ -63,12 +74,18 @@ namespace _Scripts._Shared.UI.Pop
             _cts?.Dispose();
             _cts = null;
             
+            if (CurSequence.isAlive) CurSequence.Complete();
+            CurSequence = _tweenHandler.ScaleY(PopGroup,rectTr,popDownSettings,popDownSettings,OnPopDownCompleted);
+            
             foreach (var btn in buttons.Values)
             {
                 btn.gameObject.SetActive(false);
                 btn.onClick.RemoveAllListeners();
             }
-            
+        }
+
+        private void OnPopDownCompleted()
+        {
             base.PopDown();
         }
 
@@ -137,14 +154,14 @@ namespace _Scripts._Shared.UI.Pop
         
         private void SetContents(DialogMessage msg)
         {
-            headerTxt.text = msg.Header;
+            headerTxt.SetText(msg.Header);
             msgTxt.gameObject.SetActive(msg.HasText);
             inputField.gameObject.SetActive(msg.ShowInputField);
             waitingImg.gameObject.SetActive(msg is { HasText: false, ShowInputField: false });
 
             if (msg.HasText)
             {
-                msgTxt.text = msg.Text;
+                msgTxt.SetText(msg.Text);
             }
             
             if (msg.ShowInputField)

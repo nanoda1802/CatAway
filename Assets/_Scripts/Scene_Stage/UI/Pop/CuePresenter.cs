@@ -27,17 +27,6 @@ namespace _Scripts.Scene_Stage.UI.Pop
 
         private CancellationTokenSource _cts;
 
-        private CancellationToken Token
-        {
-            get
-            {
-                _cts?.Cancel();
-                _cts?.Dispose();
-                _cts = new CancellationTokenSource();
-                return _cts.Token;
-            }
-        }
-
         [Inject]
         private void Construct(
             IPublisher<StartStageMessage> startPub,
@@ -85,7 +74,7 @@ namespace _Scripts.Scene_Stage.UI.Pop
         private void OnLevelLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
         {
             if (!IsServer) return;
-            if (!sceneName.Equals("Level")) return;
+            if (!sceneName.StartsWith("Level")) return;
 
             DisplayCue(CueType.Start).Forget();
             
@@ -94,11 +83,12 @@ namespace _Scripts.Scene_Stage.UI.Pop
 
         public async UniTaskVoid DisplayCue(CueType cueType)
         {
+            var token = RefreshToken();
             var duration = cueType == CueType.Start ? startCueDuration : endCueDuration;
             
             PopUpCueRpc(cueType, duration);
             
-            await UniTask.Delay((int)(duration * 1000), cancellationToken:Token);
+            await UniTask.Delay((int)(duration * 1000), cancellationToken:token);
 
             PopDownCueRpc(cueType);
         }
@@ -118,7 +108,7 @@ namespace _Scripts.Scene_Stage.UI.Pop
         {
             var popDownMsg = new PopDownMessage();
             _popDownPub.Publish(popDownMsg);
-
+            
             switch (cueType)
             {
                 case CueType.End:
@@ -132,6 +122,14 @@ namespace _Scripts.Scene_Stage.UI.Pop
                 default:
                     break;
             }
+        }
+
+        private CancellationToken RefreshToken()
+        {
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = new CancellationTokenSource();
+            return _cts.Token;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using _Scripts._Messages.Shared;
+﻿using _Scripts._Helper;
+using _Scripts._Messages.Shared;
 using _Scripts._Shared.Data;
 using _Scripts.Messages;
 using _Scripts.Scene_Room.Data;
@@ -53,6 +54,9 @@ namespace _Scripts._Shared
                 .AsImplementedInterfaces()
                 .AsSelf();
 
+            builder.Register<VfxHandler>(Lifetime.Singleton);
+            builder.Register<TweenHandler>(Lifetime.Singleton);
+            
             RegisterRootDisposableBag(builder);
             RegisterMessages(builder);
             

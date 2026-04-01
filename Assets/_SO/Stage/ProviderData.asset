@@ -42,3 +42,8 @@ MonoBehaviour:
     objNamePrefix: TableAlert
     defaultCount: 6
     maxCount: 10
+  toastProviderInfo:
+    prefab: {fileID: 7247037573137596842, guid: 5c26651721408d247ad3e2b76770272a, type: 3}
+    objNamePrefix: Toast
+    defaultCount: 10
+    maxCount: 20

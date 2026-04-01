@@ -16,10 +16,10 @@ namespace _Scripts.Scene_Room.UI
         [SF] private TextMeshProUGUI codeTxt;
         [SF] private Button copyBtn;
 
-        private IPublisher<RoomNoticeMessage> _noticePub;
+        private IPublisher<RoomToastMessage> _noticePub;
         
         [Inject]
-        private void Construct(IPublisher<RoomNoticeMessage> noticePub)
+        private void Construct(IPublisher<RoomToastMessage> noticePub)
         {
             _noticePub = noticePub;
         }
@@ -47,7 +47,7 @@ namespace _Scripts.Scene_Room.UI
 
         public void InitElements(string code)
         {
-            codeTxt.text = code;
+            codeTxt.SetText(code);
         }
 
         private void OnClickCopy()
@@ -58,7 +58,7 @@ namespace _Scripts.Scene_Room.UI
             // 모바일은 다르대 
             // UniCliBoard 라는 패키지로 쉽게 할 수 있다는데?
 
-            var msg = new RoomNoticeMessage("The code copy to clipboard.");
+            var msg = new RoomToastMessage("The code copy to clipboard.");
             _noticePub.Publish(msg);
         }
     }

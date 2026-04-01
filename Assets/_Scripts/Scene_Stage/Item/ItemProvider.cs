@@ -36,12 +36,13 @@ namespace _Scripts.Scene_Stage.Item
                     pub.Publish(this);
                 })
                 .AddTo(disposableBagBuilder);
+            
+            // InitPool();
         }
 
         public override void OnNetworkSpawn()
         {
             InitPool();
-
             base.OnNetworkSpawn();
         }
 
@@ -92,6 +93,12 @@ namespace _Scripts.Scene_Stage.Item
         private void OnDestroyItem(T item)
         {
             Destroy(item.transform.parent.gameObject);
+        }
+
+        public virtual void Release(T item)
+        {
+            if (IsServer) item.NetObj.TrySetParent(this.NetworkObject);
+            Pool.Release(item);
         }
     }
 }

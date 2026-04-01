@@ -25,12 +25,20 @@ namespace _Scripts.Scene_Stage.UI.Pop
                 .AddTo(disposableBagBuilder);
         }
 
+        protected override void PopUp()
+        {
+            PopGroup.alpha = 1;
+            base.PopUp();
+        }
+
         protected override void PopDown()
         {
             // 취소토큰으로 트윈 취소
             // 트윈 종료시키고 rect 값들 원복 시키기
             // 특히 shakePos 같은 거나 localScale 같은 거 원래 값으로 잘...
             base.PopDown();
+            
+            PopGroup.alpha = 0;
         }
 
         private void HandleCueMessage(CueMessage msg)
@@ -52,6 +60,8 @@ namespace _Scripts.Scene_Stage.UI.Pop
 
         private async UniTaskVoid PlayStartCue(float duration)
         {
+            await UniTask.WaitUntil(() => this.gameObject.activeSelf);
+            
             // Ready? 텍스트 갱신
             cueTxt.text = "Ready?";
             

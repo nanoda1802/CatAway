@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using _Scripts._Helper;
+using _Scripts.Scene_Stage.Data.UI;
 using Cysharp.Threading.Tasks;
+using PrimeTween;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,28 +15,43 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
     public class OrderCard : MonoBehaviour
     {
         // Component
+        [SF] private CanvasGroup cardGroup;
         [SF] private RectTransform rectTr;
         [SF] private Image fillAreaImg;
         [SF] private Image fillBarImg;
         [SF] private Image[] icons;
+        [SF] private Image warnCoverImg;
         // Status
         private float _duration = -1f;
         private float _orderTime = -1f;
+        private int _prevTime = -1;
         // Dependency
+        private TweenHandler _tweenHandler;
         private NetworkManager _netManager;
+        private OrderCardData _data;
         // Property
         private bool HasValidInfo => _duration > 0f && _orderTime > 0f;
-
+        private bool OnNetwork => _netManager is not null && _netManager.IsListening;
+        private bool ShouldWarn(float ratio, int curTime) 
+            => ratio < _data.StartWarnThreshold && (curTime - _prevTime) >= 1;
+        
+        
         [Inject]
-        private void Construct(NetworkManager netManger)
+        private void Construct(
+            TweenHandler tweenHandler,
+            NetworkManager netManger,
+            OrderCardData data)
         {
+            _tweenHandler = tweenHandler;
             _netManager = netManger;
+            _data = data;
         }
 
         private void Update()
         {
-            if (!HasValidInfo || !this.isActiveAndEnabled) return;
-            UpdateFillBar();
+            if (!HasValidInfo || !this.isActiveAndEnabled || !OnNetwork) return;
+            var remainingRatio = CalculateRemainingTimeRatio();
+            UpdateFillBar(remainingRatio);
         }
 
         public OrderCard ApplyOrderInfo(float duration, float orderTime)
@@ -61,7 +79,12 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
                 icon.gameObject.SetActive(false);
             }
 
+            _prevTime = -1;
             _duration = _orderTime = -1f;
+
+            rectTr.anchoredPosition = Vector2.zero;
+            rectTr.localRotation = Quaternion.identity;
+            rectTr.localScale = Vector3.one;
             
             return this;
         }
@@ -85,42 +108,73 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
             return this;
         }
 
-        private void UpdateFillBar() // [수정] Dirty 체크하기
+        private float CalculateRemainingTimeRatio()
         {
-            if (_netManager is null || !_netManager.IsListening) return;
-            var curServerTime = _netManager.ServerTime.TimeAsFloat;
+            float curServerTime = _netManager.ServerTime.TimeAsFloat;
+            
             var ratio = (_duration - (curServerTime - _orderTime)) / _duration;
             
-            if (ratio < 0) return;
-            fillBarImg.fillAmount = Mathf.Lerp(0, 1, ratio);
+            if (ShouldWarn(ratio,(int)curServerTime)) Warn();
+            _prevTime = (int)curServerTime;
+            
+            return ratio;
         }
 
-        public async UniTask Show(Vector2 pos, CancellationToken token) 
+        private void Warn()
         {
-            this.rectTr.anchoredPosition = pos;
+            _tweenHandler.ShakeWithWarning(
+                rectTr,
+                warnCoverImg,
+                _data.ShakeScaleSettings,
+                _data.ShakeRotSettings,
+                _data.CoverAlphaSettings);
+        }
+
+        private void UpdateFillBar(float ratio) // [수정] Dirty 체크하기
+        {
+            if (ratio < 0) return;
+            // fillBarImg.fillAmount = Mathf.Lerp(0, 1, ratio);
+            fillBarImg.fillAmount = ratio;
+        }
+
+        public void Show(float start, float end)
+        {
+            var posSettings = _data.PosSettings;
+            posSettings.startValue = start;
+            posSettings.endValue = end;
+            posSettings.settings.ease = _data.ShowEase;
             
             this.gameObject.SetActive(true);
-            
-            await UniTask.Yield(cancellationToken:token);  // [수정] 등장 트윈 추가
+
+            _tweenHandler.AnchorPosXWithAlpha(cardGroup, rectTr, _data.ShowAlphaSettings, posSettings);
         }
 
-        public async UniTask Hide(CancellationToken token)
+        public void Hide()
         {
-            this.gameObject.SetActive(false);
+            var curY = rectTr.anchoredPosition.y;
+            var posSettings = _data.PosSettings;
+            posSettings.startValue = curY;
+            posSettings.endValue = curY + _data.HideOffsetY;
+            posSettings.settings.ease = _data.HideEase;
             
-            this.transform.SetAsLastSibling();
-            
-            await UniTask.Yield(cancellationToken:token); // [수정] 퇴장 트윈 대기
+            _tweenHandler.AnchorPosY(cardGroup, rectTr, _data.HideAlphaSettings, posSettings, () =>
+            {
+                InitStatus();
+                this.gameObject.SetActive(false);
+            });
         }
-
-        public async UniTask Move(Vector2 targetPos, CancellationToken token)
+        
+        public void Move(float targetX)
         {
-            var curPos = this.rectTr.anchoredPosition;
-            if ((curPos - targetPos).sqrMagnitude <= 0.1f) return;
+            var curX = this.rectTr.anchoredPosition.x;
+            if (Mathf.Abs(curX - targetX) <= 0.01f) return;
             
-            this.rectTr.anchoredPosition = targetPos;
+            var posSettings = _data.PosSettings;
+            posSettings.startValue = curX;
+            posSettings.endValue = targetX;
+            posSettings.settings.ease = _data.MoveEase;
             
-            await UniTask.Yield(cancellationToken:token); // [수정] 이동 트윈 대기
+            _tweenHandler.AnchorPosX(rectTr, posSettings);
         }
     }
 }

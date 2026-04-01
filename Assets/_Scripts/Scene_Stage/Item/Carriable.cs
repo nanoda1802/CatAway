@@ -1,4 +1,5 @@
-﻿using _Scripts.Scene_Stage.Player.Behaviour;
+﻿using System;
+using _Scripts.Scene_Stage.Player.Behaviour;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
@@ -6,19 +7,23 @@ using VContainer;
 
 namespace _Scripts.Scene_Stage.Item
 {
-    public class Carriable : AttachableBehaviour, INetworkUpdateSystem
+    public class Carriable : AttachableBehaviour, INetworkUpdateSystem, IDespawnable
     {
+        protected StageHub StageHub;
+        
         protected Rigidbody ItemRb;
         protected MeshCollider ItemCollider;
         
         private int _defaultLayerMask;
         private int _ignoreRayCastLayerMask;
         
+        public NetworkObject NetObj { get; private set; }
         public bool IsCarrying => m_AttachState is AttachState.Attaching or AttachState.Attached;
         
         [Inject]
-        public virtual void Construct()
+        public void ConstructBase(StageHub stageHub)
         {
+            NetObj = this.transform.parent.GetComponentInChildren<NetworkObject>();
             ItemRb = this.transform.parent.GetComponentInChildren<Rigidbody>();
             
             ItemCollider = this.transform.parent.GetComponentInChildren<MeshCollider>();
@@ -26,12 +31,18 @@ namespace _Scripts.Scene_Stage.Item
             
             _defaultLayerMask = LayerMask.NameToLayer("Item");
             _ignoreRayCastLayerMask = LayerMask.NameToLayer("Ignore Raycast");
+            
+            StageHub =  stageHub;
         }
 
+        public virtual void Despawn()
+        {
+            this.NetObj?.Despawn(false);
+        }
+        
         public override void OnNetworkSpawn()
         {
-            ItemCollider.enabled = HasAuthority;
-            ItemRb.detectCollisions = HasAuthority;
+            InitPhysics();
             
             base.OnNetworkSpawn();
         }
@@ -94,6 +105,12 @@ namespace _Scripts.Scene_Stage.Item
             this.gameObject.layer = _defaultLayerMask;
             
             if (HasAuthority) ItemCollider.enabled = true;
+        }
+        
+        private void InitPhysics()
+        {
+            if (ItemCollider != null) ItemCollider.enabled = HasAuthority;
+            if (ItemRb != null) ItemRb.detectCollisions = HasAuthority;
         }
 
         private void SyncWithNetObjPosition()

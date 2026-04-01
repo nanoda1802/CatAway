@@ -11,128 +11,143 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d62858895dd487690ba047e4730f90e, type: 3}
   m_Name: Stage_Coop_1
-  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Data.StageData
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Stage.Data.StageData
   id: 1
   mode: 0
-  thumbnail: {fileID: -3735701147272787997, guid: df65a0df46f6dc04687bb5db74c11068, type: 3}
+  thumbnail: {fileID: 21300000, guid: 47f7b5c5baf0fa94781ab85aea94cc7a, type: 3}
   description: 
-  duration: 30
+  duration: 100
   playerSpawnPoints:
-  - {x: -2, y: 0, z: 0}
-  - {x: 2, y: 0, z: 0}
-  - {x: -2, y: 0, z: 2}
-  - {x: 2, y: 0, z: 2}
+  - {x: -5, y: 0, z: 1}
+  - {x: 4, y: 0, z: 5}
+  - {x: 4.5, y: 0, z: 0}
+  - {x: -4.5, y: 0, z: 5}
   tableSpawnInfos:
-  - GlobalObjectHashId: 1677690761
-    Position: {x: -3, y: 0, z: -2}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
-    PantryType: 0
-  - GlobalObjectHashId: 1677690761
-    Position: {x: -2, y: 0, z: -2}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
-    PantryType: 0
-  - GlobalObjectHashId: 1677690761
-    Position: {x: -1, y: 0, z: -2}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
-    PantryType: 0
-  - GlobalObjectHashId: 1677690761
-    Position: {x: 1, y: 0, z: -2}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
-    PantryType: 0
-  - GlobalObjectHashId: 1677690761
-    Position: {x: 2, y: 0, z: -2}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
-    PantryType: 0
-  - GlobalObjectHashId: 3631993648
-    Position: {x: -7, y: 0, z: 0}
-    Rotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-    PantryType: 0
-  - GlobalObjectHashId: 3631993648
-    Position: {x: -7, y: 0, z: 1}
-    Rotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-    PantryType: 0
-  - GlobalObjectHashId: 3631993648
-    Position: {x: 7, y: 0, z: 0}
-    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-    PantryType: 0
-  - GlobalObjectHashId: 3631993648
-    Position: {x: 7, y: 0, z: 1}
-    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-    PantryType: 0
   - GlobalObjectHashId: 601127348
-    Position: {x: -2, y: 0, z: 5}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
-    PantryType: 1
-  - GlobalObjectHashId: 601127348
-    Position: {x: -1, y: 0, z: 5}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
+    Position: {x: 6.5, y: -0.5, z: 0.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
     PantryType: 2
   - GlobalObjectHashId: 601127348
-    Position: {x: 0, y: 0, z: 5}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
-    PantryType: 4
-  - GlobalObjectHashId: 601127348
-    Position: {x: 1, y: 0, z: 5}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
-    PantryType: 8
-  - GlobalObjectHashId: 601127348
-    Position: {x: 2, y: 0, z: 5}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
+    Position: {x: 6.5, y: -0.5, z: 1.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
     PantryType: 16
   - GlobalObjectHashId: 4130104072
-    Position: {x: -3, y: 0, z: 5}
-    Rotation: {x: -0, y: 1, z: -0, w: 0}
+    Position: {x: 6.5, y: -0.5, z: -0.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
     PantryType: 0
-  - GlobalObjectHashId: 4130104072
-    Position: {x: 3, y: 0, z: 5}
-    Rotation: {x: -0, y: 1, z: -0, w: 0}
-    PantryType: 0
-  - GlobalObjectHashId: 3097374463
-    Position: {x: -7, y: 0, z: 3}
-    Rotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-    PantryType: 0
-  - GlobalObjectHashId: 3097374463
-    Position: {x: -7, y: 0, z: 4}
-    Rotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-    PantryType: 0
-  - GlobalObjectHashId: 3097374463
-    Position: {x: 7, y: 0, z: 3}
+  - GlobalObjectHashId: 1677690761
+    Position: {x: 6.5, y: -0.5, z: 4.5}
     Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
     PantryType: 0
-  - GlobalObjectHashId: 3097374463
-    Position: {x: 7, y: 0, z: 4}
+  - GlobalObjectHashId: 1677690761
+    Position: {x: 6.5, y: -0.5, z: 7.5}
     Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
     PantryType: 0
   - GlobalObjectHashId: 2805644712
-    Position: {x: 3, y: 0, z: -2}
-    Rotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+    Position: {x: 6.5, y: -0.5, z: 6.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
     PantryType: 0
   - GlobalObjectHashId: 588258136
-    Position: {x: 4, y: 0, z: -2}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
+    Position: {x: 6.5, y: -0.5, z: 5.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
     PantryType: 0
-  - GlobalObjectHashId: 837482748
-    Position: {x: -4, y: 0, z: -2}
-    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - GlobalObjectHashId: 3097374463
+    Position: {x: 6.5, y: -0.5, z: 3.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 3097374463
+    Position: {x: 6.5, y: -0.5, z: 2.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 1677690761
+    Position: {x: -7.5, y: -0.5, z: -0.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
     PantryType: 0
   - GlobalObjectHashId: 4099170054
-    Position: {x: 0, y: 0, z: -2}
+    Position: {x: -7.5, y: -0.5, z: 0.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 4099170054
+    Position: {x: -7.5, y: -0.5, z: 1.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 837482748
+    Position: {x: -7.5, y: -0.5, z: 2.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 1677690761
+    Position: {x: -7.5, y: -0.5, z: 3.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 1677690761
+    Position: {x: -7.5, y: -0.5, z: 4.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 601127348
+    Position: {x: -2.5, y: -0.5, z: 4.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+    PantryType: 8
+  - GlobalObjectHashId: 601127348
+    Position: {x: -7.5, y: -0.5, z: 5.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
+    PantryType: 4
+  - GlobalObjectHashId: 3631993648
+    Position: {x: -2.5, y: -0.5, z: 5.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 601127348
+    Position: {x: -7.5, y: -0.5, z: 6.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
+    PantryType: 2
+  - GlobalObjectHashId: 1677690761
+    Position: {x: -2.5, y: -0.5, z: 6.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 1677690761
+    Position: {x: -6.5, y: -0.5, z: 7.5}
     Rotation: {x: -0, y: -0, z: -0, w: 1}
     PantryType: 0
+  - GlobalObjectHashId: 3097374463
+    Position: {x: -5.5, y: -0.5, z: 7.5}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+    PantryType: 0
+  - GlobalObjectHashId: 3097374463
+    Position: {x: -4.5, y: -0.5, z: 7.5}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+    PantryType: 0
+  - GlobalObjectHashId: 1677690761
+    Position: {x: -3.5, y: -0.5, z: 7.5}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+    PantryType: 0
+  - GlobalObjectHashId: 1677690761
+    Position: {x: 2.5, y: -0.5, z: 1.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 3631993648
+    Position: {x: 2.5, y: -0.5, z: 2.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
+    PantryType: 0
+  - GlobalObjectHashId: 601127348
+    Position: {x: 2.5, y: -0.5, z: 3.5}
+    Rotation: {x: -0, y: 0.7071068, z: -0, w: -0.7071068}
+    PantryType: 1
   orderInfo:
     maxActiveOrderCount: 5
     newOrderInterval: 3
     requiredType: 1
     menuList:
     - recipe: 19
-      duration: 180
-      baseScore: 100
+      duration: 100
+      baseScore: 120
     - recipe: 13
-      duration: 180
-      baseScore: 100
-    - recipe: 17
-      duration: 120
-      baseScore: 100
+      duration: 100
+      baseScore: 150
+    - recipe: 5
+      duration: 60
+      baseScore: 80
     - recipe: 3
-      duration: 120
-      baseScore: 100
+      duration: 70
+      baseScore: 90
+    - recipe: 9
+      duration: 60
+      baseScore: 80

@@ -29,7 +29,7 @@ namespace _Scripts.Scene_Stage.Item.Ingredient
 
             if (ingredient != null)
             {
-                _provider.ReleaseIngredient(ingredient);
+                _provider.Release(ingredient);
             }
             else
             {

@@ -84,7 +84,7 @@ namespace _Scripts.Scene_Home
                 case ConnectionEvent.ClientConnected:
                     if (!netMgr.IsApproved)
                     {
-                        SendDialog("Failed To Join", netMgr.DisconnectReason, DialogButtonType.Retry | DialogButtonType.Cancel);
+                        SendDialog("Fail To Join", netMgr.DisconnectReason, DialogButtonType.Retry | DialogButtonType.Cancel);
                         return;
                     }
                     _popDownPub.Publish(new PopDownMessage());
@@ -93,7 +93,7 @@ namespace _Scripts.Scene_Home
                 case ConnectionEvent.ClientDisconnected:
                     if (!netMgr.IsApproved)
                     {
-                        SendDialog("Failed To Join", netMgr.DisconnectReason, DialogButtonType.Retry | DialogButtonType.Cancel);
+                        SendDialog("Fail To Join", netMgr.DisconnectReason, DialogButtonType.Retry | DialogButtonType.Cancel);
                         return;
                     }
                     return;
@@ -116,7 +116,7 @@ namespace _Scripts.Scene_Home
             
             if (!networkStarted)
             {
-                SendDialog("Failed To Create", _netManager.DisconnectReason, DialogButtonType.Cancel);
+                SendDialog("Fail To Create", _netManager.DisconnectReason, DialogButtonType.Cancel);
                 
                 return;
             }
@@ -138,7 +138,7 @@ namespace _Scripts.Scene_Home
             
             if (!networkStarted)
             {
-                SendDialog("Failed To Join", _netManager.DisconnectReason, DialogButtonType.Retry | DialogButtonType.Cancel);
+                SendDialog("Fail To Join", _netManager.DisconnectReason, DialogButtonType.Retry | DialogButtonType.Cancel);
                 return;
             }
         }

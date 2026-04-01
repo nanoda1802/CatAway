@@ -23,7 +23,7 @@ namespace _Scripts.Scene_Stage.Item.Plate
 
             if (plate != null)
             {
-                _provider.ReleasePlate(plate);
+                _provider.Release(plate);
             }
             else
             {

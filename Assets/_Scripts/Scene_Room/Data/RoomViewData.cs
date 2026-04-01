@@ -5,7 +5,7 @@ using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Room.Data
 {
-    [CreateAssetMenu(menuName = "SO/Lobby/UI/RoomView",  fileName = "RoomView")]
+    [CreateAssetMenu(menuName = "SO/UI/RoomView",  fileName = "RoomView")]
     public class RoomViewData : ScriptableObject
     {
         [SF] private SerializedDictionary<StageMode,Color> stageModeColorDic;

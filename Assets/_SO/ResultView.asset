@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: ResultView
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Result.Data.ResultViewData
   duration: 100
-  spareTimeAfterSkip: 5
+  spareTimeAfterSkip: 5.1
   timerFormat: '{0:D2}'
+  spareTimeColor: {r: 1, g: 0.37254903, b: 0.29411766, a: 1}
   checkIcon: {fileID: 21300000, guid: a455e0901347f9d4783640818c1c88f3, type: 3}
   crossIcon: {fileID: 21300000, guid: 0deadde77c9afe544a0534f91adc39b3, type: 3}
   checkColor: {r: 1, g: 0.8745098, b: 0.35686275, a: 1}

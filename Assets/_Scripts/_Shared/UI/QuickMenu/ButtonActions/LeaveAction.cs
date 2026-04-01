@@ -2,6 +2,7 @@
 using _Scripts._Shared.UI.Pop;
 using _Scripts.Messages;
 using MessagePipe;
+using UnityEngine;
 
 namespace _Scripts._Shared.UI.QuickMenu.ButtonActions
 {
@@ -11,6 +12,9 @@ namespace _Scripts._Shared.UI.QuickMenu.ButtonActions
 
         private readonly IPublisher<DialogMessage> _dialogPub;
         private readonly IPublisher<PopUpMessage> _popUpPub;
+        
+        private float _lastClickTime;
+        private bool IsValidClick => Time.time - _lastClickTime >= 1f;
         
         public LeaveAction(
             IPublisher<DialogMessage> dialogPub,
@@ -22,6 +26,9 @@ namespace _Scripts._Shared.UI.QuickMenu.ButtonActions
 
         public void OnClick()
         {
+            if (!IsValidClick) return;
+            _lastClickTime = Time.time;
+            
             var popUpMsg = new PopUpMessage(typeof(DialogPop));
             var dialogMsg = new DialogMessage(
                 "Leave Room",

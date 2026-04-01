@@ -1,6 +1,9 @@
-﻿using _Scripts.Scene_Stage.Data.UI;
+﻿using System;
+using _Scripts._Helper;
+using _Scripts.Scene_Stage.Data.UI;
 using _Scripts.Scene_Stage.Enums;
 using MessagePipe;
+using PrimeTween;
 using TMPro;
 using UnityEngine;
 using VContainer;
@@ -16,20 +19,48 @@ namespace _Scripts.Scene_Stage.UI.Board.Score
         [SF] private TextMeshProUGUI comboText;
         
         private BoardUiData _boardUiData;
+        private TweenHandler _tweenHandler;
         
         private int _prevCombo = -1;
+        private int _prevScore = 0;
+
+        private Sequence _curSeq;
         
         [Inject]
         private void Construct(
             BoardUiData boardUiData,
+            TweenHandler tweenHandler,
             ISubscriber<ScoreMessage> scoreSub,
             DisposableBagBuilder disposableBagBuilder)
         {
             _boardUiData = boardUiData;
+            _tweenHandler = tweenHandler;
 
             scoreSub
                 .Subscribe(Apply, new TeamMessageFilter<ScoreMessage>(team))
                 .AddTo(disposableBagBuilder);
+
+            InitBoard();
+        }
+
+        private void OnDestroy()
+        {
+            if (_curSeq.isAlive) _curSeq.Complete();
+        }
+
+        private void InitBoard()
+        {
+            scoreText.SetText("{0}", 0);
+            
+            comboText.SetText(_boardUiData.ComboFormat, 0);
+            
+            comboText.color = team switch
+            {
+                Team.Blue => _boardUiData.BlueTheme.TextColor,
+                Team.Red => _boardUiData.RedTheme.TextColor,
+                Team.None => _boardUiData.CoopTheme.TextColor,
+                _ => _boardUiData.CoopTheme.TextColor
+            };
         }
 
         public void Apply(ScoreMessage data)
@@ -40,16 +71,19 @@ namespace _Scripts.Scene_Stage.UI.Board.Score
 
         private void UpdateScore(int newScore, bool hasPoint)
         {
-            if (hasPoint)
-            {
-                // 득점 트윈
-            }
-            else
-            {
-                // 감점 트윈
-            }
+            if (newScore == _prevScore) return;
 
-            scoreText.text = newScore.ToString();
+            if (_curSeq.isAlive) _curSeq.Complete();
+            
+            _curSeq = _tweenHandler.Counter(
+                scoreText,
+                _prevScore,
+                newScore,
+                hasPoint ? _boardUiData.AddScoreColorSettings : _boardUiData.DeductScoreColorSettings,
+                _boardUiData.ScorePunchSettings,
+                OnCounterComplete);
+            
+            _prevScore = newScore;
         }
 
         private void UpdateCombo(int combo, bool hasPoint)
@@ -57,12 +91,18 @@ namespace _Scripts.Scene_Stage.UI.Board.Score
             if (_prevCombo == combo) return;
             
             combo = hasPoint ? combo : 0;
-            comboText.text = string.Format(_boardUiData.ComboFormat, combo);
+            comboText.SetText(_boardUiData.ComboFormat, combo);
             
-            var colorIdx = Mathf.Clamp(combo, 0, _boardUiData.ComboColorLastIndex);
-            comboText.color = _boardUiData.GetComboColor(colorIdx);
+            // var colorIdx = Mathf.Clamp(combo, 0, _boardUiData.ComboColorLastIndex);
+            // comboText.color = _boardUiData.GetComboColor(colorIdx);
             
             _prevCombo = combo;
+        }
+
+        private void OnCounterComplete()
+        {
+            scoreText.color = _boardUiData.AddScoreColorSettings.startValue;
+            scoreText.SetText("{0}", _prevScore);
         }
     }
 }

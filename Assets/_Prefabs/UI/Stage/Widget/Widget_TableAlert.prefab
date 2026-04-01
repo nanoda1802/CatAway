@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 75, y: 75}
+  m_SizeDelta: {x: 65, y: 65}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1176422696686833915
 MonoBehaviour:
@@ -52,7 +52,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.UI.Widget.TableAlert.TableAlertWidget
   alertImg: {fileID: 7830195327489477604}
-  rectTr: {fileID: 3480605130885250573}
 --- !u!222 &817998061589787185
 CanvasRenderer:
   m_ObjectHideFlags: 0

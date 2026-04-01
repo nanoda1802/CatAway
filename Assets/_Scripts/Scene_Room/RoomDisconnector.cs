@@ -18,7 +18,7 @@ namespace _Scripts.Scene_Room
         private IPublisher<LoadSceneMessage> _loadScenePub;
         private IPublisher<PopUpMessage> _popUpPub;
         private IPublisher<DialogMessage> _dialogPub;
-        private IPublisher<RoomNoticeMessage> _roomNoticePub;
+        private IPublisher<RoomToastMessage> _roomNoticePub;
 
         private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
         
@@ -28,7 +28,7 @@ namespace _Scripts.Scene_Room
             IPublisher<LoadSceneMessage> loadScenePub,
             IPublisher<PopUpMessage> popUpPub,
             IPublisher<DialogMessage> dialogPub,
-            IPublisher<RoomNoticeMessage> roomNoticePub,
+            IPublisher<RoomToastMessage> roomNoticePub,
             ISubscriber<LeaveRoomMessage> leaveRoomSub)
         {
             _roomStatus = roomStatus;
@@ -124,7 +124,7 @@ namespace _Scripts.Scene_Room
         [Rpc(SendTo.Everyone)]
         private void NotifyDisconnectRpc(ulong targetId)
         {
-            var msg = new RoomNoticeMessage($"Player{targetId} has left Room.");
+            var msg = new RoomToastMessage($"Player{targetId} has left Room.");
             _roomNoticePub.Publish(msg);
         }
     }

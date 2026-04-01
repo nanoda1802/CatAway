@@ -8,7 +8,7 @@ namespace _Scripts.Scene_Stage.UI.Widget
         private RectTransform _canvasRectTr;
         private Camera _mainCam;
 
-        private RectTransform _widgetRectTr;
+        protected RectTransform WidgetRectTr;
         
         [Inject]
         private void ConstructBase(RectTransform canvasRectTr, Camera mainCam)
@@ -16,7 +16,7 @@ namespace _Scripts.Scene_Stage.UI.Widget
             _canvasRectTr = canvasRectTr;
             _mainCam = mainCam;
 
-            _widgetRectTr = GetComponent<RectTransform>();
+            WidgetRectTr = GetComponent<RectTransform>();
         }
 
         public virtual void Show()
@@ -42,7 +42,7 @@ namespace _Scripts.Scene_Stage.UI.Widget
                 out Vector2 localPoint
             );
             
-            _widgetRectTr.anchoredPosition = localPoint;
+            WidgetRectTr.anchoredPosition = localPoint;
         }
     }
 }

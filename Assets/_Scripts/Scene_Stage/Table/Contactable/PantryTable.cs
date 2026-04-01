@@ -31,22 +31,47 @@ namespace _Scripts.Scene_Stage.Table.Contactable
             _stageHub = stageHub;
         }
 
+        public override void OnNetworkSpawn()
+        {
+            if (IsServer) _sharedIngredientType.Value = presetType;
+
+            _sharedIngredientType.OnValueChanged += OnTypeChanged;
+
+            base.OnNetworkSpawn();
+        }
+
         protected override void OnNetworkPostSpawn()
         {
-            presetType = _sharedIngredientType.Value;
-            
-            var provider = _stageHub.FetchProvider<IngredientProvider>();
-            (Mesh mesh, Vector3 scale) = provider.GetModelInfo(_sharedIngredientType.Value);
-            
-            sampleMeshFilter.sharedMesh = mesh;
-            sampleTransform.localScale = scale;
+            UpdateSampleModel(_sharedIngredientType.Value);
             
             base.OnNetworkPostSpawn();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            _sharedIngredientType.OnValueChanged -= OnTypeChanged;
+            
+            base.OnNetworkDespawn();
         }
 
         public void SetAs(IngredientType type)
         {
             _sharedIngredientType.Value = type;
+        }
+
+        private void UpdateSampleModel(IngredientType type)
+        {
+            var provider = _stageHub.FetchProvider<IngredientProvider>();
+            (Mesh mesh, Vector3 scale) = provider.GetModelInfo(type);
+            
+            sampleMeshFilter.sharedMesh = mesh;
+            sampleTransform.localScale = scale;
+        }
+
+        private void OnTypeChanged(IngredientType prev, IngredientType cur)
+        {
+            if (prev == cur) return;
+            UpdateSampleModel(cur);
         }
 
         #region Contactable 관련 메서드
@@ -72,8 +97,9 @@ namespace _Scripts.Scene_Stage.Table.Contactable
         {
             var provider = _stageHub.FetchProvider<IngredientProvider>();
             var ingredient = provider.GetIngredient(presetType, transform.position);
-            NetworkManager.PrefabHandler.SetInstantiationData(ingredient.NetworkObject,new IngredientTypePacket(presetType));
-            ingredient.NetworkObject.Spawn(true);
+            
+            NetworkManager.PrefabHandler.SetInstantiationData(ingredient.NetObj,new IngredientTypePacket(presetType));
+            ingredient.NetObj.Spawn(true);
             
             await UniTask.Yield();
             carrier.Pick(ingredient);

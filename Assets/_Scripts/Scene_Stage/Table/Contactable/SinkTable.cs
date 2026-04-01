@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Scripts._Helper;
 using _Scripts._Wrapper;
 using _Scripts.Scene_Stage.Item;
 using _Scripts.Scene_Stage.Item.Plate;
@@ -16,12 +17,14 @@ namespace _Scripts.Scene_Stage.Table.Contactable
 {
     public class SinkTable : NetworkBehaviour, IInteractable, INetworkUpdateSystem, IContactable
     {
+        [SF] private ParticleSystem bubbleVfx;
         // Data
         [SF] private float dirtinessThreshold = 0.005f;
         private readonly int _washAnimParamHash = Animator.StringToHash("WashDish");
         // Dependency
         private AttachableSlot _tableSlot;
         private StageHub _stageHub;
+        private VfxHandler _vfxHandler;
         // Caching
         private Plate _targetPlate;
         private ProgressBarWidget _activeBarWidget;
@@ -34,9 +37,12 @@ namespace _Scripts.Scene_Stage.Table.Contactable
         public bool IsInteracting => _interactorList.Count > 0 && _targetPlate != null;
 
         [Inject]
-        private void Construct(StageHub stageHub)
+        private void Construct(
+            StageHub stageHub,
+            VfxHandler vfxHandler)
         {
             _stageHub = stageHub;
+            _vfxHandler = vfxHandler;
             
             _tableSlot = GetComponentInChildren<AttachableSlot>();
             _tableSlot.OnAttach += OnSlotAttached;
@@ -58,6 +64,8 @@ namespace _Scripts.Scene_Stage.Table.Contactable
             _sharedProgress.CheckExceedsDirtinessThreshold = null;
             _tableSlot.OnAttach -= OnSlotAttached;
             _tableSlot.OnDetach -= OnSlotDetached;
+            
+            _vfxHandler.StopImmediately(bubbleVfx);
             
             base.OnNetworkDespawn();
         }
@@ -82,6 +90,7 @@ namespace _Scripts.Scene_Stage.Table.Contactable
             if (!IsServer || attachableBehaviour is not Plate plate) return;
             
             ActivateProgressBarRpc();
+            
             OnFinished += plate.OnPrepCompleted;
             this.RegisterNetworkUpdate(NetworkUpdateStage.Update);
         }
@@ -91,6 +100,8 @@ namespace _Scripts.Scene_Stage.Table.Contactable
             if (!IsServer || attachableBehaviour is not Plate plate) return;
             
             DeactivateProgressBarRpc();
+            DeactivateVfxRpc();
+            
             OnFinished = null;
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
             
@@ -118,7 +129,7 @@ namespace _Scripts.Scene_Stage.Table.Contactable
         {
             if (plate.IsCarrying) plate.Detach();
             var provider = _stageHub.FetchProvider<PlateProvider>();
-            provider.ReleasePlate(plate);
+            provider.Release(plate);
             plate.NetworkObject.Despawn(false);
         }
         #endregion
@@ -134,11 +145,13 @@ namespace _Scripts.Scene_Stage.Table.Contactable
                 if (!provider.HasInactivePlate) return false;
                 
                 _targetPlate = provider.GetPlate(transform.position);
-                _targetPlate.NetworkObject.Spawn(true);
+                _targetPlate.NetObj.Spawn(true);
                 _targetPlate.Attach(_tableSlot);
             }
             
             animParamHash = _washAnimParamHash;
+            
+            if (!IsInteracting) ActivateVfxRpc();
             
             _interactorList.Add(interactor.OwnerClientId);
             OnFinished += interactor.FinishRpc;
@@ -183,6 +196,20 @@ namespace _Scripts.Scene_Stage.Table.Contactable
             var provider = _stageHub.FetchProvider<ProgressBarProvider>();
             provider.ReleaseWidget(_activeBarWidget);
             _activeBarWidget = null;
+        }
+        #endregion
+        
+        #region VFX 관련 메서드
+        [Rpc(SendTo.Everyone)]
+        private void ActivateVfxRpc()
+        {
+            _vfxHandler.PlayVfx(bubbleVfx);
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void DeactivateVfxRpc()
+        {
+            _vfxHandler.StopSmoothly(bubbleVfx);
         }
         #endregion
     }

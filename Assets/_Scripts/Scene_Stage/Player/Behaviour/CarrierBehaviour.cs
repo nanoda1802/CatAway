@@ -104,8 +104,11 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
                this.Pick(item);
                return;
             }
-            
-            if (!_detectStatus.DetectTable(out var table)) return;
+
+            if (!_detectStatus.DetectTable(out var table))
+            {
+               return;
+            }
             
             AssignToBroker(table);
          }

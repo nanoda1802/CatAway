@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
+using _Scripts._Helper;
 using _Scripts._Wrapper;
 using _Scripts.Scene_Stage.Item;
 using _Scripts.Scene_Stage.Item.Cookware;
@@ -9,6 +11,7 @@ using _Scripts.Scene_Stage.UI.Widget.TableAlert;
 using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VContainer;
 using SF = UnityEngine.SerializeField;
 
@@ -16,6 +19,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
 {
     public class StoveTable : NetworkBehaviour, IPlacable, INetworkUpdateSystem
     {
+        [SF] private ParticleSystem fireVfx;
         // Data
         [SF] private float dirtinessThreshold = 0.005f;
         [SF] private float preWarnDelay = 5f;
@@ -25,6 +29,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
         // Dependency
         private PlacementBroker _placementBroker;
         private StageHub _stageHub;
+        private VfxHandler _vfxHandler;
         // Caching
         private Cookware _placedCookware;
         private ProgressBarWidget _activeBarWidget;
@@ -46,10 +51,12 @@ namespace _Scripts.Scene_Stage.Table.Placable
         [Inject]
         private void Construct(
             PlacementBroker placementBroker,
-            StageHub stageHub)
+            StageHub stageHub,
+            VfxHandler vfxHandler)
         {
             _placementBroker = placementBroker;
             _stageHub = stageHub;
+            _vfxHandler = vfxHandler;
             
             _itemTag = TagHandle.GetExistingTag("Item");
             
@@ -71,20 +78,14 @@ namespace _Scripts.Scene_Stage.Table.Placable
         #region NGO 관련 메서드
         public override void OnNetworkSpawn()
         {
+            if (IsServer) NetworkManager.SceneManager.OnLoadEventCompleted += OnLevelLoaded;
             _sharedProgress.CheckExceedsDirtinessThreshold = CheckDirtiness;
             base.OnNetworkSpawn();
         }
 
-        protected override void OnNetworkPostSpawn()
-        {
-            if (IsServer) AttachWithSpawn().Forget();
-            
-            base.OnNetworkPostSpawn();
-        }
-
         public override void OnNetworkPreDespawn()
         {
-            CancelWarn();
+            if (IsServer) CancelWarn();
             
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
             
@@ -93,7 +94,20 @@ namespace _Scripts.Scene_Stage.Table.Placable
             _tableSlot.OnAttach -= OnTableSlotAttached;
             _tableSlot.OnDetach -= OnTableSlotDetached;
             
+            _vfxHandler.StopImmediately(fireVfx);
+            
             base.OnNetworkPreDespawn();
+        }
+        
+        // 씬 배치 네트워크오브젝트라서, 모든 클라이언트에서 스폰 완료된 안전한 시점이 이때 뿐...!
+        private void OnLevelLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+        {
+            if (!NetworkManager.IsServer) return;
+            if (!sceneName.StartsWith("Level")) return;
+            
+            AttachWithSpawn().Forget();
+            
+            NetworkManager.SceneManager.OnLoadEventCompleted -= OnLevelLoaded;
         }
         
         private void OnTableSlotAttached(Carriable item)
@@ -112,8 +126,6 @@ namespace _Scripts.Scene_Stage.Table.Placable
             
             if (_placedCookware.HeldIngredient.IsRaw) StartHeat();
             if (_placedCookware.HeldIngredient.IsWellPrepped) WarnOverHeat().Forget();
-            
-            // 불 vfx 켜기 rpc
         }
 
         private void OnTableSlotDetached(Carriable item)
@@ -126,8 +138,6 @@ namespace _Scripts.Scene_Stage.Table.Placable
             _placedCookware.HolderSlot.OnAttach -= OnCookwareSlotAttached;
             _placedCookware.HolderSlot.OnDetach -= OnCookwareSlotDetached;
             _placedCookware = null;
-            
-            // 불 vfx 끄기 rpc
         }
 
         private void OnCookwareSlotAttached(Carriable item)
@@ -136,8 +146,6 @@ namespace _Scripts.Scene_Stage.Table.Placable
             
             if (ingredient.IsRaw) StartHeat();
             if (ingredient.IsWellPrepped) WarnOverHeat().Forget();
-            
-            // 불 vfx 켜기 rpc
         }
 
         private void OnCookwareSlotDetached(Carriable item)
@@ -146,8 +154,6 @@ namespace _Scripts.Scene_Stage.Table.Placable
             
             if (IsHeating) CancelHeat();
             if (IsWarning) CancelWarn();
-            
-            // 불 vfx 끄기 rpc
         }
 
         private bool CheckDirtiness(in float prev, in float next)
@@ -209,7 +215,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
         {
             var provider = _stageHub.FetchProvider<CookwareProvider>();
             var cookware = provider.GetCookware(this.transform.position);
-            cookware.NetworkObject.Spawn(true);
+            cookware.NetObj.Spawn(true);
             
             await UniTask.Yield();
             this.Place(cookware);
@@ -222,6 +228,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             OnFinished += _placedCookware.HeldIngredient.OnPrepCompleted;
             
             ActivateProgressBarRpc();
+            ActivateVfxRpc();
             
             this.RegisterNetworkUpdate(NetworkUpdateStage.Update);
         }
@@ -233,6 +240,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
             
             DeactivateProgressBarRpc();
+            DeactivateVfxRpc();
             
             _sharedProgress.Value = 0;
         }
@@ -260,6 +268,8 @@ namespace _Scripts.Scene_Stage.Table.Placable
                 _warningCts = new CancellationTokenSource();
             }
             
+            if (!fireVfx.isPlaying) ActivateVfxRpc();
+            
             var canceled = await UniTask.Delay(PreWarnDelay, false, cancellationToken:_warningCts.Token).SuppressCancellationThrow();
             if (canceled) return;
             
@@ -268,6 +278,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             canceled = await UniTask.Delay(WarnDuration, false, cancellationToken:_warningCts.Token).SuppressCancellationThrow();
 
             DeactivateTableAlertRpc(); // [수정] 스폰 상태일 때만 호출하ㅣ게 수정
+            DeactivateVfxRpc();
             
             if (!canceled && HasHeatTarget)
             {
@@ -280,6 +291,8 @@ namespace _Scripts.Scene_Stage.Table.Placable
             _warningCts?.Cancel();
             _warningCts?.Dispose();
             _warningCts = null;
+            
+            DeactivateVfxRpc();
         }
         #endregion
 
@@ -324,6 +337,20 @@ namespace _Scripts.Scene_Stage.Table.Placable
             var provider = _stageHub.FetchProvider<TableAlertProvider>();
             provider.ReleaseWidget(_activeAlertWidget);
             _activeAlertWidget = null;
+        }
+        #endregion
+        
+        #region VFX 관련 메서드
+        [Rpc(SendTo.Everyone)]
+        private void ActivateVfxRpc()
+        {
+            _vfxHandler.PlayVfx(fireVfx);
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void DeactivateVfxRpc()
+        {
+            _vfxHandler.StopSmoothly(fireVfx);
         }
         #endregion
     }

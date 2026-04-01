@@ -42,13 +42,15 @@ namespace _Scripts.Scene_Stage.UI.Board.Score
                 .AddTo(disposableBagBuilder);
         }
 
-        public void UpdateScore(int baseScore, float remainingRatio, ulong clientId = ulong.MaxValue)
+        public int UpdateScore(int baseScore, float remainingRatio, ulong clientId = ulong.MaxValue)
         {
-            var point = CalculatePoint(baseScore, remainingRatio);
+            int point = CalculatePoint(baseScore, remainingRatio);
 
             (int curScore, int curCombo) = _stageStatus.RecordCurScore(team, point, clientId);
             
             UpdateRpc(new ScoreMessage(team, curScore, curCombo, point > 0));
+
+            return point;
         }
 
         private int CalculatePoint(int score, float ratio)

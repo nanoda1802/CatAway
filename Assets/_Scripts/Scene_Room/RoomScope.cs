@@ -49,7 +49,7 @@ namespace _Scripts.Scene_Room
             var msgOptions = Parent.Container.Resolve<MessagePipeOptions>();
             builder.RegisterMessageBroker<InitRoomMessage>(msgOptions);
             builder.RegisterMessageBroker<LeaveRoomMessage>(msgOptions);
-            builder.RegisterMessageBroker<RoomNoticeMessage>(msgOptions);
+            builder.RegisterMessageBroker<RoomToastMessage>(msgOptions);
             
             builder.RegisterMessageBroker<SwitchStartMessage>(msgOptions);
             

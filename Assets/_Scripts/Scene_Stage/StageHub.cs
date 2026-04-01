@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using _Scripts.Scene_Stage.Enums;
 using _Scripts.Scene_Stage.Table;
+using _Scripts.Scene_Stage.Table.Placable;
 using _Scripts.Scene_Stage.UI.Board.Order;
 using _Scripts.Scene_Stage.UI.Board.Score;
 using _Scripts.Scene_Stage.UI.Pop;
@@ -18,6 +19,7 @@ namespace _Scripts.Scene_Stage
         
         private readonly Dictionary<Type, IPlacable> _placableDic = new();
         private readonly Dictionary<Type, IProvider> _providerDic = new();
+        private readonly Dictionary<Team, PlateReturnTable> _plateReturnTableDic = new();
         
         private readonly Dictionary<Team, ScorePresenter> _scorePresenterDic = new();
         private readonly Dictionary<Team, OrderPresenter> _orderPresenterDic = new();
@@ -33,7 +35,16 @@ namespace _Scripts.Scene_Stage
             DisposableBagBuilder disposableBagBuilder)
         {
             placableSub
-                .Subscribe(table => _placableDic.TryAdd(table.GetType(), table))
+                .Subscribe(table =>
+                {
+                    if (table is PlateReturnTable returnTable)
+                    {
+                        _plateReturnTableDic.TryAdd(returnTable.Team, returnTable);
+                        return;
+                    }
+
+                    _placableDic.TryAdd(table.GetType(), table);
+                })
                 .AddTo(disposableBagBuilder);
             
             providerSub
@@ -63,6 +74,11 @@ namespace _Scripts.Scene_Stage
         public T FetchProvider<T>() where T : MonoBehaviour, IProvider
         {
             return _providerDic.GetValueOrDefault(typeof(T), null) as T;
+        }
+
+        public PlateReturnTable FetchPlateReturnTable(Team team)
+        {
+            return _plateReturnTableDic.GetValueOrDefault(team, null);
         }
 
         public ScorePresenter FetchScorePresenter(Team team)

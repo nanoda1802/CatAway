@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Scripts._Wrapper;
+using _Scripts.Scene_Stage.Enums;
 using _Scripts.Scene_Stage.Item;
 using _Scripts.Scene_Stage.Item.Plate;
 using _Scripts.Stage;
@@ -16,6 +17,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
     {
         // Data
         [SF] private float plateOffsetY = 0.1f;
+        [SF] private Team team;
         // Dependency
         private AttachableSlot _tableSlot;
         // Caching
@@ -23,6 +25,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
         private IDisposable _subscription;
         // Property
         public Carriable PlacedItem => _returnedPlates.TryPeek(out Carriable item) ? item : null;
+        public Team Team => team;
 
         [Inject]
         private void Construct(

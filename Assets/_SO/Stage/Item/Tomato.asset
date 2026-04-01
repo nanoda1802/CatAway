@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06ede87c9df14d9bb02353ccf6c9fde2, type: 3}
   m_Name: Tomato
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.IngredientData
-  tempPrefab: {fileID: 5728861221599045894, guid: 7c68e747e58a6bc4eba8a59e0b3802cb, type: 3}
   type: 4
   defaultModelInfo:
     renderMesh: {fileID: -1340541719380434750, guid: 83fdd2cb637136948b1588fa64ac2eb4, type: 3}
@@ -26,7 +25,7 @@ MonoBehaviour:
     renderMesh: {fileID: 0}
     colliderMesh: {fileID: 0}
     scale: {x: 0, y: 0, z: 0}
-  maxProgress: 2
+  maxProgress: 1
   maxPrepState: 1
   throwForce: 17
   dampingThreshold: 10

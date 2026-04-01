@@ -1,3 +1,4 @@
+using _Scripts._Helper;
 using _Scripts.Messages.Stage;
 using _Scripts.Scene_Stage.Player.Status;
 using Cysharp.Threading.Tasks;
@@ -6,14 +7,19 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
+using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Stage.Player.Behaviour
 {
     public class MovementBehaviour : NetworkBehaviour, INetworkUpdateSystem
     {
+        [SF] private ParticleSystem dashVfx;
+        
         private MoveStatus _moveStatus;
         private InteractStatus _interactStatus;
     
+        private VfxHandler _vfxHandler;
+        
         private InputAction _moveAction;
         private InputAction _dashAction;
 
@@ -28,6 +34,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
         private void Construct(
             MoveStatus moveStatus, 
             InteractStatus interactStatus,
+            VfxHandler vfxHandler,
             PlayerInput inputMap,
             Rigidbody playerRb,
             Animator playerAnimator,
@@ -37,6 +44,8 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
         {
             _moveStatus = moveStatus;
             _interactStatus = interactStatus;
+            
+            _vfxHandler = vfxHandler;
             
             _moveAction = inputMap.asset.FindAction("Movement"); // 방법 1
             _dashAction = inputMap.Stage.Button1; // 방법 2
@@ -127,6 +136,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             Dash().Forget();
             
             _moveStatus.UpdateSpeedMultiplier(true);
+            ActivateVfxRpc();
             
             // float speed = _moveStatus.UpdateSpeedMultiplier(true);
             // _animator.SetFloat(_moveSpeedParamHash, speed);
@@ -135,6 +145,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
         private void OnDashCanceled(InputAction.CallbackContext ctx)
         {
             _moveStatus.UpdateSpeedMultiplier(false);
+            DeactivateVfxRpc();
             
             // float speed = _moveStatus.UpdateSpeedMultiplier(false);
             // _animator.SetFloat(_moveSpeedParamHash, speed);
@@ -164,6 +175,18 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             _dashAction.started -= OnDashStarted;
             _dashAction.canceled -= OnDashCanceled;
             _dashAction.Disable();
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void ActivateVfxRpc()
+        {
+            _vfxHandler.PlayVfx(dashVfx);
+        }
+        
+        [Rpc(SendTo.Everyone)]
+        private void DeactivateVfxRpc()
+        {
+            _vfxHandler.StopSmoothly(dashVfx);
         }
     }
 }

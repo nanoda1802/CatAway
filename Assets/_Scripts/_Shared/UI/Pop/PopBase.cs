@@ -1,5 +1,7 @@
-﻿using _Scripts.Messages;
+﻿using System;
+using _Scripts.Messages;
 using MessagePipe;
+using PrimeTween;
 using UnityEngine;
 using VContainer;
 
@@ -7,8 +9,10 @@ namespace _Scripts._Shared.UI.Pop
 {
     public class PopBase : MonoBehaviour
     {
-        private CanvasGroup _popGroup;
+        protected CanvasGroup PopGroup;
         protected PopPanel Bg;
+        
+        protected Sequence CurSequence;
         
         [Inject]
         private void ConstructBase(
@@ -18,35 +22,45 @@ namespace _Scripts._Shared.UI.Pop
             ISubscriber<PopUpMessage> popUpSub,
             ISubscriber<PopDownMessage> popDownSub)
         {
-            _popGroup = popUpGroup;
+            PopGroup = popUpGroup;
             Bg = bg;
 
-            popUpSub.Subscribe(msg =>
-                {
-                    if (!msg.IsRequested(this)) return; 
-                    this.PopUp();
-                }).AddTo(disposableBagBuilder);
-            
-            popDownSub.Subscribe(msg => 
-                {
-                    if (!this.isActiveAndEnabled) return;
-                    PopDown();
-                })
+            popUpSub
+                .Subscribe(HandlePopUpMessage)
                 .AddTo(disposableBagBuilder);
+            
+            popDownSub
+                .Subscribe(HandlePopDownMessage)
+                .AddTo(disposableBagBuilder);
+        }
+
+        private void OnDestroy()
+        {
+            if (CurSequence.isAlive) CurSequence.Complete();
+        }
+
+        private void HandlePopUpMessage(PopUpMessage msg)
+        {
+            if (msg.IsRequested(this) && !isActiveAndEnabled) PopUp();
+        }
+
+        private void HandlePopDownMessage(PopDownMessage msg)
+        {
+            PopDown();
         }
 
         protected virtual void PopUp()
         {
-            _popGroup.alpha = 1;
-            _popGroup.blocksRaycasts = true;
+            if (CurSequence.isAlive) CurSequence.Complete();
+            
+            PopGroup.blocksRaycasts = true;
             
             this.gameObject.SetActive(true);
         }
 
         protected virtual void PopDown()
         {
-            _popGroup.alpha = 0;
-            _popGroup.blocksRaycasts = false;
+            PopGroup.blocksRaycasts = false;
             
             this.gameObject.SetActive(false);
         }

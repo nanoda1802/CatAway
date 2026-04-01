@@ -102,7 +102,6 @@ namespace _Scripts.Scene_Stage.Data
         private void RecordResult(EndStageMessage msg)
         {
             _room.RecordStageResult(AcePlayerId, _statusByTeam.Values.ToArray());
-            Debug.Log("[StageStatus] Record Result");
         }
     }
 }

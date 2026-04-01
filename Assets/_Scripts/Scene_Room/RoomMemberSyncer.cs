@@ -49,6 +49,7 @@ namespace _Scripts.Scene_Room
         {
             get
             {
+                return true;
                 if (!IsServer) return false;
                 if (!_roomStatus.EachTeamHasMember) return false;
 

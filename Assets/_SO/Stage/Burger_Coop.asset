@@ -17,6 +17,7 @@ MonoBehaviour:
   thumbnail: {fileID: -8791713682513551609, guid: 7d38e6509983ed34f8f269518669f503, type: 3}
   description: 
   duration: 5940
+  playerSpawnPoints: []
   tableSpawnInfos: []
   orderInfo:
     maxActiveOrderCount: 5
@@ -24,14 +25,14 @@ MonoBehaviour:
     requiredType: 1
     menuList:
     - recipe: 19
-      duration: 180
-      baseScore: 100
+      duration: 100
+      baseScore: 120
     - recipe: 13
-      duration: 180
-      baseScore: 100
+      duration: 100
+      baseScore: 150
     - recipe: 17
-      duration: 120
-      baseScore: 100
+      duration: 60
+      baseScore: 80
     - recipe: 3
-      duration: 120
-      baseScore: 100
+      duration: 70
+      baseScore: 90

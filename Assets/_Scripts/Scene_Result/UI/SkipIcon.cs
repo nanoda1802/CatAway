@@ -34,7 +34,6 @@ namespace _Scripts.Scene_Result.UI
 
         public void Hide()
         {
-            if (!isActiveAndEnabled) return;
             gameObject.SetActive(false);
         }
 

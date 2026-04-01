@@ -136,9 +136,10 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
             _lastUpdateTime = NetworkManager.ServerTime.TimeAsFloat;
         }
 
-        public bool CheckRecipe(IngredientType recipe, ulong clientId)
+        public bool CheckRecipe(IngredientType recipe, ulong clientId, out int point)
         {
             OrderStatus matchOrder = null;
+            point = -1;
             
             foreach (var activeOrder in _activeOrderList)
             {
@@ -152,7 +153,8 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
             
             // 득점
             var scorePresenter = _stageHub.FetchScorePresenter(team);
-            scorePresenter.UpdateScore(matchOrder.BaseScore, matchOrder.RemainingRatio, clientId);
+            point = scorePresenter.UpdateScore(matchOrder.BaseScore, matchOrder.RemainingRatio, clientId);
+            
             RemoveOrder(matchOrder);
             return true;
         }

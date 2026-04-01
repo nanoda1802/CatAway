@@ -1,12 +1,16 @@
-﻿using MessagePipe;
+﻿using _Scripts.Scene_Stage.Data.UI;
+using MessagePipe;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Stage.UI.Widget
 {
     public class WidgetUiScope : LifetimeScope
     {
+        [SF] private WidgetData data;
+        
         private Canvas _widgetCanvas;
         private RectTransform _canvasRectTr;
         private Camera _mainCam;
@@ -36,7 +40,8 @@ namespace _Scripts.Scene_Stage.UI.Widget
             builder.RegisterComponent(_widgetCanvas);
             builder.RegisterComponent(_canvasRectTr);
             builder.RegisterComponent(_mainCam);
-            
+
+            builder.RegisterInstance(data);
             builder.RegisterInstance(_disposableBagBuilder);
             
             base.Configure(builder);

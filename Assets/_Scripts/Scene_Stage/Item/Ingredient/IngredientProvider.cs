@@ -30,7 +30,6 @@ namespace _Scripts.Scene_Stage.Item.Ingredient
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
-            
             NetworkManager.PrefabHandler.AddHandler(Info.Prefab, new IngredientPrefabHandler(this));
         }
 
@@ -55,12 +54,17 @@ namespace _Scripts.Scene_Stage.Item.Ingredient
             ingredient.transform.parent.transform.position = pos;
             return ingredient;
         }
-    
-        public void ReleaseIngredient(Ingredient ingredient)
-        {
-            if (IsServer) ingredient.NetworkObject.TrySetParent(this.NetworkObject);
-            Pool.Release(ingredient);
-        }
+
+        // public override void Release(Ingredient item)
+        // {
+        //     base.Release(item);
+        // }
+        //
+        // public void ReleaseIngredient(Ingredient ingredient)
+        // {
+        //     if (IsServer) ingredient.NetworkObject.TrySetParent(this.NetworkObject);
+        //     Pool.Release(ingredient);
+        // }
 
         public (Mesh, Vector3) GetModelInfo(IngredientType type)
         {

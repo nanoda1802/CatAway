@@ -5,16 +5,19 @@ using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Result.Data
 {
-    [CreateAssetMenu(menuName = "SO/Lobby/UI/ResultView",  fileName = "ResultView")]
+    [CreateAssetMenu(menuName = "SO/UI/ResultView",  fileName = "ResultView")]
     public class ResultViewData : ScriptableObject
     {
         [Header("[ Timer ]")]
         [SF] private float duration = 10f;
         [SF] private float spareTimeAfterSkip = 5f;
         [SF] private string timerFormat = "{0:D2}:{1:D2}";
+        [SF] private Color spareTimeColor;
+        
         public float Duration => duration;
         public float SpareTimeAfterSkip => spareTimeAfterSkip;
         public string TimerFormat => timerFormat;
+        public Color SpareTimeColor => spareTimeColor;
 
         [Header("[ Skip Vote ]")]
         [SF] private Sprite checkIcon;

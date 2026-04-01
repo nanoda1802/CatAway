@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06ede87c9df14d9bb02353ccf6c9fde2, type: 3}
   m_Name: Patty
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Item.IngredientData
-  tempPrefab: {fileID: 5728861221599045894, guid: 7c68e747e58a6bc4eba8a59e0b3802cb, type: 3}
   type: 2
   defaultModelInfo:
     renderMesh: {fileID: -8794997232909900580, guid: 367bab942037468409d91209a6d73770, type: 3}
@@ -26,7 +25,7 @@ MonoBehaviour:
     renderMesh: {fileID: 5206871348096782535, guid: 367bab942037468409d91209a6d73770, type: 3}
     colliderMesh: {fileID: -8794997232909900580, guid: 367bab942037468409d91209a6d73770, type: 3}
     scale: {x: 0.5, y: 0.7, z: 0.5}
-  maxProgress: 5
+  maxProgress: 8
   maxPrepState: 2
   throwForce: 17
   dampingThreshold: 10

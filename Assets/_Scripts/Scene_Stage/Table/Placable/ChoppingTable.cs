@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Scripts._Helper;
 using _Scripts._Wrapper;
 using _Scripts.Scene_Stage.Enums;
 using _Scripts.Scene_Stage.Item;
@@ -15,14 +16,17 @@ namespace _Scripts.Scene_Stage.Table.Placable
 {
     public class ChoppingTable : NetworkBehaviour, IPlacable, IInteractable, INetworkUpdateSystem
     {
+        [SF] private ParticleSystem chopVfx;
         // Data
         [SF] private float dirtinessThreshold = 0.005f;
         [SF] private IngredientType ingredientMask = IngredientType.Lettuce | IngredientType.Cheese | IngredientType.Tomato;
         private readonly int _chopAnimParamHash = Animator.StringToHash("Chop");
-        // Dependency
+        // Components
         private AttachableSlot _tableSlot;
+        // Dependency
         private PlacementBroker _placementBroker;
         private StageHub _stageHub;
+        private VfxHandler _vfxHandler;
         // Caching
         [SF] private GameObject knifeModel;
         private Ingredient _targetIngredient;
@@ -40,10 +44,12 @@ namespace _Scripts.Scene_Stage.Table.Placable
         [Inject]
         private void Construct(
             PlacementBroker placementBroker,
-            StageHub stageHub)
+            StageHub stageHub,
+            VfxHandler vfxHandler)
         {
             _placementBroker = placementBroker;
             _stageHub = stageHub;
+            _vfxHandler = vfxHandler;
             
             _itemTag = TagHandle.GetExistingTag("Item");
             
@@ -77,6 +83,8 @@ namespace _Scripts.Scene_Stage.Table.Placable
             _sharedProgress.CheckExceedsDirtinessThreshold = null;
             _tableSlot.OnAttach -= OnSlotAttached;
             _tableSlot.OnDetach -= OnSlotDetached;
+            
+            _vfxHandler.StopImmediately(chopVfx);
             
             base.OnNetworkPreDespawn();
         }
@@ -196,15 +204,16 @@ namespace _Scripts.Scene_Stage.Table.Placable
             if (_targetIngredient == null || _targetIngredient.IsWellPrepped) return false;
             
             _interactorList.Add(interactor.OwnerClientId);
+            animParamHash = _chopAnimParamHash;
             
             OnFinished += interactor.FinishRpc;
             OnFinished += _targetIngredient.OnPrepCompleted;
             
             ActivateProgressBarRpc();
+            ActivateVfxRpc();
             
             this.RegisterNetworkUpdate(NetworkUpdateStage.Update);
             
-            animParamHash = _chopAnimParamHash;
             return true;
         }
 
@@ -214,6 +223,8 @@ namespace _Scripts.Scene_Stage.Table.Placable
             
             OnFinished -= interactor.FinishRpc;
             OnFinished -= _targetIngredient.OnPrepCompleted;
+            
+            DeactivateVfxRpc();
             
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
         }
@@ -229,6 +240,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
             
             DeactivateProgressBarRpc();
+            DeactivateVfxRpc();
             
             _sharedProgress.Value = 0;
         }
@@ -256,6 +268,20 @@ namespace _Scripts.Scene_Stage.Table.Placable
             var provider = _stageHub.FetchProvider<ProgressBarProvider>();
             provider.ReleaseWidget(_activeBarWidget);
             _activeBarWidget = null;
+        }
+        #endregion
+
+        #region VFX 관련 메서드
+        [Rpc(SendTo.Everyone)]
+        private void ActivateVfxRpc()
+        {
+            _vfxHandler.PlayVfx(chopVfx);
+        }
+
+        [Rpc(SendTo.Everyone)]
+        private void DeactivateVfxRpc()
+        {
+            _vfxHandler.StopSmoothly(chopVfx);
         }
         #endregion
     }

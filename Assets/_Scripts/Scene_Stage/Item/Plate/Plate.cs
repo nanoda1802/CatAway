@@ -31,14 +31,24 @@ namespace _Scripts.Scene_Stage.Item.Plate
         public IngredientType Plating => _platingMask;
         
         [Inject]
-        public void ConstructPlate(
+        public void Construct(
             PlateData data,
             StageHub stageHub)
         {
             this._data = data;
             this._stageHub = stageHub;
         }
+        
+        public override void Despawn()
+        {
+            if (!IsServer) return;
 
+            var provider = StageHub.FetchProvider<PlateProvider>();
+            provider.Release(this);
+            
+            base.Despawn();
+        }
+        
         #region NGO 관련 메서드
         public override void OnNetworkSpawn()
         {
@@ -120,7 +130,7 @@ namespace _Scripts.Scene_Stage.Item.Plate
             if (ingredient.IsCarrying) ingredient.Detach();
             
             var provider = _stageHub.FetchProvider<IngredientProvider>();
-            provider.ReleaseIngredient(ingredient);
+            provider.Release(ingredient);
             ingredient.NetworkObject.Despawn(false);
             
             if (!HasIngredient) ActivateIconRpc();
@@ -132,17 +142,19 @@ namespace _Scripts.Scene_Stage.Item.Plate
             UpdateIconRpc(_platingList.Count-1, ingredient.Type);
         }
         
-        public void ClearHolder()
+        public void ClearHolder(bool beClean)
         {
             if (!HasAuthority) return;
             
-            _curProgress = 0;
-            _curState = PrepState.Raw;
+            _curProgress = beClean ? 1 : 0;
+            _curState = beClean? PrepState.WellDone : PrepState.Raw;
             
             _platingMask = 0;
             _platingList.Clear();
             
-            MakeDirtyRpc();
+            if (beClean) MakeCleanRpc();
+            else MakeDirtyRpc();
+            
             DeactivateIconRpc();
         }
         
@@ -165,18 +177,18 @@ namespace _Scripts.Scene_Stage.Item.Plate
         [Rpc(SendTo.Everyone)]
         private void UpdatePlatingRpc(IngredientType key)
         {
-            if (!platingModel.gameObject.activeSelf) platingModel.gameObject.SetActive(true);
             platingModel.sharedMesh = _data.GetMesh(key);
             platingModel.transform.localScale = key <= 0 ? _data.FoodWasteLocalScale : _data.PlatingLocalScale;
             platingModel.transform.localPosition = _data.PlatingLocalPos;
+            if (!platingModel.gameObject.activeSelf) platingModel.gameObject.SetActive(true);
         }
         
         [Rpc(SendTo.Everyone)]
         private void MakeDirtyRpc()
         {
-            if (!platingModel.gameObject.activeSelf) platingModel.gameObject.SetActive(true);
             platingModel.sharedMesh = _data.FoodWasteMesh;
             platingModel.transform.localScale = _data.FoodWasteLocalScale;
+            if (!platingModel.gameObject.activeSelf) platingModel.gameObject.SetActive(true);
         }
         #endregion
 
@@ -188,7 +200,7 @@ namespace _Scripts.Scene_Stage.Item.Plate
 
             var provider = _stageHub.FetchProvider<PlatingIconProvider>();
             _activeIconWidget = provider.GetWidget(this.transform.position);
-            _activeIconWidget.ConnectWith(this.transform);
+            _activeIconWidget.AssignTo(this.transform);
         }
 
         [Rpc(SendTo.Everyone)]

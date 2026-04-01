@@ -45,7 +45,7 @@ namespace _Scripts.Scene_Stage
 
             var stageData = Parent.Container.Resolve<RoomStatus>().CurStageData;
             builder.RegisterInstance(stageData);
-            builder.RegisterInstance(providerData);
+            builder.RegisterInstance(providerData).AsImplementedInterfaces().AsSelf();
             builder.RegisterInstance(playerPrefab);
             builder.RegisterInstance(_disposableBagBuilder);
             

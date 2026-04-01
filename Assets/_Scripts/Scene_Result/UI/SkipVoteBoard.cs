@@ -3,6 +3,7 @@ using System.Threading;
 using _Scripts.Messages.StageResult;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
+using PrimeTween;
 using UnityEngine;
 using VContainer;
 using SF = UnityEngine.SerializeField;
@@ -62,10 +63,6 @@ namespace _Scripts.Scene_Result.UI
             }
             
             if (!this.isActiveAndEnabled) await Show(token);
-            // for (int i = 0; i < agreements; i++)
-            // {
-            //     icons[i].Show().Forget();
-            // }
         }
 
         private CancellationToken RefreshToken()

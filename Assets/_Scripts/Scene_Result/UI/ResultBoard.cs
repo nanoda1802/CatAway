@@ -67,10 +67,11 @@ namespace _Scripts.Scene_Result.UI
         
         private void SetValues(ResultBoardMessage msg)
         {
-            scoreTxt.text = msg.Score.ToString();
-            bestComboTxt.text = msg.BestCombo.ToString();
-            orderDeliveredTxt.text = $"{(int)(msg.DeliveredRatio * 100)}%";
-            totalTxt.text = msg.Income.ToString();
+            // [임시] 텍스트 포맷 데이터로...
+            scoreTxt.SetText("{0}", msg.Score);
+            bestComboTxt.SetText("{0}", msg.BestCombo);
+            orderDeliveredTxt.SetText("{0}%",(int)(msg.DeliveredRatio * 100));
+            totalTxt.SetText("{0}", msg.Income);
         }
 
         private async UniTaskVoid ShowCard(bool isWin)
@@ -80,6 +81,9 @@ namespace _Scripts.Scene_Result.UI
             
             await UniTask.Delay(1000, cancellationToken:token).SuppressCancellationThrow();
 
+            // 스킵의 취소인지 파괴으 취ㅗ인지 구분을 해야할 거 같은디
+            // 스킵이면 suppress가 맞는데 취소면 suppress면 안 돼...
+            
             foreach (var text in _texts)
             {
                 await TweenText(text, 1000, token);

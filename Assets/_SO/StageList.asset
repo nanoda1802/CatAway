@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.Data.StageListData
   stages:
   - {fileID: 11400000, guid: 159f6464c7605834b93285285a205f8f, type: 2}
-  - {fileID: 11400000, guid: ad35be9b1dc7efc4489ec4e2b7100542, type: 2}
   - {fileID: 11400000, guid: 3afa30f8846a4d948a48a5f8b0360241, type: 2}
-  - {fileID: 11400000, guid: 4f4f2e8e447ffb04a8f7c4b905cb41f1, type: 2}
+  - {fileID: 11400000, guid: d90371b5f1c43414f81c7b76a984cc5e, type: 2}
+  - {fileID: 11400000, guid: f2562faa5d83cda42addb0d74f7577e7, type: 2}

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 419406795057895544}
   - component: {fileID: 7074590815389051091}
   - component: {fileID: 3964545193734026777}
+  - component: {fileID: 2714450055428289218}
   m_Layer: 5
   m_Name: Canvas_Widget
   m_TagString: Untagged
@@ -58,6 +59,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 5904354007598352272}
+  data: {fileID: 11400000, guid: f58cd31a1eb931a4c9bcd6296b19ea12, type: 2}
 --- !u!223 &3669242713406420036
 Canvas:
   m_ObjectHideFlags: 0
@@ -76,10 +78,10 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &8444123587405646739
 MonoBehaviour:
@@ -140,3 +142,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d022412243c43f69480ed3b0ecf2e16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.UI.Widget.PlatingIcon.PlatingIconProvider
+--- !u!114 &2714450055428289218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5904354007598352272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5093331833804121839492e4934197f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Stage.UI.Widget.Toast.ToastProvider

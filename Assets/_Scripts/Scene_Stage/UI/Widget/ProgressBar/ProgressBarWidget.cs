@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using _Scripts.Scene_Stage.Data.UI;
+using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Stage.UI.Widget.ProgressBar
@@ -8,8 +10,14 @@ namespace _Scripts.Scene_Stage.UI.Widget.ProgressBar
     {
         [SF] private Image fillBarImg;
         
-        [SF] private Vector3 offset = new Vector3(0,1.2f,0);
-       
+        private WidgetData _data;
+
+        [Inject]
+        private void Construct(WidgetData data)
+        {
+            _data = data;
+        }
+        
         public override void Show()
         {
             base.Show();
@@ -23,7 +31,7 @@ namespace _Scripts.Scene_Stage.UI.Widget.ProgressBar
 
         public override void UpdatePosition(Vector3 worldPos)
         {
-            base.UpdatePosition(worldPos + offset);
+            base.UpdatePosition(worldPos + _data.ProgressBarOffset);
         }
 
         public void UpdateProgress(float prevValue, float curValue)

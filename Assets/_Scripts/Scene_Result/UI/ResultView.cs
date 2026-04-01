@@ -83,12 +83,11 @@ namespace _Scripts.Scene_Result.UI
 
             if (!IsTimerDirty(second)) return;
             
-            // [임시]
-            if (second <= _viewData.SpareTimeAfterSkip) timerTxt.color = Color.red;
+            if (second <= _viewData.SpareTimeAfterSkip) timerTxt.color = _viewData.SpareTimeColor;
             
             _sb.Clear();
             _sb.AppendFormat(_viewData.TimerFormat, second);
-            timerTxt.text = _sb.ToString();
+            timerTxt.SetText(_sb);
 
             _prevSecond = second;
         }

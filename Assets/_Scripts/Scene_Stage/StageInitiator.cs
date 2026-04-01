@@ -64,7 +64,8 @@ namespace _Scripts.Scene_Stage
                     _sceneChanger.LoadByServer(uiSceneName, LoadSceneMode.Additive);
                     break;
                 case "StageUi_Comp" or "StageUi_Coop":
-                    _sceneChanger.LoadByServer("Level", LoadSceneMode.Additive);
+                    var levelSceneName = $"Level_{_room.CurStageData.Mode}_{_room.CurStageData.Id}";
+                    _sceneChanger.LoadByServer(levelSceneName, LoadSceneMode.Additive);
                     break;
                 case "Level":
                     break;

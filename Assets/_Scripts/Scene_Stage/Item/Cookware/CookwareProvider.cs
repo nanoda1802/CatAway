@@ -7,7 +7,6 @@ namespace _Scripts.Scene_Stage.Item.Cookware
         public override void OnNetworkSpawn()
         { 
             base.OnNetworkSpawn();
-            
             NetworkManager.PrefabHandler.AddHandler(Info.Prefab, new CookwarePrefabHandler(this));
         }
     
@@ -18,10 +17,15 @@ namespace _Scripts.Scene_Stage.Item.Cookware
             return cookware;
         }
     
-        public void ReleaseCookware(Cookware cookware)
-        {
-            if (IsServer) cookware.NetworkObject.TrySetParent(this.NetworkObject);
-            Pool.Release(cookware);
-        }
+        // public override void Release(Ingredient item)
+        // {
+        //     base.Release(item);
+        // }
+        
+        // public void ReleaseCookware(Cookware cookware)
+        // {
+        //     if (IsServer) cookware.NetworkObject.TrySetParent(this.NetworkObject);
+        //     Pool.Release(cookware);
+        // }
     }
 }

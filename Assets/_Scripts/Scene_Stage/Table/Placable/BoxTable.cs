@@ -1,16 +1,25 @@
-﻿using _Scripts._Wrapper;
+﻿using System;
+using System.Collections.Generic;
+using _Scripts._Wrapper;
 using _Scripts.Scene_Stage.Item;
 using _Scripts.Scene_Stage.Item.Ingredient;
+using _Scripts.Scene_Stage.Item.Plate;
+using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VContainer;
+using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Stage.Table.Placable
 {
     public class BoxTable : NetworkBehaviour, IPlacable
     {
+        [SF] private bool spawnWithPlate;
         // Component
         private AttachableSlot _tableSlot;
+        // Dependency
+        private StageHub _stageHub;
         private PlacementBroker _placementBroker;
         // Caching
         private TagHandle _itemTag;
@@ -18,8 +27,11 @@ namespace _Scripts.Scene_Stage.Table.Placable
         public Carriable PlacedItem { get; private set; }
 
         [Inject]
-        private void Construct(PlacementBroker placementBroker)
+        private void Construct(
+            StageHub stageHub,
+            PlacementBroker placementBroker)
         {
+            _stageHub = stageHub;
             _placementBroker = placementBroker;
 
             _itemTag = TagHandle.GetExistingTag("Item");
@@ -40,13 +52,31 @@ namespace _Scripts.Scene_Stage.Table.Placable
         }
 
         #region NGO 관련 메서드
+        public override void OnNetworkSpawn()
+        {
+            if (IsServer) NetworkManager.SceneManager.OnLoadEventCompleted += OnLevelLoaded;
+            base.OnNetworkSpawn();
+        }
+
         public override void OnNetworkPreDespawn()
         {
             _tableSlot.OnAttach -= OnSlotAttached;
             _tableSlot.OnDetach -= OnSlotDetached;
+            
             base.OnNetworkPreDespawn();
         }
 
+        // 씬 배치 네트워크오브젝트라서, 모든 클라이언트에서 스폰 완료된 안전한 시점이 이때 뿐...!
+        private void OnLevelLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+        {
+            if (!NetworkManager.IsServer) return;
+            if (!sceneName.StartsWith("Level")) return;
+            
+            if (spawnWithPlate) AttachWithSpawn().Forget();
+            
+            NetworkManager.SceneManager.OnLoadEventCompleted -= OnLevelLoaded;
+        }
+        
         private void OnSlotAttached(Carriable item)
         {
             item.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
@@ -90,6 +120,17 @@ namespace _Scripts.Scene_Stage.Table.Placable
             }
             
             return true;
+        }
+        
+        private async UniTaskVoid AttachWithSpawn()
+        {
+            var provider = _stageHub.FetchProvider<PlateProvider>();
+            var plate = provider.GetPlate(this.transform.position);
+            plate.NetObj.Spawn(true);
+            
+            await UniTask.Yield();
+            plate.ClearHolder(true);
+            this.Place(plate);
         }
         #endregion
     }

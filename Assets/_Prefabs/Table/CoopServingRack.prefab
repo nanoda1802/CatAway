@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 744271e8a0b911949aa201d6a1e511bc, type: 2}
+  - {fileID: 2100000, guid: 05556c67b5d40bd4e8ab1cbc567d6b82, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2908838090
+  GlobalObjectIdHash: 4099170054
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -182,8 +182,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 1, y: 0.6, z: 1}
+  m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!1 &6502068773177445752
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,7 +250,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 744271e8a0b911949aa201d6a1e511bc, type: 2}
+  - {fileID: 2100000, guid: 05556c67b5d40bd4e8ab1cbc567d6b82, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -339,7 +339,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 744271e8a0b911949aa201d6a1e511bc, type: 2}
+  - {fileID: 2100000, guid: 05556c67b5d40bd4e8ab1cbc567d6b82, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -373,7 +373,7 @@ PrefabInstance:
     - target: {fileID: 223712727381896264, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 744271e8a0b911949aa201d6a1e511bc, type: 2}
+      objectReference: {fileID: 2100000, guid: 406972f35ebb7574886a9ede14a6c0c3, type: 2}
     - target: {fileID: 2130745786113780676, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
       propertyPath: m_Name
       value: Model
@@ -446,39 +446,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4373062968682616710, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1319073043451913507}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2130745786113780676, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5242157059198576351}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
 --- !u!4 &5685721162841618274 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4373062968682616710, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
   m_PrefabInstance: {fileID: 8239195726880858340}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &8054246877192686368 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2130745786113780676, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
-  m_PrefabInstance: {fileID: 8239195726880858340}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &5242157059198576351
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8054246877192686368}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 384
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.8400001, y: 0.24697775, z: 0.8064001}
-  m_Center: {x: 0, y: 0.12, z: 0.39479998}

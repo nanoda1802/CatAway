@@ -21,7 +21,7 @@ namespace _Scripts.Scene_Stage.Item.Cookware
         public Ingredient.Ingredient HeldIngredient { get; private set; }
 
         [Inject]
-        public void ConstructCookware(StageHub stageHub)
+        public void Construct(StageHub stageHub)
         {
             _stageHub = stageHub;
 
@@ -30,7 +30,17 @@ namespace _Scripts.Scene_Stage.Item.Cookware
             _holderSlot.OnAttach += OnSlotAttached;
             _holderSlot.OnDetach += OnSlotDetached;
         }
+        
+        public override void Despawn()
+        {
+            if (!IsServer || !IsSpawned) return;
 
+            var provider = StageHub.FetchProvider<CookwareProvider>();
+            provider.Release(this);
+            
+            base.Despawn();
+        }
+        
         #region NGO 관련 메서드
         public override void OnNetworkPreDespawn()
         {
@@ -97,7 +107,7 @@ namespace _Scripts.Scene_Stage.Item.Cookware
             return holdableIngredientType.HasFlag(type);
         }
         
-        public void ClearHolder()
+        public void ClearHolder(bool beClean)
         {
             if (!HasAuthority || !HasIngredient) return;
  
@@ -105,7 +115,7 @@ namespace _Scripts.Scene_Stage.Item.Cookware
             if (ingredient.IsCarrying) ingredient.Detach();
             
             var provider = _stageHub.FetchProvider<IngredientProvider>();
-            provider.ReleaseIngredient(ingredient);
+            provider.Release(ingredient);
             ingredient.NetworkObject.Despawn(false);
         }
         #endregion

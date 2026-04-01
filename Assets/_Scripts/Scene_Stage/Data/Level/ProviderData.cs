@@ -8,14 +8,16 @@ using _Scripts.Scene_Stage.UI.Widget;
 using _Scripts.Scene_Stage.UI.Widget.PlatingIcon;
 using _Scripts.Scene_Stage.UI.Widget.ProgressBar;
 using _Scripts.Scene_Stage.UI.Widget.TableAlert;
+using _Scripts.Scene_Stage.UI.Widget.Toast;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer.Unity;
 using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Stage.Data.Level
 {
     [CreateAssetMenu(fileName = "ProviderData", menuName = "SO/Stage/Provider")]
-    public class ProviderData : ScriptableObject
+    public class ProviderData : ScriptableObject, IInitializable
     {
         private readonly Dictionary<Type, IProviderInfo> _providerInfos = new();
         
@@ -28,8 +30,9 @@ namespace _Scripts.Scene_Stage.Data.Level
         [SF] private ProviderInfo<PlatingIconWidget> platingIconProviderInfo;
         [SF] private ProviderInfo<ProgressBarWidget> progressBarProviderInfo;
         [SF] private ProviderInfo<TableAlertWidget> tableAlertProviderInfo;
+        [SF] private ProviderInfo<ToastWidget> toastProviderInfo;
 
-        private void OnEnable()
+        public void Initialize()
         {
             _providerInfos.Clear();
             
@@ -40,6 +43,7 @@ namespace _Scripts.Scene_Stage.Data.Level
             _providerInfos.Add(typeof(PlatingIconWidget), platingIconProviderInfo);
             _providerInfos.Add(typeof(ProgressBarWidget), progressBarProviderInfo);
             _providerInfos.Add(typeof(TableAlertWidget), tableAlertProviderInfo);
+            _providerInfos.Add(typeof(ToastWidget), toastProviderInfo);
         }
 
         public ProviderInfo<NetworkObject> GetItemProviderInfo<T>() where T : Carriable

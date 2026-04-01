@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using _Scripts.Scene_Stage.Data.Item;
 using _Scripts.Scene_Stage.Enums;
 using Cysharp.Threading.Tasks;
@@ -29,12 +30,20 @@ namespace _Scripts.Scene_Stage.Item.Ingredient
         public bool IsThrowing { get; private set; }
         
         [Inject]
-        public override void Construct()
+        public void Construct()
         {
-            base.Construct();
-            
             _meshFilter = this.GetComponent<MeshFilter>();
             _networkTr = this.transform.parent.GetComponent<NetworkTransform>();
+        }
+        
+        public override void Despawn()
+        {
+            if (!IsServer) return;
+
+            var provider = StageHub.FetchProvider<IngredientProvider>();
+            provider.Release(this);
+            
+            base.Despawn();
         }
 
         public void InitData(IngredientData data, bool isRequiredIngredient)
@@ -52,7 +61,7 @@ namespace _Scripts.Scene_Stage.Item.Ingredient
             
             if (HasAuthority) ItemCollider.sharedMesh = colliderMesh;
         }
-        
+
         #region NGO 관련 메서드
         public override void OnNetworkSpawn()
         {
@@ -123,7 +132,10 @@ namespace _Scripts.Scene_Stage.Item.Ingredient
             
             ItemRb.linearVelocity = _data.ThrowForce * dir;
 
-            while (!ShouldApplyDamping(origin) && HasEnoughVelocity(ItemRb.linearVelocity) && !ItemRb.isKinematic)
+            while (ItemRb != null 
+                   && !ItemRb.isKinematic
+                   && !ShouldApplyDamping(origin) 
+                   && HasEnoughVelocity(ItemRb.linearVelocity))
             {
                 await UniTask.DelayFrame(5, cancellationToken:token);
             }
@@ -133,7 +145,9 @@ namespace _Scripts.Scene_Stage.Item.Ingredient
         {
             if (ItemRb.isKinematic) return;
 
-            while (ItemRb.linearVelocity.sqrMagnitude > 0.5f && !ItemRb.isKinematic)
+            while (ItemRb != null 
+                   && !ItemRb.isKinematic
+                   && ItemRb.linearVelocity.sqrMagnitude > 0.5f)
             {
                 ItemRb.linearVelocity *= _data.DampingRatio;
                 await UniTask.DelayFrame(5, cancellationToken:token);

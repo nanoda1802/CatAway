@@ -78,7 +78,7 @@ namespace _Scripts.Scene_Room.UI
 
         public RoomMemberCard SetName(string memberName)
         {
-            nameTxt.text = memberName;
+            nameTxt.SetText(memberName);
             return this;
         }
         

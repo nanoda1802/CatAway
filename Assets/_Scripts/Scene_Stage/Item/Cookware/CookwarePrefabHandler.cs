@@ -23,7 +23,7 @@ namespace _Scripts.Scene_Stage.Item.Cookware
 
             if (cookware != null)
             {
-                _provider.ReleaseCookware(cookware);
+                _provider.Release(cookware);
             }
             else
             {

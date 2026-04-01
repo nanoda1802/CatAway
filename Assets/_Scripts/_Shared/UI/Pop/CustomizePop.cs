@@ -1,6 +1,8 @@
-﻿using _Scripts._Shared.Data;
+﻿using _Scripts._Helper;
+using _Scripts._Shared.Data;
 using _Scripts.Messages;
 using MessagePipe;
+using PrimeTween;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -10,17 +12,28 @@ namespace _Scripts._Shared.UI.Pop
 {
     public class CustomizePop : PopBase
     {
+        [Header("[ Components ]")]
+        [SF] private RectTransform rectTr;
         [SF] private Button[] colorButtons;
         [SF] private Image[] colorIcons;
         
+        [Header("[ Tween Settings ]")]
+        [SF] private TweenSettings<float> popUpPosSettings;
+        [SF] private TweenSettings<float> popUpAlphaSettings;
+        [SF] private TweenSettings<float> popDownPosSettings;
+        [SF] private TweenSettings<float> popDownAlphaSettings;
+        
+        private TweenHandler _tweenHandler;
         private AvatarData _avatarData;
         private IPublisher<AvatarMessage> _avatarPub;
 
         [Inject]
         private void Construct(
+            TweenHandler tweenHandler,
             AvatarData avatarData,
             IPublisher<AvatarMessage> avatarPub)
         {
+            _tweenHandler = tweenHandler;
             _avatarData = avatarData;
             _avatarPub = avatarPub;
             
@@ -30,9 +43,18 @@ namespace _Scripts._Shared.UI.Pop
         protected override void PopUp()
         {
             base.PopUp();
-            
+            CurSequence = _tweenHandler.AnchorPosY(PopGroup, rectTr, popUpAlphaSettings, popUpPosSettings, OnPopUpCompleted);
+        }
+
+        protected override void PopDown()
+        {
+            if (CurSequence.isAlive) CurSequence.Complete();
+            CurSequence = _tweenHandler.AnchorPosY(PopGroup, rectTr, popDownAlphaSettings, popDownPosSettings, OnPopDownCompleted);
+        }
+
+        private void OnPopUpCompleted()
+        {
             Bg.OnClick += PopDown;
-            Bg.OnSwipeDown += PopDown;
 
             foreach (var btn in colorButtons)
             {
@@ -42,17 +64,16 @@ namespace _Scripts._Shared.UI.Pop
             }
         }
 
-        protected override void PopDown()
+        private void OnPopDownCompleted()
         {
+            base.PopDown();
+            
+            Bg.OnClick -= PopDown;
+            
             foreach (var btn in colorButtons)
             {
                 btn.onClick.RemoveAllListeners();
             }
-            
-            Bg.OnClick -= PopDown;
-            Bg.OnSwipeDown -= PopDown;
-            
-            base.PopDown();
         }
 
         private void InitColorIcons()

@@ -54,9 +54,9 @@ namespace _Scripts.Scene_Stage
         private void OnLevelLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
         {
             if (!_netManager.IsServer) return;
-            if (!sceneName.Equals("Level")) return;
+            if (!sceneName.StartsWith("Level")) return;
             
-            SpawnTables();
+            // SpawnTables();
             SpawnPlayers();
             
             _netManager.SceneManager.OnLoadEventCompleted -= OnLevelLoaded;
@@ -82,8 +82,6 @@ namespace _Scripts.Scene_Stage
 
         private void SpawnTables()
         {
-            // [추가] 접시 프로바이더에서 접시 꺼내서 랜덤 테이블에 올려놓기
-
             foreach (var info in _room.CurStageData.TableSpawnInfos)
             {
                 if (!_tablePrefabs.TryGetValue(info.GlobalObjectHashId, out var prefab)) continue;

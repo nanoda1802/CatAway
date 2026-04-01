@@ -63,7 +63,7 @@ namespace _Scripts.Scene_Result.UI
 
         public ResultMemberCard SetName(string memberName)
         {
-            nameText.text = memberName;
+            nameText.SetText(memberName);
             return this;
         }
         
