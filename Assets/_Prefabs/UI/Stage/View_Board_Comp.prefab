@@ -64,7 +64,9 @@ MonoBehaviour:
   - {fileID: 0}
   boardUiData: {fileID: 11400000, guid: 092de9853d90aaf4c95a386fafff4634, type: 2}
   orderCardData: {fileID: 11400000, guid: 0fcf78c8669bf1f41bf51446c0d6390d, type: 2}
+  respawnCardData: {fileID: 11400000, guid: dc4d7bceaef55ca42b55316666c37794, type: 2}
   orderCardPrefab: {fileID: 8411156510693102058, guid: ee65f0b19d430764196a8ae1f0d2dbd3, type: 3}
+  respawnCardPrefab: {fileID: 7377296330999669661, guid: 14fdefa97fe7cb141bc9c0dc3ac723b7, type: 3}
 --- !u!223 &7259249931982412302
 Canvas:
   m_ObjectHideFlags: 0

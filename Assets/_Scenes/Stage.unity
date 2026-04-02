@@ -168,6 +168,7 @@ MonoBehaviour:
   autoRun: 0
   autoInjectGameObjects: []
   providerData: {fileID: 11400000, guid: 0fa8b9ea5a3c87b4a9a6d26ac612ae17, type: 2}
+  sfxListData: {fileID: 11400000, guid: 2da30115864d709408cc0faf593a687d, type: 2}
   playerPrefab: {fileID: 1029032892360754072, guid: 915817c9c3a6bd2439500daf33d94d4a, type: 3}
 --- !u!1 &1131265557
 GameObject:

@@ -10,7 +10,7 @@ using VContainer;
 
 namespace _Scripts.Scene_Stage.Player.Behaviour
 {
-    public class InteractionBehaviour : NetworkBehaviour
+    public class InteractionBehaviour : NetworkBehaviour, IBehaviourWithInput
     {
         // Status
         private DetectStatus _detectStatus;
@@ -127,7 +127,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             CancelRpc();
         }
     
-        private void SubscribeInputEvents(StartStageMessage msg)
+        public void SubscribeInputEvents(StartStageMessage msg)
         {
             if (!IsLocalPlayer) return;
             
@@ -136,7 +136,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             _interactAction.canceled += OnInteractCanceled;
         }
     
-        private void UnsubscribeInputEvents(EndStageMessage msg)
+        public void UnsubscribeInputEvents(EndStageMessage msg)
         {
             if (!IsLocalPlayer) return;
             

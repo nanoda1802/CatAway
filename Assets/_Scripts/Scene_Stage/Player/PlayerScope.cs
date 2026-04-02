@@ -48,17 +48,30 @@ namespace _Scripts.Scene_Stage.Player
             
             builder.RegisterInstance(_disposableBagBuilder);
 
-            builder.RegisterComponent(playerRb);
-            builder.RegisterComponent(playerMeshRenderer);
-            builder.RegisterComponent(animator);
-            builder.RegisterComponent(detectPoint);
-            
-            builder.RegisterComponent(playerSyncer);
-            builder.RegisterComponent(movementBehaviour);
-            builder.RegisterComponent(interactionBehaviour);
-            builder.RegisterComponent(carrierBehaviour);
-            builder.RegisterComponent(collisionBehaviour);
-            // builder.RegisterComponent(emotionBehaviour);
+            builder.UseComponents(componentsBuilder =>
+            {
+                componentsBuilder.AddInstance(playerRb);
+                componentsBuilder.AddInstance(playerMeshRenderer);
+                componentsBuilder.AddInstance(animator);
+                componentsBuilder.AddInstance(detectPoint);
+                
+                componentsBuilder.AddInstance(playerSyncer);
+                componentsBuilder.AddInstance(collisionBehaviour);
+                
+                componentsBuilder
+                    .AddInstance(movementBehaviour)
+                    .As<IBehaviourWithInput>()
+                    .AsSelf();
+                componentsBuilder
+                    .AddInstance(interactionBehaviour)
+                    .As<IBehaviourWithInput>()
+                    .AsSelf();
+                componentsBuilder
+                    .AddInstance(carrierBehaviour)
+                    .As<IBehaviourWithInput>()
+                    .AsSelf();
+                // componentsBuilder.AddInstance(emotionBehaviour);
+            });
             
             base.Configure(builder);
         }

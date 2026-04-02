@@ -13,6 +13,7 @@ namespace _Scripts.Scene_Stage.Data
         [RO, SF] private int id;
         [RO, SF] private StageMode mode;
         [SF] private Sprite thumbnail;
+        [SF] private AudioClip bgm;
         [SF] private string description;
         [SF] private float duration;
         [RO, SF] private Vector3[] playerSpawnPoints;
@@ -22,6 +23,7 @@ namespace _Scripts.Scene_Stage.Data
         public int Id => id;
         public StageMode Mode => mode;
         public Sprite Thumbnail => thumbnail;
+        public AudioClip Bgm => bgm;
         public string Desc => description;
         public float Duration => duration;
         public Vector3[] PlayerSpawnPoints => playerSpawnPoints;

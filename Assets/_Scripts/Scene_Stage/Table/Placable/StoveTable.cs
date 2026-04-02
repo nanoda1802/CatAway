@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using _Scripts._Helper;
+using _Scripts._Shared.Sound;
 using _Scripts._Wrapper;
+using _Scripts.Scene_Stage.Data;
 using _Scripts.Scene_Stage.Item;
 using _Scripts.Scene_Stage.Item.Cookware;
 using _Scripts.Scene_Stage.Item.Ingredient;
@@ -24,6 +26,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
         [SF] private float dirtinessThreshold = 0.005f;
         [SF] private float preWarnDelay = 5f;
         [SF] private float warnDuration = 10f;
+        private StageSfxListData _sfxList;
         // Component
         private AttachableSlot _tableSlot;
         // Dependency
@@ -34,6 +37,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
         private Cookware _placedCookware;
         private ProgressBarWidget _activeBarWidget;
         private TableAlertWidget _activeAlertWidget;
+        private SfxBuilder _activeSfx;
         private CancellationTokenSource _warningCts;
         private TagHandle _itemTag;
         // Network Variable
@@ -50,10 +54,12 @@ namespace _Scripts.Scene_Stage.Table.Placable
 
         [Inject]
         private void Construct(
+            StageSfxListData sfxListData,
             PlacementBroker placementBroker,
             StageHub stageHub,
             VfxHandler vfxHandler)
         {
+            _sfxList = sfxListData;
             _placementBroker = placementBroker;
             _stageHub = stageHub;
             _vfxHandler = vfxHandler;
@@ -95,6 +101,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             _tableSlot.OnDetach -= OnTableSlotDetached;
             
             _vfxHandler.StopImmediately(fireVfx);
+            _activeSfx?.Stop();
             
             base.OnNetworkPreDespawn();
         }
@@ -218,6 +225,9 @@ namespace _Scripts.Scene_Stage.Table.Placable
             cookware.NetObj.Spawn(true);
             
             await UniTask.Yield();
+            
+            if (!this.IsSpawned) return;
+            
             this.Place(cookware);
         }
         #endregion
@@ -228,7 +238,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             OnFinished += _placedCookware.HeldIngredient.OnPrepCompleted;
             
             ActivateProgressBarRpc();
-            ActivateVfxRpc();
+            ActivateFxRpc();
             
             this.RegisterNetworkUpdate(NetworkUpdateStage.Update);
         }
@@ -240,7 +250,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
             
             DeactivateProgressBarRpc();
-            DeactivateVfxRpc();
+            DeactivateFxRpc();
             
             _sharedProgress.Value = 0;
         }
@@ -268,7 +278,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
                 _warningCts = new CancellationTokenSource();
             }
             
-            if (!fireVfx.isPlaying) ActivateVfxRpc();
+            if (!fireVfx.isPlaying) ActivateFxRpc();
             
             var canceled = await UniTask.Delay(PreWarnDelay, false, cancellationToken:_warningCts.Token).SuppressCancellationThrow();
             if (canceled) return;
@@ -278,7 +288,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             canceled = await UniTask.Delay(WarnDuration, false, cancellationToken:_warningCts.Token).SuppressCancellationThrow();
 
             DeactivateTableAlertRpc(); // [수정] 스폰 상태일 때만 호출하ㅣ게 수정
-            DeactivateVfxRpc();
+            DeactivateFxRpc();
             
             if (!canceled && HasHeatTarget)
             {
@@ -292,7 +302,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             _warningCts?.Dispose();
             _warningCts = null;
             
-            DeactivateVfxRpc();
+            DeactivateFxRpc();
         }
         #endregion
 
@@ -340,17 +350,22 @@ namespace _Scripts.Scene_Stage.Table.Placable
         }
         #endregion
         
-        #region VFX 관련 메서드
+        #region FX 관련 메서드
         [Rpc(SendTo.Everyone)]
-        private void ActivateVfxRpc()
+        private void ActivateFxRpc()
         {
             _vfxHandler.PlayVfx(fireVfx);
+            
+            _activeSfx?.Stop();
+            _activeSfx = _sfxList.Play(StageSfxType.Grill);
         }
 
         [Rpc(SendTo.Everyone)]
-        private void DeactivateVfxRpc()
+        private void DeactivateFxRpc()
         {
             _vfxHandler.StopSmoothly(fireVfx);
+            _activeSfx?.Stop();
+            _activeSfx = null;
         }
         #endregion
     }

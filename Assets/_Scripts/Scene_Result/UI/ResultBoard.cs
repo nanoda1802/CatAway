@@ -47,7 +47,7 @@ namespace _Scripts.Scene_Result.UI
                 .AddTo(disposableBagBuilder);
         }
 
-        private void OnDestroy()
+        private void OnDisable()
         {
             _cts?.Cancel();
             _cts?.Dispose();

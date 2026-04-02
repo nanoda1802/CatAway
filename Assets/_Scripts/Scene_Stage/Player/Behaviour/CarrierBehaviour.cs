@@ -15,10 +15,11 @@ using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Stage.Player.Behaviour
 {
-    public class CarrierBehaviour : AttachableNode
+    public class CarrierBehaviour : AttachableNode, IBehaviourWithInput
     {
          // Data
          private readonly int _carryParamHash = Animator.StringToHash("Carry");
+         private StageSfxListData _sfxList;
          // Broker
          private PlacementBroker _placementBroker;
          private ContactBroker _contactBroker;
@@ -37,6 +38,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
          
          [Inject]
          private void Construct(
+            StageSfxListData sfxList,
             PlacementBroker placementBroker,
             ContactBroker contactBroker,
             DetectStatus detectStatus,
@@ -48,6 +50,9 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             ISubscriber<EndStageMessage> endSub,
             DisposableBagBuilder disposableBagBuilder)
          {
+            Debug.Log("<color=red>혹시 설마 주입 두 번 되나요?</color>");
+            _sfxList = sfxList;
+            
             _placementBroker = placementBroker;
             _contactBroker = contactBroker;
             
@@ -116,6 +121,23 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
          [Rpc(SendTo.Server)]
          private void BehaveOnCarryingHandRpc()
          {
+            if (CarriedItem is IIngredientHolder holder 
+                && _detectStatus.DetectItem(out var item)
+                && item is Ingredient ingredient)
+            {
+               if (holder.CanHold(ingredient, out string rejectMsg))
+               {
+                  holder.Hold(ingredient);
+                  PlaySfxRpc(StageSfxType.ActionAllowed);
+                  return;
+               }
+               
+               if (!string.IsNullOrEmpty(rejectMsg))
+               {
+                  Debug.LogWarning($"{rejectMsg} [Player{this.OwnerClientId}]");
+               }
+            }
+
             if (!_detectStatus.DetectTable(out var table))
             {
                this.Drop();
@@ -132,6 +154,8 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             
             ingredient.Throw(throwPoint.position, throwPoint.rotation,throwPoint.forward).Forget();
             ingredient.Detach();
+            
+            PlaySfxRpc(StageSfxType.Throw);
          }
          
          public void Pick(Carriable item)
@@ -140,7 +164,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             item.Attach(this);
          }
 
-         private void Drop()
+         public void Drop()
          {
             this.CarriedItem?.Detach();
          }
@@ -152,17 +176,28 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             if (table.TryGetComponent(out IPlacable placable))
             {
                result = _placementBroker.AcceptCase(this, placable);
-               if (result.IsSuccess) return;
+               if (result.IsSuccess)
+               {
+                  PlaySfxRpc(StageSfxType.ActionAllowed);
+                  return;
+               }
             }
             
             if (table.TryGetComponent(out IContactable contactable))
             {
                result = _contactBroker.AcceptCase(this, contactable);
-               if (result.IsSuccess) return;
+               if (result.IsSuccess)
+               {
+                  PlaySfxRpc(StageSfxType.ActionAllowed);
+                  return;
+               }
             }
-            
-            if (result.Reason is not null)
+
+            if (!string.IsNullOrEmpty(result.Reason))
+            {
                Debug.LogWarning($"{result.Reason} [Player{this.OwnerClientId} + {table.name}]");
+               PlaySfxRpc(StageSfxType.ActionBlocked);
+            }
          }
          #endregion
          
@@ -183,7 +218,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             ThrowRpc();
          }
          
-         private void SubscribeInputEvents(StartStageMessage msg)
+         public void SubscribeInputEvents(StartStageMessage msg)
          {
             if (!IsLocalPlayer) return;
             
@@ -194,7 +229,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             _throwAction.started += OnThrowStarted;
          }
       
-         private void UnsubscribeInputEvents(EndStageMessage msg)
+         public void UnsubscribeInputEvents(EndStageMessage msg)
          {
             if (!IsLocalPlayer) return;
             
@@ -205,5 +240,11 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             _throwAction.Disable();
          }
          #endregion
+
+         [Rpc(SendTo.Owner)]
+         private void PlaySfxRpc(StageSfxType sfxType)
+         {
+            _sfxList.Play(sfxType);
+         }
     }
 }

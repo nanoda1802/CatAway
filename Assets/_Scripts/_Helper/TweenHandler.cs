@@ -9,7 +9,7 @@ namespace _Scripts._Helper
     public class TweenHandler
     {
         private readonly string _defaultTextFormat = "{0}";
-        
+
         public Sequence ScaleY(
             CanvasGroup canvasGroup,
             RectTransform rectTr,
@@ -114,8 +114,7 @@ namespace _Scripts._Helper
         
         public Tween LoopPunchScale(RectTransform rectTr, ShakeSettings settings, Action onComplete = null)
         {
-            return Tween.PunchScale(rectTr, settings)
-                .OnComplete(onComplete);
+            return Tween.PunchScale(rectTr, settings).OnComplete(onComplete);
         }
 
         public Sequence PunchScaleWithColor(TextMeshProUGUI tmp, TweenSettings<Color> colorSettings, ShakeSettings settings, Action onComplete = null)
@@ -148,9 +147,11 @@ namespace _Scripts._Helper
             ShakeSettings scaleSettings,
             ShakeSettings rotSettings,
             TweenSettings<float> alphaSettings,
+            Action onShake,
             Action onComplete = null)
         {
             var seq = Sequence.Create()
+                .ChainCallback(onShake)
                 .Group(Tween.Alpha(img, alphaSettings))
                 .Group(Tween.PunchScale(rectTr, scaleSettings))
                 .Group(Tween.PunchLocalRotation(rectTr, rotSettings))

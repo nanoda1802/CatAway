@@ -65,7 +65,7 @@ namespace _Scripts._Shared.UI.Pop
         protected override void PopUp()
         {
             base.PopUp();
-            CurSequence = _tweenHandler.ScaleY(PopGroup,rectTr,popUpSettings,popUpSettings);
+            CurSequence = _tweenHandler.ScaleY(ViewGroup,rectTr,popUpSettings,popUpSettings);
         }
 
         protected override void PopDown()
@@ -75,7 +75,7 @@ namespace _Scripts._Shared.UI.Pop
             _cts = null;
             
             if (CurSequence.isAlive) CurSequence.Complete();
-            CurSequence = _tweenHandler.ScaleY(PopGroup,rectTr,popDownSettings,popDownSettings,OnPopDownCompleted);
+            CurSequence = _tweenHandler.ScaleY(ViewGroup,rectTr,popDownSettings,popDownSettings,OnPopDownCompleted);
             
             foreach (var btn in buttons.Values)
             {

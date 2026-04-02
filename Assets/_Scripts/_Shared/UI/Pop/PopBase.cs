@@ -9,20 +9,29 @@ namespace _Scripts._Shared.UI.Pop
 {
     public class PopBase : MonoBehaviour
     {
-        protected CanvasGroup PopGroup;
+        protected Canvas PopCanvas;
+        protected CanvasGroup ViewGroup;
         protected PopPanel Bg;
+
+        protected CanvasGroup PopGroup;
         
         protected Sequence CurSequence;
+
+        private bool IsActive => PopCanvas.enabled;
         
         [Inject]
         private void ConstructBase(
-            CanvasGroup popUpGroup,
+            Canvas canvas,
+            CanvasGroup canvasGroup,
             PopPanel bg,
             DisposableBagBuilder disposableBagBuilder,
             ISubscriber<PopUpMessage> popUpSub,
             ISubscriber<PopDownMessage> popDownSub)
         {
-            PopGroup = popUpGroup;
+            PopGroup = this.GetComponent<CanvasGroup>();
+            
+            PopCanvas = canvas;
+            ViewGroup = canvasGroup;
             Bg = bg;
 
             popUpSub
@@ -41,7 +50,7 @@ namespace _Scripts._Shared.UI.Pop
 
         private void HandlePopUpMessage(PopUpMessage msg)
         {
-            if (msg.IsRequested(this) && !isActiveAndEnabled) PopUp();
+            if (msg.IsRequested(this) && !IsActive) PopUp();
         }
 
         private void HandlePopDownMessage(PopDownMessage msg)
@@ -53,16 +62,20 @@ namespace _Scripts._Shared.UI.Pop
         {
             if (CurSequence.isAlive) CurSequence.Complete();
             
-            PopGroup.blocksRaycasts = true;
+            PopCanvas.enabled = true;
+            ViewGroup.blocksRaycasts = true;
             
-            this.gameObject.SetActive(true);
+            PopGroup.alpha = 1;
+            PopGroup.blocksRaycasts = true;
         }
 
         protected virtual void PopDown()
         {
-            PopGroup.blocksRaycasts = false;
+            PopCanvas.enabled = false;
+            ViewGroup.blocksRaycasts = false;
             
-            this.gameObject.SetActive(false);
+            PopGroup.alpha = 0;
+            PopGroup.blocksRaycasts = false;
         }
     }
 }

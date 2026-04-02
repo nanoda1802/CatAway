@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Scripts._Shared;
+using _Scripts._Shared.Sound;
+using _Scripts.Messages.Stage;
 using _Scripts.Scene_Room.Data;
+using MessagePipe;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using VContainer.Unity;
@@ -13,15 +16,29 @@ namespace _Scripts.Scene_Stage
         private readonly NetworkManager _netManager;
         private readonly SceneChanger _sceneChanger;
         private readonly RoomStatus _room;
+        private readonly SoundManager _soundManager;
 
         public StageInitiator(
             NetworkManager networkManager,
             SceneChanger sceneChanger,
-            RoomStatus roomStatus)
+            RoomStatus roomStatus,
+            SoundManager soundManager,
+            ISubscriber<StartStageMessage> startSub,
+            ISubscriber<EndStageMessage> endSub,
+            DisposableBagBuilder disposableBagBuilder)
         {
             _netManager = networkManager;
             _sceneChanger = sceneChanger;
             _room = roomStatus;
+            _soundManager = soundManager;
+            
+            startSub
+                .Subscribe(StartBgm)
+                .AddTo(disposableBagBuilder);
+            
+            endSub
+                .Subscribe(StopBgm)
+                .AddTo(disposableBagBuilder);
         }
       
         public void Initialize()
@@ -70,6 +87,16 @@ namespace _Scripts.Scene_Stage
                 case "Level":
                     break;
             }
+        }
+
+        private void StartBgm(StartStageMessage msg)
+        {
+            _soundManager.PlayBgm(_room.CurStageData.Bgm).Forget();
+        }
+
+        private void StopBgm(EndStageMessage msg)
+        {
+            _soundManager.StopBgm().Forget();
         }
     }
 }

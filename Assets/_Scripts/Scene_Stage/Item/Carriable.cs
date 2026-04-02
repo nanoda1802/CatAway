@@ -37,7 +37,7 @@ namespace _Scripts.Scene_Stage.Item
 
         public virtual void Despawn()
         {
-            this.NetObj?.Despawn(false);
+            this?.NetObj?.Despawn(false);
         }
         
         public override void OnNetworkSpawn()

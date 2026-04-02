@@ -178,7 +178,7 @@ namespace Editor
                 if (!prefabAsset.TryGetComponent<NetworkObject>(out var netObj)) continue;
                 
                 // 이건 프리펩이 아니고 월드 오브젝트로 해야해
-                bool isPantry = child.TryGetComponent<PantryTable>(out var pantry);
+                bool isPantry = child.TryGetComponent<PantryTable_BackUp>(out var pantry);
                 
                 var info = new TableSpawnInfo
                 {

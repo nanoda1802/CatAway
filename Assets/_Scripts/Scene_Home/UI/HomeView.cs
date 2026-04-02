@@ -72,7 +72,10 @@ namespace _Scripts.Scene_Home.UI
                 RectTransform curTarget = FiftyToFifty ? joinBtnRectTr : createBtnRectTr;
                 
                 await UniTask.Delay(_data.ShakeInterval, cancellationToken:this.destroyCancellationToken);
-                await _tweenHandler.Shake(curTarget, _data.ScaleSetting, _data.RotSetting).WithCancellation(this.destroyCancellationToken);
+                
+                await _tweenHandler
+                    .Shake(curTarget, _data.ScaleSetting, _data.RotSetting)
+                    .WithCancellation(this.destroyCancellationToken);
             }
         }
 

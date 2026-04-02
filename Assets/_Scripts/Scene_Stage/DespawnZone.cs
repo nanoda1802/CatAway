@@ -20,7 +20,8 @@ namespace _Scripts.Scene_Stage
         {
             if (!other.CompareTag(_itemTag) && !other.CompareTag(_playerTag)) return;
             
-            var despawnable = other.GetComponentInChildren<IDespawnable>();
+            var despawnable = other.transform.parent.GetComponentInChildren<IDespawnable>();
+            Debug.Log($"[Despawn] 디스폰 존 감지 {other.tag} / despawnable? {despawnable is not null}");
             despawnable?.Despawn();
         }
     }

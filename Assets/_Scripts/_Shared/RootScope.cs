@@ -1,6 +1,7 @@
 ﻿using _Scripts._Helper;
 using _Scripts._Messages.Shared;
 using _Scripts._Shared.Data;
+using _Scripts._Shared.Sound;
 using _Scripts.Messages;
 using _Scripts.Scene_Room.Data;
 using _Scripts.Scene_Stage.Data;
@@ -19,9 +20,11 @@ namespace _Scripts._Shared
         [Header("[ Components ]")]
         [SF] private NetworkManager netManager;
         [SF] private UnityTransport utp;
+        [SF] private SoundManager soundManager;
         [Header("[ Data ]")]
         [SF] private StageListData stageList;
         [SF] private AvatarData avatarData;
+        [SF] private SoundSettingsData soundSettingsData;
 
         private DisposableBagBuilder _rootDisposableBagBuilder;
 
@@ -40,19 +43,23 @@ namespace _Scripts._Shared
                 pointsBuilder.Add<RoomStatus>().AsSelf();
                 pointsBuilder.Add<SceneChanger>().AsSelf();
                 pointsBuilder.Add<PlayerStatus>().AsSelf();
+                pointsBuilder.Add<SfxProvider>().AsSelf();
             });
             
             builder.UseComponents(componentsBuilder =>
             {
                 componentsBuilder.AddInstance(netManager);
                 componentsBuilder.AddInstance(utp);
-                componentsBuilder.AddInstance(avatarData);
+                componentsBuilder.AddInstance(soundManager);
             });
             
-            builder
-                .RegisterInstance(stageList)
+            builder.RegisterInstance(stageList)
                 .AsImplementedInterfaces()
                 .AsSelf();
+            builder.RegisterInstance(soundSettingsData)
+                .AsImplementedInterfaces()
+                .AsSelf();
+            builder.RegisterInstance(avatarData);
 
             builder.Register<VfxHandler>(Lifetime.Singleton);
             builder.Register<TweenHandler>(Lifetime.Singleton);

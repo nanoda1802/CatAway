@@ -171,7 +171,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
                 // 감점
                 var targetOrder = _activeOrderList[i];
                 scorePresenter.UpdateScore(targetOrder.BaseScore, -1);
-                RemoveOrder(targetOrder);
+                RemoveOrder(targetOrder, true);
             }
         }
 
@@ -193,11 +193,11 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
             AddRpc(new AddOrderMessage(team, _nextOrderId++,orderStatus.Recipe,orderStatus.Duration,NetworkManager.ServerTime.TimeAsFloat));
         }
 
-        private void RemoveOrder(OrderStatus target)
+        private void RemoveOrder(OrderStatus target, bool isTimeout = false)
         {
             if(!_activeOrderList.Remove(target)) return;
             
-            RemoveRpc(new RemoveOrderMessage(team, target.Id));
+            RemoveRpc(new RemoveOrderMessage(team, target.Id, isTimeout));
             
             _inactiveOrderStack.Push(target);
 

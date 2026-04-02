@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using _Scripts._Helper;
+using _Scripts.Scene_Stage.Data;
 using _Scripts.Scene_Stage.Data.UI;
 using Cysharp.Threading.Tasks;
 using PrimeTween;
@@ -26,6 +27,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
         private float _orderTime = -1f;
         private int _prevTime = -1;
         // Dependency
+        private StageSfxListData _sfxList;
         private TweenHandler _tweenHandler;
         private NetworkManager _netManager;
         private OrderCardData _data;
@@ -38,10 +40,12 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
         
         [Inject]
         private void Construct(
+            StageSfxListData sfxListData,
             TweenHandler tweenHandler,
             NetworkManager netManger,
             OrderCardData data)
         {
+            _sfxList = sfxListData;
             _tweenHandler = tweenHandler;
             _netManager = netManger;
             _data = data;
@@ -127,7 +131,13 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
                 warnCoverImg,
                 _data.ShakeScaleSettings,
                 _data.ShakeRotSettings,
-                _data.CoverAlphaSettings);
+                _data.CoverAlphaSettings,
+                OnShake);
+        }
+
+        private void OnShake()
+        {
+            _sfxList.Play(StageSfxType.Alert);
         }
 
         private void UpdateFillBar(float ratio) // [수정] Dirty 체크하기

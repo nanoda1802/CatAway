@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Scripts._Helper;
+using _Scripts._Shared.Sound;
 using _Scripts._Wrapper;
+using _Scripts.Scene_Stage.Data;
 using _Scripts.Scene_Stage.Enums;
 using _Scripts.Scene_Stage.Item;
 using _Scripts.Scene_Stage.Item.Ingredient;
@@ -21,6 +23,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
         [SF] private float dirtinessThreshold = 0.005f;
         [SF] private IngredientType ingredientMask = IngredientType.Lettuce | IngredientType.Cheese | IngredientType.Tomato;
         private readonly int _chopAnimParamHash = Animator.StringToHash("Chop");
+        private StageSfxListData _sfxList;
         // Components
         private AttachableSlot _tableSlot;
         // Dependency
@@ -31,6 +34,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
         [SF] private GameObject knifeModel;
         private Ingredient _targetIngredient;
         private ProgressBarWidget _activeBarWidget;
+        private SfxBuilder _activeSfx;
         private readonly List<ulong> _interactorList = new();
         private TagHandle _itemTag;
         // Network Variable
@@ -45,11 +49,13 @@ namespace _Scripts.Scene_Stage.Table.Placable
         private void Construct(
             PlacementBroker placementBroker,
             StageHub stageHub,
-            VfxHandler vfxHandler)
+            VfxHandler vfxHandler,
+            StageSfxListData sfxList)
         {
             _placementBroker = placementBroker;
             _stageHub = stageHub;
             _vfxHandler = vfxHandler;
+            _sfxList = sfxList;
             
             _itemTag = TagHandle.GetExistingTag("Item");
             
@@ -85,6 +91,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             _tableSlot.OnDetach -= OnSlotDetached;
             
             _vfxHandler.StopImmediately(chopVfx);
+            _activeSfx?.Stop();
             
             base.OnNetworkPreDespawn();
         }
@@ -210,7 +217,7 @@ namespace _Scripts.Scene_Stage.Table.Placable
             OnFinished += _targetIngredient.OnPrepCompleted;
             
             ActivateProgressBarRpc();
-            ActivateVfxRpc();
+            ActivateFxRpc();
             
             this.RegisterNetworkUpdate(NetworkUpdateStage.Update);
             
@@ -273,15 +280,19 @@ namespace _Scripts.Scene_Stage.Table.Placable
 
         #region VFX 관련 메서드
         [Rpc(SendTo.Everyone)]
-        private void ActivateVfxRpc()
+        private void ActivateFxRpc()
         {
             _vfxHandler.PlayVfx(chopVfx);
+            _activeSfx?.Stop();
+            _activeSfx = _sfxList.Play(StageSfxType.Chop);
         }
 
         [Rpc(SendTo.Everyone)]
         private void DeactivateVfxRpc()
         {
             _vfxHandler.StopSmoothly(chopVfx);
+            _activeSfx?.Stop();
+            _activeSfx = null;
         }
         #endregion
     }

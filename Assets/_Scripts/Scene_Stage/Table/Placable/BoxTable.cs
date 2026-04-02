@@ -129,6 +129,9 @@ namespace _Scripts.Scene_Stage.Table.Placable
             plate.NetObj.Spawn(true);
             
             await UniTask.Yield();
+            
+            if (!this.IsSpawned) return;
+            
             plate.ClearHolder(true);
             this.Place(plate);
         }

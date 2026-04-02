@@ -15,6 +15,7 @@ MonoBehaviour:
   id: 1
   mode: 0
   thumbnail: {fileID: 21300000, guid: 47f7b5c5baf0fa94781ab85aea94cc7a, type: 3}
+  bgm: {fileID: 8300000, guid: 17105a69a7186b645856f730181c7819, type: 3}
   description: 
   duration: 100
   playerSpawnPoints:

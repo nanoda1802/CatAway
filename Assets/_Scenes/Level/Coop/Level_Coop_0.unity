@@ -979,6 +979,10 @@ PrefabInstance:
       propertyPath: presetType
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8164398918180838837, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: presetType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8921095354905934193, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.5
@@ -1716,6 +1720,10 @@ PrefabInstance:
       value: 601127348
       objectReference: {fileID: 0}
     - target: {fileID: 5520484545910401258, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: presetType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164398918180838837, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: presetType
       value: 4
       objectReference: {fileID: 0}
@@ -2914,6 +2922,10 @@ PrefabInstance:
       propertyPath: presetType
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 8164398918180838837, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: presetType
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 8921095354905934193, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.5
@@ -3218,6 +3230,10 @@ PrefabInstance:
       value: 601127348
       objectReference: {fileID: 0}
     - target: {fileID: 5520484545910401258, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: presetType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164398918180838837, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: presetType
       value: 1
       objectReference: {fileID: 0}
@@ -3576,6 +3592,10 @@ PrefabInstance:
       value: 601127348
       objectReference: {fileID: 0}
     - target: {fileID: 5520484545910401258, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: presetType
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164398918180838837, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: presetType
       value: 16
       objectReference: {fileID: 0}
@@ -5418,7 +5438,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7051347572674421674, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: spawnWithPlate
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7937009976268064101, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: m_LocalPosition.x

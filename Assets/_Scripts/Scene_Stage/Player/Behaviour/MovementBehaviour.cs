@@ -1,5 +1,6 @@
 using _Scripts._Helper;
 using _Scripts.Messages.Stage;
+using _Scripts.Scene_Stage.Data;
 using _Scripts.Scene_Stage.Player.Status;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
@@ -11,7 +12,7 @@ using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Stage.Player.Behaviour
 {
-    public class MovementBehaviour : NetworkBehaviour, INetworkUpdateSystem
+    public class MovementBehaviour : NetworkBehaviour, INetworkUpdateSystem, IBehaviourWithInput
     {
         [SF] private ParticleSystem dashVfx;
         
@@ -25,6 +26,8 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
 
         private Rigidbody _playerRb;
         private Animator _animator;
+
+        private StageSfxListData _sfxList;
     
         private readonly int _moveParamHash = Animator.StringToHash("Move");
         private readonly int _moveSpeedParamHash = Animator.StringToHash("MoveSpeed");
@@ -38,6 +41,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             PlayerInput inputMap,
             Rigidbody playerRb,
             Animator playerAnimator,
+            StageSfxListData sfxList,
             ISubscriber<StartStageMessage> startSub,
             ISubscriber<EndStageMessage> endSub,
             DisposableBagBuilder disposableBagBuilder)
@@ -53,6 +57,8 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             _playerRb = playerRb;
             _animator = playerAnimator;
             
+            _sfxList = sfxList;
+            
             startSub
                 .Subscribe(SubscribeInputEvents)
                 .AddTo(disposableBagBuilder);
@@ -61,18 +67,9 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
                 .Subscribe(UnsubscribeInputEvents)
                 .AddTo(disposableBagBuilder);
         }
-
-        public override void OnNetworkSpawn()
-        {
-            if (!IsLocalPlayer) return;
-            
-            this.RegisterNetworkUpdate(NetworkUpdateStage.FixedUpdate);
-        }
         
         public override void OnNetworkDespawn()
         {
-            if (!IsLocalPlayer) return;
-            
             this.UnregisterNetworkUpdate(NetworkUpdateStage.FixedUpdate);
         }
         
@@ -98,6 +95,8 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
         private async UniTaskVoid Dash()
         {
             SetDashState(true);
+
+            _sfxList.Play(StageSfxType.Dash);
             
             _playerRb.MoveRotation(_moveStatus.LookRot);
             _playerRb.AddForce(_moveStatus.DashForce, ForceMode.VelocityChange);
@@ -136,7 +135,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             Dash().Forget();
             
             _moveStatus.UpdateSpeedMultiplier(true);
-            ActivateVfxRpc();
+            if (IsSpawned) ActivateVfxRpc();
             
             // float speed = _moveStatus.UpdateSpeedMultiplier(true);
             // _animator.SetFloat(_moveSpeedParamHash, speed);
@@ -145,13 +144,13 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
         private void OnDashCanceled(InputAction.CallbackContext ctx)
         {
             _moveStatus.UpdateSpeedMultiplier(false);
-            DeactivateVfxRpc();
+            if (IsSpawned) DeactivateVfxRpc();
             
             // float speed = _moveStatus.UpdateSpeedMultiplier(false);
             // _animator.SetFloat(_moveSpeedParamHash, speed);
         }
         
-        private void SubscribeInputEvents(StartStageMessage msg)
+        public void SubscribeInputEvents(StartStageMessage msg)
         {
             if (!IsLocalPlayer) return;
             
@@ -162,9 +161,11 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             _dashAction.Enable();
             _dashAction.started += OnDashStarted;
             _dashAction.canceled += OnDashCanceled;
+            
+            this.RegisterNetworkUpdate(NetworkUpdateStage.FixedUpdate);
         }
     
-        private void UnsubscribeInputEvents(EndStageMessage msg)
+        public void UnsubscribeInputEvents(EndStageMessage msg)
         {
             if (!IsLocalPlayer) return;
             
@@ -175,6 +176,8 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
             _dashAction.started -= OnDashStarted;
             _dashAction.canceled -= OnDashCanceled;
             _dashAction.Disable();
+            
+            this.UnregisterNetworkUpdate(NetworkUpdateStage.FixedUpdate);
         }
 
         [Rpc(SendTo.Everyone)]

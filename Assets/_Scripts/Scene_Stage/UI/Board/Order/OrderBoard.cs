@@ -18,6 +18,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
         // Data
         private StageData _stageData;
         private BoardUiData _boardData;
+        private StageSfxListData _sfxList;
         private OrderCardData _cardData;
         private OrderCard _prefab;
         // Component
@@ -40,6 +41,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
         private void Construct(
             StageData stageData,
             BoardUiData boardUiData,
+            StageSfxListData sfxListData,
             OrderCardData cardData,
             OrderCard prefab,
             IObjectResolver container,
@@ -50,6 +52,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
         {
             _stageData = stageData;
             _boardData = boardUiData;
+            _sfxList = sfxListData;
             _cardData = cardData;
             _prefab = prefab;
             _resolver = container;
@@ -133,7 +136,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
         public void Apply(RemoveOrderMessage data)
         {
             // CancelTween();
-            DeactivateCard(data.TargetId);
+            DeactivateCard(data.TargetId, data.IsTimeout);
             SortActiveCards();
         }
 
@@ -165,9 +168,11 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
             _activeCardDic.Add(msg.OrderId, card);
 
             card.Show(_showCardStartX, targetX);
+            
+            _sfxList.Play(StageSfxType.NewOrder);
         }
 
-        private void DeactivateCard(int targetId)
+        private void DeactivateCard(int targetId, bool isTimeout)
         {
             if (!_activeCardDic.Remove(targetId, out var targetCard)) return;
             
@@ -176,6 +181,8 @@ namespace _Scripts.Scene_Stage.UI.Board.Order
             targetCard.Hide();
             
             _inactiveCardQueue.Enqueue(targetCard);
+            
+            _sfxList.Play(isTimeout ? StageSfxType.OrderFailed : StageSfxType.OrderSuccess);
         }
 
         private void SortActiveCards()

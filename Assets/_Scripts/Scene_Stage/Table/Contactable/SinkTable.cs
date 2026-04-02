@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Scripts._Helper;
+using _Scripts._Shared.Sound;
 using _Scripts._Wrapper;
+using _Scripts.Scene_Stage.Data;
 using _Scripts.Scene_Stage.Item;
 using _Scripts.Scene_Stage.Item.Plate;
 using _Scripts.Scene_Stage.Player.Behaviour;
@@ -21,6 +23,7 @@ namespace _Scripts.Scene_Stage.Table.Contactable
         // Data
         [SF] private float dirtinessThreshold = 0.005f;
         private readonly int _washAnimParamHash = Animator.StringToHash("WashDish");
+        private StageSfxListData _sfxList;
         // Dependency
         private AttachableSlot _tableSlot;
         private StageHub _stageHub;
@@ -28,6 +31,7 @@ namespace _Scripts.Scene_Stage.Table.Contactable
         // Caching
         private Plate _targetPlate;
         private ProgressBarWidget _activeBarWidget;
+        private SfxBuilder _activeSfx;
         private readonly List<ulong> _interactorList = new();
         // Network Variable
         private readonly NetworkVariable<float> _sharedProgress = new();
@@ -38,9 +42,11 @@ namespace _Scripts.Scene_Stage.Table.Contactable
 
         [Inject]
         private void Construct(
+            StageSfxListData sfxListData,
             StageHub stageHub,
             VfxHandler vfxHandler)
         {
+            _sfxList = sfxListData;
             _stageHub = stageHub;
             _vfxHandler = vfxHandler;
             
@@ -66,6 +72,7 @@ namespace _Scripts.Scene_Stage.Table.Contactable
             _tableSlot.OnDetach -= OnSlotDetached;
             
             _vfxHandler.StopImmediately(bubbleVfx);
+            _activeSfx?.Stop();
             
             base.OnNetworkDespawn();
         }
@@ -100,7 +107,7 @@ namespace _Scripts.Scene_Stage.Table.Contactable
             if (!IsServer || attachableBehaviour is not Plate plate) return;
             
             DeactivateProgressBarRpc();
-            DeactivateVfxRpc();
+            DeactivateFxRpc();
             
             OnFinished = null;
             this.UnregisterNetworkUpdate(NetworkUpdateStage.Update);
@@ -151,7 +158,7 @@ namespace _Scripts.Scene_Stage.Table.Contactable
             
             animParamHash = _washAnimParamHash;
             
-            if (!IsInteracting) ActivateVfxRpc();
+            if (!IsInteracting) ActivateFxRpc();
             
             _interactorList.Add(interactor.OwnerClientId);
             OnFinished += interactor.FinishRpc;
@@ -163,6 +170,7 @@ namespace _Scripts.Scene_Stage.Table.Contactable
         {
             _interactorList.Remove(interactor.OwnerClientId);
             OnFinished -= interactor.FinishRpc;
+            if (!IsInteracting) DeactivateFxRpc();
         }
         
         public void FinishInteraction()
@@ -199,17 +207,23 @@ namespace _Scripts.Scene_Stage.Table.Contactable
         }
         #endregion
         
-        #region VFX 관련 메서드
+        #region FX 관련 메서드
         [Rpc(SendTo.Everyone)]
-        private void ActivateVfxRpc()
+        private void ActivateFxRpc()
         {
             _vfxHandler.PlayVfx(bubbleVfx);
+            
+            _activeSfx?.Stop();
+            _activeSfx = _sfxList.Play(StageSfxType.WashDish);
         }
 
         [Rpc(SendTo.Everyone)]
-        private void DeactivateVfxRpc()
+        private void DeactivateFxRpc()
         {
             _vfxHandler.StopSmoothly(bubbleVfx);
+            
+            _activeSfx?.Stop();
+            _activeSfx = null;
         }
         #endregion
     }

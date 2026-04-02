@@ -28,13 +28,13 @@ namespace _Scripts._Shared.UI.Pop
         protected override void PopUp()
         {
             base.PopUp();
-            CurSequence = _tweenHandler.AnchorPosY(PopGroup, rectTr, popUpAlphaSettings, popUpPosSettings, OnPopUpCompleted);
+            CurSequence = _tweenHandler.AnchorPosY(ViewGroup, rectTr, popUpAlphaSettings, popUpPosSettings, OnPopUpCompleted);
         }
 
         protected override void PopDown()
         {
             if (CurSequence.isAlive) CurSequence.Complete();
-            CurSequence = _tweenHandler.AnchorPosY(PopGroup, rectTr, popDownAlphaSettings, popDownPosSettings, OnPopDownCompleted);
+            CurSequence = _tweenHandler.AnchorPosY(ViewGroup, rectTr, popDownAlphaSettings, popDownPosSettings, OnPopDownCompleted);
             
             Bg.OnClick -= PopDown;
         }

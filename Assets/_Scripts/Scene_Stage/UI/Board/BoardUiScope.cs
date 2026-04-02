@@ -13,8 +13,11 @@ namespace _Scripts.Scene_Stage.UI.Board
         [Header("[ Data ]")]
         [SF] private BoardUiData boardUiData;
         [SF] private OrderCardData orderCardData;
+        [SF] private RespawnCardData respawnCardData;
+
         [Header("[ Prefab ]")]
         [SF] private OrderCard orderCardPrefab;
+        [SF] private RespawnCard respawnCardPrefab;
         
         private Canvas _boardCanvas;
         private RectTransform _canvasRectTr;
@@ -44,8 +47,12 @@ namespace _Scripts.Scene_Stage.UI.Board
             builder.RegisterComponent(_canvasRectTr);
 
             builder.RegisterInstance(boardUiData);
+            
             builder.RegisterInstance(orderCardData);
             builder.RegisterInstance(orderCardPrefab);
+            
+            builder.RegisterInstance(respawnCardData);
+            builder.RegisterInstance(respawnCardPrefab);
             
             builder.RegisterInstance(_disposableBagBuilder);
 

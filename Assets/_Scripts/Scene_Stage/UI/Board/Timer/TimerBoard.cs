@@ -19,6 +19,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Timer
         // Data
         private StageData _stageData;
         private BoardUiData _boardUiData;
+        private StageSfxListData _sfxList;
         // Dependency
         private TweenHandler _tweenHandler;
         // Component
@@ -37,6 +38,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Timer
         private void Construct(
             StageData stageData,
             BoardUiData boardUiData,
+            StageSfxListData sfxList,
             TweenHandler tweenHandler,
             ISubscriber<float> timerSub,
             ISubscriber<EndStageMessage> endSub,
@@ -44,6 +46,8 @@ namespace _Scripts.Scene_Stage.UI.Board.Timer
         {
             _stageData = stageData;
             _boardUiData = boardUiData;
+            _sfxList = sfxList;
+            
             _tweenHandler = tweenHandler;
             
             timerSub
@@ -84,6 +88,7 @@ namespace _Scripts.Scene_Stage.UI.Board.Timer
             {
                 if (_curSeq.isAlive) _curSeq.Complete();
                 _curSeq = _tweenHandler.PunchScaleWithColor(timerTxt, _boardUiData.TimerColorSettings, _boardUiData.TimerPunchSettings);
+                _sfxList.Play(StageSfxType.Alarm);
             }
 
             _prevSecond = second;

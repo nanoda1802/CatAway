@@ -1,4 +1,6 @@
-﻿using _Scripts.Messages;
+﻿using _Scripts._Messages.Stage;
+using _Scripts._Shared.Sound;
+using _Scripts.Messages;
 using _Scripts.Messages.Stage;
 using _Scripts.Scene_Room.Data;
 using _Scripts.Scene_Stage.Data;
@@ -20,6 +22,7 @@ namespace _Scripts.Scene_Stage
     public class StageScope : LifetimeScope
     {
         [SF] private ProviderData providerData;
+        [SF] private StageSfxListData sfxListData;
         [SF] private PlayerSyncer playerPrefab;
 
         private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
@@ -42,11 +45,19 @@ namespace _Scripts.Scene_Stage
             builder.Register<PlacementBroker>(Lifetime.Scoped);
             builder.Register<ContactBroker>(Lifetime.Scoped);
 
-
+            var soundManager = Parent.Container.Resolve<SoundManager>();
+            sfxListData.Inject(soundManager);
+            
             var stageData = Parent.Container.Resolve<RoomStatus>().CurStageData;
             builder.RegisterInstance(stageData);
-            builder.RegisterInstance(providerData).AsImplementedInterfaces().AsSelf();
+            builder.RegisterInstance(sfxListData)
+                .AsImplementedInterfaces()
+                .AsSelf();
+            builder.RegisterInstance(providerData)
+                .AsImplementedInterfaces()
+                .AsSelf();
             builder.RegisterInstance(playerPrefab);
+            
             builder.RegisterInstance(_disposableBagBuilder);
             
             var msgOptions = Parent.Container.Resolve<MessagePipeOptions>();
@@ -57,6 +68,8 @@ namespace _Scripts.Scene_Stage
             builder.RegisterMessageBroker<ScorePresenter>(msgOptions);
             builder.RegisterMessageBroker<CuePresenter>(msgOptions);
             builder.RegisterMessageBroker<HubCallMessage>(msgOptions);
+            
+            builder.RegisterMessageBroker<PlayerDespawnMessage>(msgOptions);    
             
             builder.RegisterMessageBroker<ScoreMessage>(msgOptions);
             builder.RegisterMessageBroker<AddOrderMessage>(msgOptions);

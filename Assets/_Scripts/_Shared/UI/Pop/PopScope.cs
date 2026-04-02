@@ -8,15 +8,20 @@ namespace _Scripts._Shared.UI.Pop
 {
     public class PopScope : LifetimeScope
     {
-        [SF] private CanvasGroup canvasGroup;
+        [SF] private Canvas popCanvas;
+        [SF] private CanvasGroup popGroup;
         [SF] private PopPanel popPanel;
         
         private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
         
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterComponent(canvasGroup);
-            builder.RegisterComponent(popPanel);
+            builder.UseComponents(componentsBuilder =>
+            {
+                componentsBuilder.AddInstance(popCanvas);
+                componentsBuilder.AddInstance(popGroup);
+                componentsBuilder.AddInstance(popPanel);
+            });
             
             builder.RegisterInstance(_disposableBagBuilder);
             

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using _Scripts.Messages.Stage;
 using _Scripts.Scene_Room.Data;
+using _Scripts.Scene_Stage.Data;
 using _Scripts.Scene_Stage.Player;
 using _Scripts.Scene_Stage.Table;
 using _Scripts.Scene_Stage.Table.Contactable;
@@ -39,12 +40,18 @@ namespace _Scripts.Scene_Stage
         public void Initialize()
         {
             CacheTablePrefabs();
+
+            var playerNetObj = _playerPrefab.GetComponent<NetworkObject>();
+            _netManager.PrefabHandler.AddHandler(playerNetObj, new PlayerPrefabHandler(this));
             
             if (_netManager.IsServer) _netManager.SceneManager.OnLoadEventCompleted += OnLevelLoaded;
         }
 
         public void Dispose()
         {
+            var playerNetObj = _playerPrefab.GetComponent<NetworkObject>();
+            _netManager.PrefabHandler.RemoveHandler(playerNetObj);
+            
             foreach (var prefab in _tablePrefabs.Values)
             {
                 _netManager.PrefabHandler.RemoveHandler(prefab);
@@ -88,7 +95,7 @@ namespace _Scripts.Scene_Stage
                 
                 var table = _resolver.Instantiate(prefab, info.Position, info.Rotation);
 
-                if (info.IsPantry && table.TryGetComponent<PantryTable>(out var pantry))
+                if (info.IsPantry && table.TryGetComponent<PantryTable_BackUp>(out var pantry))
                 {
                     pantry.SetAs(info.PantryType);
                 }
@@ -96,7 +103,13 @@ namespace _Scripts.Scene_Stage
                 table.Spawn(true);
             }
         }
-        
+
+        public PlayerSyncer CreatePlayer(Vector3 pos)
+        {
+            var player = Object.Instantiate(_playerPrefab, pos, Quaternion.identity);
+            return player;
+        }
+
         private void SpawnPlayers()
         {
             var members = _room.Members;
@@ -104,12 +117,18 @@ namespace _Scripts.Scene_Stage
             
             for (int i = 0; i < members.Length; i++)
             {
-                var mem = members[i];
+                MemberInfo mem = members[i];
                 if (mem == null) continue;
                 
-                var spawnPoint = _room.CurStageData.PlayerSpawnPoints[i];
-                var player = Object.Instantiate(_playerPrefab, spawnPoint, Quaternion.identity);
-                player.NetworkObject.SpawnAsPlayerObject(mem.ClientId,true);
+                Vector3 spawnPoint = _room.CurStageData.PlayerSpawnPoints[i];
+                
+                var player = CreatePlayer(spawnPoint).ApplySpawnInfo(false);
+                
+                _netManager.PrefabHandler.SetInstantiationData(player.NetObj, new PlayerSpawnPacket(false));
+                player.NetObj.SpawnAsPlayerObject(mem.ClientId, true);
+                
+                // var player = Object.Instantiate(_playerPrefab, spawnPoint, Quaternion.identity);
+                // player.NetworkObject.SpawnAsPlayerObject(mem.ClientId,true);
             }
         }
     }

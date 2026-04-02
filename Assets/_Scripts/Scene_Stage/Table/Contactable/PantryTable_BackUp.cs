@@ -11,7 +11,7 @@ using SF = UnityEngine.SerializeField;
 
 namespace _Scripts.Scene_Stage.Table.Contactable
 {
-    public class PantryTable : NetworkBehaviour, IContactable
+    public class PantryTable_BackUp : NetworkBehaviour, IContactable
     {
         // Data
         [SF] private IngredientType presetType;
@@ -102,6 +102,9 @@ namespace _Scripts.Scene_Stage.Table.Contactable
             ingredient.NetObj.Spawn(true);
             
             await UniTask.Yield();
+            
+            if (!this.IsSpawned) return;
+            
             carrier.Pick(ingredient);
         }
         #endregion
