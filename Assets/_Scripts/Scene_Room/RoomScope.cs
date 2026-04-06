@@ -33,8 +33,12 @@ namespace _Scripts.Scene_Room
             builder.Register<IButtonAction<QuickMenuButtonType>, TutorialAction>(Lifetime.Scoped);
             builder.Register<IButtonAction<QuickMenuButtonType>, SettingsAction>(Lifetime.Scoped);
             builder.Register<IButtonAction<QuickMenuButtonType>, LeaveAction>(Lifetime.Scoped);
+
+            builder.Register<PointSwapper>(Lifetime.Singleton)
+                .AsImplementedInterfaces()
+                .AsSelf();
             
-            builder.Register<RoomMemberCardProvider>(Lifetime.Scoped);
+            builder.Register<RoomMemberCardProvider>(Lifetime.Singleton);
 
             builder.RegisterInstance(_disposableBagBuilder);
             
@@ -66,8 +70,6 @@ namespace _Scripts.Scene_Room
             builder.RegisterMessageBroker<HideMemberCardMessage>(msgOptions);
             builder.RegisterMessageBroker<MoveMemberCardMessage>(msgOptions);
             builder.RegisterMessageBroker<UpdateMemberNameMessage>(msgOptions);
-            
-            
             
             base.Configure(builder);
         }

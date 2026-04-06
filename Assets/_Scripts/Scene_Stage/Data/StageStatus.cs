@@ -62,6 +62,8 @@ namespace _Scripts.Scene_Stage.Data
             endSub
                 .Subscribe(RecordResult)
                 .AddTo(disposableBagBuilder);
+            
+            Debug.Log($"<color=cyan>[StageStatus]</color> Construct");
         }
 
         public void RecordTotalOrderCount(Team team)
@@ -101,6 +103,7 @@ namespace _Scripts.Scene_Stage.Data
 
         private void RecordResult(EndStageMessage msg)
         {
+            Debug.Log($"<color=cyan>[StageStatus]</color> record : ace? {AcePlayerId} / resultByTeam? {_statusByTeam.Count}");
             _room.RecordStageResult(AcePlayerId, _statusByTeam.Values.ToArray());
         }
     }

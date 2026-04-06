@@ -38,7 +38,6 @@ namespace _Scripts._Shared.Data
             {
                 _sfxDict.Add(sfx.Type, sfx);
             }
-            Debug.Log($"<color=green>[SFX]</color> {this.GetType().Name} Initialize");
         }
 
         private SfxInfo<T> GetInfo(T sfxType)
@@ -46,11 +45,10 @@ namespace _Scripts._Shared.Data
             return _sfxDict.GetValueOrDefault(sfxType);
         }
 
-        public SfxBuilder Play(T sfxType)
+        public SfxBuilder Play(T sfxType, bool withRandomPitch = false, Transform tr = null)
         {
             var info = GetInfo(sfxType);
-            Debug.Log($"<color=green>[SFX]</color> {this.GetType().Name} Play : info? {info.IsValid} / manager? {_soundManager != null}");
-            return info.IsValid ? _soundManager?.PlaySfx(info) : null;
+            return info.IsValid ? _soundManager?.PlaySfx(info, withRandomPitch, tr) : null;
         }
     }
 }

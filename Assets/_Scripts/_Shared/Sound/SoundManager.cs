@@ -47,6 +47,8 @@ namespace _Scripts._Shared.Sound
             _soundSettings.SfxVolumeChanged += OnSfxVolumeChanged;
             _soundSettings.BgmMuteToggled += OnBgmMuteToggled;
             _soundSettings.SfxMuteToggled += OnSfxMuteToggled;
+
+            SyncValues(soundSettings);
         }
 
         public void TogglePause(bool isPaused)
@@ -59,7 +61,12 @@ namespace _Scripts._Shared.Sound
             if (isPaused) _bgmAudioSource.Pause();
             else _bgmAudioSource.UnPause();
         }
-        
+
+        private void SyncValues(SoundSettingsData data)
+        {
+            BgmVolume = data.BgmVolume;
+        }
+
         #region Settings Event 관련 메서드
         private void OnBgmVolumeChanged(float volume)
         {
@@ -138,12 +145,17 @@ namespace _Scripts._Shared.Sound
         #region Sfx 관련 메서드
         public void StopAllSfx()
         {
-            foreach (var sfx in _activeSfx)
+            for (int i = _activeSfx.Count - 1; i >= 0; i--)
             {
-                if (sfx == null) continue;
-             
-                sfx.Stop();
+                if (_activeSfx[i] == null) continue;
+                _activeSfx[i].Stop();
             }
+            // foreach (var sfx in _activeSfx)
+            // {
+            //     if (sfx == null) continue;
+            //  
+            //     sfx.Stop();
+            // }
             
             _activeSfx.Clear();
         }
@@ -154,8 +166,6 @@ namespace _Scripts._Shared.Sound
                 .WithInfo(info.Clip, info.IsLoop)
                 .WithRandomPitch(randomPitch)
                 .WithPos(sourceTr);
-            
-            Debug.Log($"<color=green>[SFX]</color> {this.GetType().Name} PlaySfx : info? {info.IsValid} / clip? {info.Clip?.name} / loop? {info.IsLoop} / sfx? {sfx !=null}");
             
             bool hasPlay = sfx != null && sfx.Play();
             

@@ -54,6 +54,10 @@ namespace _Scripts.Scene_Room.UI
                 .Subscribe(RemoveMemberCard)
                 .AddTo(disposableBagBuilder);
             
+            moveCardSub
+                .Subscribe(UpdateCardPos)
+                .AddTo(disposableBagBuilder);
+            
             updateNameSub
                 .Subscribe(UpdateCardName)
                 .AddTo(disposableBagBuilder);
@@ -167,6 +171,8 @@ namespace _Scripts.Scene_Room.UI
 
         private void UpdateCardPos(MoveMemberCardMessage msg)
         {
+            if (!_activeCards.TryGetValue(msg.MemberId, out var targetCard)) return;
+            targetCard.UpdatePosition(msg.NewPos);
         }
 
         private CancellationToken RefreshToken()

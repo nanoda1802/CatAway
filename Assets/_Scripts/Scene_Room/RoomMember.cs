@@ -8,6 +8,7 @@ using _Scripts.Scene_Room.Enums;
 using MessagePipe;
 using Unity.Collections;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using VContainer;
 
@@ -16,7 +17,9 @@ namespace _Scripts.Scene_Room
     public class RoomMember : NetworkBehaviour
     {
         // Components
+        private NetworkTransform _netTr;
         private SkinnedMeshRenderer _renderer;
+        private Animator _animator;
         // Dependency
         private AvatarData _avatarData;
         private PlayerStatus _playerStatus;
@@ -35,12 +38,18 @@ namespace _Scripts.Scene_Room
         // Caching
         private RoomMemberSyncer _memberSyncer;
         private MaterialPropertyBlock _matPropBlock;
+        private readonly int _dragAnimHash = Animator.StringToHash("Drag");
         // Property
         public bool IsHostMember => IsOwnedByServer;
         public bool IsReady => _sharedReadyState.Value; 
-        public Vector3 CurPos => transform.position;
         public int AvatarIndex => _sharedAvatarIndex.Value;
         public string Nickname => _sharedNickname.Value.Value;
+
+        public Vector3 CurPos
+        {
+            get => transform.position;
+            set => transform.position = new Vector3(value.x, value.y, CurPos.z);
+        }
 
         [Inject]
         private void Construct(
@@ -56,6 +65,8 @@ namespace _Scripts.Scene_Room
             ISubscriber<AvatarMessage> avatarSub,
             DisposableBagBuilder disposableBagBuilder)
         {
+            _netTr = GetComponent<NetworkTransform>();
+            _animator = GetComponentInChildren<Animator>();
             _renderer = GetComponentInChildren<SkinnedMeshRenderer>();
             _matPropBlock = new MaterialPropertyBlock();
             
@@ -167,6 +178,20 @@ namespace _Scripts.Scene_Room
             var res = new SwitchReadyRespond(this.OwnerClientId, newState, IsOwner);
             _readyRespondPub.Publish(res);
 
+        }
+
+        public RoomMember StartDrag()
+        {
+            transform.rotation = Quaternion.identity;
+            _animator.SetBool(_dragAnimHash, true);
+            return this;
+        }
+
+        public void MoveTo(Vector3 pos, Quaternion rot)
+        {
+            _netTr.Teleport(pos, rot,Vector3.one);
+            _animator.SetBool(_dragAnimHash, false);
+            MoveCardRpc(pos,rot);
         }
 
         private void ShowCard()

@@ -36,12 +36,10 @@ namespace _Scripts.Scene_Stage.Player
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.Register<PlayerInput>(Lifetime.Scoped);
-            
-            builder.Register<MoveStatus>(Lifetime.Scoped);
-            builder.Register<DetectStatus>(Lifetime.Scoped);
-            builder.Register<CarryStatus>(Lifetime.Scoped);
-            builder.Register<InteractStatus>(Lifetime.Scoped);
+            builder.Register<MoveStatus>(Lifetime.Singleton);
+            builder.Register<DetectStatus>(Lifetime.Singleton);
+            builder.Register<CarryStatus>(Lifetime.Singleton);
+            builder.Register<InteractStatus>(Lifetime.Singleton);
 
             builder.RegisterInstance(playerData);
             builder.RegisterInstance(avatarData);

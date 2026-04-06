@@ -1,5 +1,8 @@
 ﻿using _Scripts._Messages.Stage;
+using _Scripts._Shared.Enums;
 using _Scripts._Shared.Sound;
+using _Scripts._Shared.UI;
+using _Scripts._Shared.UI.QuickMenu.ButtonActions;
 using _Scripts.Messages;
 using _Scripts.Messages.Stage;
 using _Scripts.Scene_Room.Data;
@@ -41,9 +44,12 @@ namespace _Scripts.Scene_Stage
             builder.RegisterEntryPoint<StageInitiator>();
             builder.RegisterEntryPoint<StageHub>().AsSelf();
 
-            builder.Register<StageStatus>(Lifetime.Scoped);
-            builder.Register<PlacementBroker>(Lifetime.Scoped);
-            builder.Register<ContactBroker>(Lifetime.Scoped);
+            builder.Register<IButtonAction<QuickMenuButtonType>, SettingsAction>(Lifetime.Scoped);
+            builder.Register<IButtonAction<QuickMenuButtonType>, LeaveAction>(Lifetime.Scoped);
+            
+            builder.Register<StageStatus>(Lifetime.Singleton);
+            builder.Register<PlacementBroker>(Lifetime.Singleton);
+            builder.Register<ContactBroker>(Lifetime.Singleton);
 
             var soundManager = Parent.Container.Resolve<SoundManager>();
             sfxListData.Inject(soundManager);

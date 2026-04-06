@@ -244,7 +244,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
          [Rpc(SendTo.Owner)]
          private void PlaySfxRpc(StageSfxType sfxType)
          {
-            _sfxList.Play(sfxType);
+            _sfxList.Play(sfxType, true, this.transform);
          }
     }
 }

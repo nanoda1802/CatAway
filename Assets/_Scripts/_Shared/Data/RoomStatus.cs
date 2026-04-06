@@ -128,13 +128,16 @@ namespace _Scripts.Scene_Room.Data
             return newMemIdx;
         }
         
-        public bool RemoveMember(ulong targetId)
+        public bool RemoveMember(ulong targetId, out int idx)
         {
+            idx = -1;
+            
             for (int i = 0; i < Members.Length; i++)
             {
                 if (Members[i] == null || Members[i].ClientId != targetId) continue;
                 
                 Members[i] = null;
+                idx = i;
                 Report("Remove");
                 return true;
             }
@@ -171,6 +174,7 @@ namespace _Scripts.Scene_Room.Data
 
         public void RecordStageResult(ulong aceId, params TeamStatus[] resultByTeam)
         {
+            Debug.Log($"<color=cyan>[RoomStatus]</color> record : ace? {aceId} / resultByTeam? {resultByTeam != null}");
             _stageResult = new StageResultInfo(aceId, resultByTeam);
         }
     }

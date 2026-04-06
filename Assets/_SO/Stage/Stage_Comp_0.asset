@@ -17,7 +17,7 @@ MonoBehaviour:
   thumbnail: {fileID: 21300000, guid: e49dbc281c9a7a54382a27427c73514a, type: 3}
   bgm: {fileID: 8300000, guid: 17105a69a7186b645856f730181c7819, type: 3}
   description: 
-  duration: 100
+  duration: 180
   playerSpawnPoints:
   - {x: 0.5, y: 0, z: 0}
   - {x: 6, y: 0, z: -0.5}

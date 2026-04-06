@@ -54,14 +54,12 @@ namespace _Scripts._Shared.Sound
         {
             sfx.Apply(_soundSettings.SfxVolume, _soundSettings.IsSfxMute);
             sfx.gameObject.SetActive(true);
-            Debug.Log($"<color=green>[SFX]</color> {this.GetType().Name} OnGet");
         }
 
         private void OnRelease(SfxBuilder sfx)
         {
             sfx.gameObject.SetActive(false);
             sfx.Init();
-            Debug.Log($"<color=green>[SFX]</color> {this.GetType().Name} OnRelease");
         }
         
         private void OnDestroySfx(SfxBuilder sfx) { }

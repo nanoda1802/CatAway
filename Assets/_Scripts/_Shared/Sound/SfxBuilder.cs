@@ -86,12 +86,10 @@ namespace _Scripts._Shared.Sound
         {
             _audioSource.Stop();
             _soundManager.ReleaseBuilder(this);
-            Debug.Log($"<color=green>[SFX]</color> {this.GetType().Name} Stop");
         }
 
         public bool Play()
         {
-            Debug.Log($"<color=green>[SFX]</color> {this.GetType().Name} Play : hasClip? {HasClip}");
             if (!HasClip) return false;
             
             _audioSource.Play();
@@ -104,8 +102,6 @@ namespace _Scripts._Shared.Sound
         {
             var token = RefreshToken();
             float clipLen = CurClip.length;
-            
-            Debug.Log($"<color=green>[SFX]</color> {this.GetType().Name} Playing : clipLen {clipLen}");
             
             while (clipLen > 0 && !token.IsCancellationRequested)
             {

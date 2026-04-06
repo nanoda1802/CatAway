@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5876915076274317420}
   - component: {fileID: 3693926824423951900}
   - component: {fileID: 163250565887837994}
+  - component: {fileID: 8335361181643044772}
   m_Layer: 5
   m_Name: Btn_Carry
   m_TagString: Untagged
@@ -104,6 +105,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 1
+--- !u!114 &8335361181643044772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317761048875557568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20c9f685d3f64a92819b9bceb10d0071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Stage.VirtualButton
+  iconImg: {fileID: 1954123482808095806}
 --- !u!1 &1096816778450263999
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,6 +297,7 @@ GameObject:
   - component: {fileID: 4418500284700622938}
   - component: {fileID: 4612842610468735539}
   - component: {fileID: 2446351731444380228}
+  - component: {fileID: 4598418568884442651}
   m_Layer: 5
   m_Name: Img_E
   m_TagString: Untagged
@@ -347,6 +362,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4598418568884442651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3982969431084192275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20c9f685d3f64a92819b9bceb10d0071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Stage.VirtualButton
+  iconImg: {fileID: 2446351731444380228}
 --- !u!1 &4053754302155044096
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,6 +386,7 @@ GameObject:
   - component: {fileID: 4731951011409851291}
   - component: {fileID: 1113841617050766423}
   - component: {fileID: 4308165554698268662}
+  - component: {fileID: 7346490832361733703}
   m_Layer: 5
   m_Name: Img_N
   m_TagString: Untagged
@@ -422,6 +451,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7346490832361733703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4053754302155044096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20c9f685d3f64a92819b9bceb10d0071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Stage.VirtualButton
+  iconImg: {fileID: 4308165554698268662}
 --- !u!1 &4262963685312799144
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,6 +475,7 @@ GameObject:
   - component: {fileID: 1112137065945009290}
   - component: {fileID: 1612016846745342794}
   - component: {fileID: 8465941508315055115}
+  - component: {fileID: 6404516436181726925}
   m_Layer: 5
   m_Name: Img_W
   m_TagString: Untagged
@@ -497,6 +540,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6404516436181726925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4262963685312799144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20c9f685d3f64a92819b9bceb10d0071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Stage.VirtualButton
+  iconImg: {fileID: 8465941508315055115}
 --- !u!1 &4326261968583419588
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,6 +641,7 @@ GameObject:
   - component: {fileID: 4687117463121457574}
   - component: {fileID: 2186401017814824031}
   - component: {fileID: 6742258389989750045}
+  - component: {fileID: 8275408870197769645}
   m_Layer: 5
   m_Name: Btn_Throw
   m_TagString: Untagged
@@ -676,6 +733,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 1
+--- !u!114 &8275408870197769645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4831333567817745502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20c9f685d3f64a92819b9bceb10d0071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Stage.VirtualButton
+  iconImg: {fileID: 7876098206793136013}
 --- !u!1 &5304058918806874486
 GameObject:
   m_ObjectHideFlags: 0
@@ -855,6 +925,7 @@ GameObject:
   - component: {fileID: 5142134003342391388}
   - component: {fileID: 8926832158516475601}
   - component: {fileID: 7109654128203606035}
+  - component: {fileID: 6102625614834043646}
   m_Layer: 5
   m_Name: Img_S
   m_TagString: Untagged
@@ -919,6 +990,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6102625614834043646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6691475387637607187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20c9f685d3f64a92819b9bceb10d0071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Stage.VirtualButton
+  iconImg: {fileID: 7109654128203606035}
 --- !u!1 &7687016746885751516
 GameObject:
   m_ObjectHideFlags: 0
@@ -1043,6 +1127,7 @@ GameObject:
   - component: {fileID: 567148430411978481}
   - component: {fileID: 7865084956124990680}
   - component: {fileID: 5360634853432233116}
+  - component: {fileID: 5878624011555516613}
   m_Layer: 5
   m_Name: Btn_Dash
   m_TagString: Untagged
@@ -1134,6 +1219,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 1
+--- !u!114 &5878624011555516613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8698114130800741336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20c9f685d3f64a92819b9bceb10d0071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Stage.VirtualButton
+  iconImg: {fileID: 6729783968123797812}
 --- !u!1 &9042329855007907269
 GameObject:
   m_ObjectHideFlags: 0
@@ -1223,7 +1321,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11414302, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_Size
-      value: 0.9503967
+      value: 0.49999988
       objectReference: {fileID: 0}
     - target: {fileID: 11414302, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_Value
@@ -1243,7 +1341,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22400762, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.00008392334
+      value: 0.000030517578
       objectReference: {fileID: 0}
     - target: {fileID: 22414360, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.x

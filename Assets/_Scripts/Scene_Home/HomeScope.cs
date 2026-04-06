@@ -15,6 +15,8 @@ namespace _Scripts.Scene_Home
     {
         [SF] private HomeViewData  homeViewData;
         
+        private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
+        
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(homeViewData);
@@ -25,6 +27,8 @@ namespace _Scripts.Scene_Home
             builder.Register<IButtonAction<QuickMenuButtonType>, SettingsAction>(Lifetime.Scoped);
             builder.Register<IButtonAction<QuickMenuButtonType>, ExitAction>(Lifetime.Scoped);
 
+            builder.RegisterInstance(_disposableBagBuilder);
+            
             var msgOptions = Parent.Container.Resolve<MessagePipeOptions>();
             builder.RegisterMessageBroker<CreateRoomRequest>(msgOptions);
             builder.RegisterMessageBroker<JoinRoomRequest>(msgOptions);

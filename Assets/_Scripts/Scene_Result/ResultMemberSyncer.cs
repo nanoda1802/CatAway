@@ -95,7 +95,7 @@ namespace _Scripts.Scene_Result
             if (eventData.EventType != ConnectionEvent.ClientDisconnected) return;
             if (!IsServer) return;
             
-            bool removed = _roomStatus.RemoveMember(eventData.ClientId);
+            bool removed = _roomStatus.RemoveMember(eventData.ClientId, out int idx);
             
             if (removed)
             {

@@ -19,8 +19,6 @@ namespace _Scripts.Scene_Room
         private IPublisher<PopUpMessage> _popUpPub;
         private IPublisher<DialogMessage> _dialogPub;
         private IPublisher<RoomToastMessage> _roomNoticePub;
-
-        private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
         
         [Inject]
         private void Construct(
@@ -29,7 +27,8 @@ namespace _Scripts.Scene_Room
             IPublisher<PopUpMessage> popUpPub,
             IPublisher<DialogMessage> dialogPub,
             IPublisher<RoomToastMessage> roomNoticePub,
-            ISubscriber<LeaveRoomMessage> leaveRoomSub)
+            ISubscriber<LeaveRoomMessage> leaveRoomSub,
+            DisposableBagBuilder disposableBagBuilder)
         {
             _roomStatus = roomStatus;
             _loadScenePub = loadScenePub;
@@ -39,7 +38,7 @@ namespace _Scripts.Scene_Room
             
             leaveRoomSub
                 .Subscribe(LeaveRoom)
-                .AddTo(_disposableBagBuilder);
+                .AddTo(disposableBagBuilder);
         }
 
         public override void OnNetworkSpawn()
@@ -52,12 +51,6 @@ namespace _Scripts.Scene_Room
         {
             NetworkManager.OnConnectionEvent -= OnConnection;
             base.OnNetworkDespawn();
-        }
-        
-        public override void OnDestroy()
-        {
-            _disposableBagBuilder?.Build().Dispose();
-            base.OnDestroy();
         }
 
         private async UniTaskVoid LoadHomeAfterShutdown()

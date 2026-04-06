@@ -60,7 +60,7 @@ namespace _Scripts._Shared
                 .AsImplementedInterfaces()
                 .AsSelf();
             builder.RegisterInstance(avatarData);
-
+            builder.Register<PlayerInput>(Lifetime.Singleton);
             builder.Register<VfxHandler>(Lifetime.Singleton);
             builder.Register<TweenHandler>(Lifetime.Singleton);
             

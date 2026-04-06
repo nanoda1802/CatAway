@@ -19,9 +19,10 @@ namespace _Scripts.Scene_Room
 {
     public class RoomMemberSyncer : NetworkBehaviour
     {
-        [SF] private float[] spawnPosX; // 3,1,-1,-3
-        [SF] private float[] spawnRotY; // -30,-15, 15, 30
-        [SF] private float spawnPosZ = -5.5f;
+        [SF] private MemberPoint[] points;
+        private float[] _spawnPosX; // 3,1,-1,-3
+        private Quaternion[] _spawnRot; // -30,-15, 15, 30
+        private float _spawnPosZ = -5.5f;
         
         private IObjectResolver _resolver;
         private RoomMember _memberPrefab;
@@ -49,7 +50,6 @@ namespace _Scripts.Scene_Room
         {
             get
             {
-                return true;
                 if (!IsServer) return false;
                 if (!_roomStatus.EachTeamHasMember) return false;
 
@@ -82,6 +82,9 @@ namespace _Scripts.Scene_Room
             switchReadySub
                 .Subscribe(CheckStartState)
                 .AddTo(disposableBagBuilder);
+
+            
+            InitSpawnPoint();
         }
 
         public override void OnNetworkSpawn()
@@ -143,6 +146,8 @@ namespace _Scripts.Scene_Room
             (Vector3 spawnPos, Quaternion spawnRot) = CalculatePosAndRot(spawnIdx);
             var newMem = CreateMemberObject(clientId, spawnPos, spawnRot).AssignTo(this);
             
+            points[spawnIdx].Assign(newMem);
+            
             var newNetObj = newMem.GetComponent<NetworkObject>();
             newNetObj.SpawnAsPlayerObject(clientId,true);
             
@@ -151,12 +156,29 @@ namespace _Scripts.Scene_Room
         
         private (Vector3, Quaternion) CalculatePosAndRot(int idx)
         {
-            Vector3 pos = new Vector3(spawnPosX[idx], 0, spawnPosZ);
-            float rotY = spawnRotY[idx];
-            Quaternion rot = Quaternion.Euler(0, rotY, 0);
+            Vector3 pos = new Vector3(_spawnPosX[idx], 0, _spawnPosZ);
+            Quaternion rot = _spawnRot[idx];
             return (pos, rot);
         }
-        
+
+        private void InitSpawnPoint()
+        {
+            int len = points.Length;
+            _spawnPosX = new float[len];
+            _spawnRot = new Quaternion[len];
+            
+            for (int i = 0; i < len; i++)
+            {
+                var curPoint = points[i];
+                
+                _spawnPosX[i] = curPoint.Pos.x;
+                _spawnRot[i] = curPoint.Rot;
+                _spawnPosZ = curPoint.Pos.z;
+                
+                curPoint.Init(i, SwapMember);
+            }
+        }
+
         private void OnConnection(NetworkManager netMgr, ConnectionEventData eventData)
         {
             switch (eventData.EventType)
@@ -201,21 +223,24 @@ namespace _Scripts.Scene_Room
 
         private void RemoveTargetMember(ulong targetId) // PlayerPrefab이라 자동으로 디스폰되는 바람에 직접 디스폰은 안하지만...
         {
-            bool removed = _roomStatus.RemoveMember(targetId);
+            bool removed = _roomStatus.RemoveMember(targetId, out int idx);
 
             if (removed)
             {
                 _members.Remove(targetId);
+                points[idx].Resign();
                 CheckStartState();
             }
         }
         
-        public bool SwapMember(int idx1, int idx2)
+        public void SwapMember(int idx1, int idx2)
         {
-            if (!IsServer) return false;
+            if (!IsServer) return;
             
             var swapped = _roomStatus.SwapMember(idx1, idx2);
 
+            Debug.Log($"<color=green>[Swap]</color> MemberSyncer Swap : {swapped}");
+            
             if (swapped)
             {
                 var id1 = _roomStatus.GetIdByIndex(idx1);
@@ -231,8 +256,6 @@ namespace _Scripts.Scene_Room
                     mem2.InitReadyStateRpc();
                 }
             }
-            
-            return swapped;
         }
         
         private void InitReadyStates(SwitchModeRequest req)

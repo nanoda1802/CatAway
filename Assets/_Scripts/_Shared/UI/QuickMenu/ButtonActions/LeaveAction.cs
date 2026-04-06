@@ -31,7 +31,7 @@ namespace _Scripts._Shared.UI.QuickMenu.ButtonActions
             
             var popUpMsg = new PopUpMessage(typeof(DialogPop));
             var dialogMsg = new DialogMessage(
-                "Leave Room",
+                "Leave",
                 "Return to Home?",
                 string.Empty,
                 DialogButtonType.Leave | DialogButtonType.Cancel

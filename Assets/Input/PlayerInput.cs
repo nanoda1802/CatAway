@@ -307,6 +307,65 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Room"",
+            ""id"": ""42eb477c-9c1b-4a69-94bd-3b36791d9062"",
+            ""actions"": [
+                {
+                    ""name"": ""PointerPress"",
+                    ""type"": ""Button"",
+                    ""id"": ""3c80c279-898e-4590-974f-b5c4ae9c9f46"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Hold"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PointerPosition"",
+                    ""type"": ""Value"",
+                    ""id"": ""23cf552e-b14b-4527-9ad1-23af4bc2a250"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""b550b1ce-eace-48b5-86d0-e3fbe2acef29"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC"",
+                    ""action"": ""PointerPress"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8ca83b27-aee8-40fe-b95b-cc8892dfd8ab"",
+                    ""path"": ""<Touchscreen>/Press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";GamePad"",
+                    ""action"": ""PointerPress"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c7ac6046-fdb4-4d5d-86b3-68239c69ee06"",
+                    ""path"": ""<Pointer>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";PC;GamePad"",
+                    ""action"": ""PointerPosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -345,11 +404,16 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Stage_Button0 = m_Stage.FindAction("Button0", throwIfNotFound: true);
         m_Stage_Button1 = m_Stage.FindAction("Button1", throwIfNotFound: true);
         m_Stage_Button2 = m_Stage.FindAction("Button2", throwIfNotFound: true);
+        // Room
+        m_Room = asset.FindActionMap("Room", throwIfNotFound: true);
+        m_Room_PointerPress = m_Room.FindAction("PointerPress", throwIfNotFound: true);
+        m_Room_PointerPosition = m_Room.FindAction("PointerPosition", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
     {
         UnityEngine.Debug.Assert(!m_Stage.enabled, "This will cause a leak and performance issues, PlayerInput.Stage.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Room.enabled, "This will cause a leak and performance issues, PlayerInput.Room.Disable() has not been called.");
     }
 
     /// <summary>
@@ -550,6 +614,113 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="StageActions" /> instance referencing this action map.
     /// </summary>
     public StageActions @Stage => new StageActions(this);
+
+    // Room
+    private readonly InputActionMap m_Room;
+    private List<IRoomActions> m_RoomActionsCallbackInterfaces = new List<IRoomActions>();
+    private readonly InputAction m_Room_PointerPress;
+    private readonly InputAction m_Room_PointerPosition;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Room".
+    /// </summary>
+    public struct RoomActions
+    {
+        private @PlayerInput m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public RoomActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Room/PointerPress".
+        /// </summary>
+        public InputAction @PointerPress => m_Wrapper.m_Room_PointerPress;
+        /// <summary>
+        /// Provides access to the underlying input action "Room/PointerPosition".
+        /// </summary>
+        public InputAction @PointerPosition => m_Wrapper.m_Room_PointerPosition;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Room; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="RoomActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(RoomActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="RoomActions" />
+        public void AddCallbacks(IRoomActions instance)
+        {
+            if (instance == null || m_Wrapper.m_RoomActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_RoomActionsCallbackInterfaces.Add(instance);
+            @PointerPress.started += instance.OnPointerPress;
+            @PointerPress.performed += instance.OnPointerPress;
+            @PointerPress.canceled += instance.OnPointerPress;
+            @PointerPosition.started += instance.OnPointerPosition;
+            @PointerPosition.performed += instance.OnPointerPosition;
+            @PointerPosition.canceled += instance.OnPointerPosition;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="RoomActions" />
+        private void UnregisterCallbacks(IRoomActions instance)
+        {
+            @PointerPress.started -= instance.OnPointerPress;
+            @PointerPress.performed -= instance.OnPointerPress;
+            @PointerPress.canceled -= instance.OnPointerPress;
+            @PointerPosition.started -= instance.OnPointerPosition;
+            @PointerPosition.performed -= instance.OnPointerPosition;
+            @PointerPosition.canceled -= instance.OnPointerPosition;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="RoomActions.UnregisterCallbacks(IRoomActions)" />.
+        /// </summary>
+        /// <seealso cref="RoomActions.UnregisterCallbacks(IRoomActions)" />
+        public void RemoveCallbacks(IRoomActions instance)
+        {
+            if (m_Wrapper.m_RoomActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="RoomActions.AddCallbacks(IRoomActions)" />
+        /// <seealso cref="RoomActions.RemoveCallbacks(IRoomActions)" />
+        /// <seealso cref="RoomActions.UnregisterCallbacks(IRoomActions)" />
+        public void SetCallbacks(IRoomActions instance)
+        {
+            foreach (var item in m_Wrapper.m_RoomActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_RoomActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="RoomActions" /> instance referencing this action map.
+    /// </summary>
+    public RoomActions @Room => new RoomActions(this);
     private int m_PCSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -611,5 +782,27 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnButton2(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Room" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="RoomActions.AddCallbacks(IRoomActions)" />
+    /// <seealso cref="RoomActions.RemoveCallbacks(IRoomActions)" />
+    public interface IRoomActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "PointerPress" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPointerPress(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PointerPosition" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPointerPosition(InputAction.CallbackContext context);
     }
 }

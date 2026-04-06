@@ -96,7 +96,7 @@ namespace _Scripts.Scene_Stage.Player.Behaviour
         {
             SetDashState(true);
 
-            _sfxList.Play(StageSfxType.Dash);
+            _sfxList.Play(StageSfxType.Dash, true, this.transform);
             
             _playerRb.MoveRotation(_moveStatus.LookRot);
             _playerRb.AddForce(_moveStatus.DashForce, ForceMode.VelocityChange);

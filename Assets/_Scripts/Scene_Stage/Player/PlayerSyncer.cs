@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using _Scripts._Messages.Stage;
 using _Scripts._Shared.Data;
+using _Scripts.Messages.Room;
 using _Scripts.Messages.Stage;
 using _Scripts.Scene_Stage.Data;
 using _Scripts.Scene_Stage.Player.Behaviour;
@@ -75,7 +76,6 @@ namespace _Scripts.Scene_Stage.Player
         {
             if (IsOwner)
             {
-                Debug.Log($"플레이어 스폰, owner = true, respawn? {_isRespawn}");
                 _sharedAvatarIndex.Value = _playerStatus.AvatarIndex;
             }
 
@@ -89,15 +89,16 @@ namespace _Scripts.Scene_Stage.Player
 
         protected override void OnNetworkPostSpawn() // [핵심] 해답은 여기였다 ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ 로컬플레이어가 왜 그냥 스폰에선 false고 post에선 true지...? 어쨌든! 다른 비헤이비어들이 아직 스폰되지 않은 상태였고, 비헤이비어의 subscribe 메서드에는 islocalPlayer 여부로 리턴이 걸려있으니, 당연히 작동 안 했던거.....
         {
-            Debug.Log($"포스트 플레이어 스폰, owner? {IsOwner}, localplayer? {IsLocalPlayer} , respawn? {_isRespawn}");
             if (IsOwner && _isRespawn) EnableInputs();
 
             base.OnNetworkPostSpawn();
         }
 
-        public override void OnNetworkDespawn()
+        public override void OnNetworkPreDespawn()
         {
-            _inputMap?.Dispose();
+            Debug.Log($"<color=red>[Player Pre Despawn]<color> owner? {IsOwner} / localplayer? {IsLocalPlayer}");
+            if (IsOwner) DisableInputs();
+            
             _sharedAvatarIndex.OnValueChanged = null;
 
             base.OnNetworkDespawn();
@@ -116,14 +117,22 @@ namespace _Scripts.Scene_Stage.Player
             foreach (var behaviour in _behaviours)
             {
                 behaviour.SubscribeInputEvents(new StartStageMessage());
-                Debug.Log($"비헤이비어들 인풋 활성화 중 : {behaviour.GetType().Name}");
+            }
+        }
+
+        private void DisableInputs()
+        {
+            _inputMap.Disable();
+                
+            foreach (var behaviour in _behaviours)
+            {
+                behaviour.UnsubscribeInputEvents(new EndStageMessage());
             }
         }
 
         public PlayerSyncer ApplySpawnInfo(bool isRespawn)
         {
             _isRespawn = isRespawn;
-            Debug.Log($"[Spawn] ApplySpawnInfo, 리스폰인가요? {isRespawn}");
             
             return this;
         }
@@ -131,21 +140,13 @@ namespace _Scripts.Scene_Stage.Player
         public void Despawn()
         {
             if (!IsServer) return;
-            
-            // if (_carrierBehaviour.CarriedItem is IDespawnable carriedItem)
-            // {
-            // Debug.Log($"[Despawn] player_{OwnerClientId}의 carriedItem 디스폰");
-            //     carriedItem.Despawn();
-            // }
 
-            Debug.Log($"[Despawn] carrier_{OwnerClientId} Drop");
             _carrierBehaviour.Drop();
             
-            Debug.Log($"[Despawn] player_{OwnerClientId} 디스폰 메세지 발송");
             var msg = new PlayerDespawnMessage(this.OwnerClientId, _respawnPoint, NetworkManager.ServerTime.TimeAsFloat);
             _despawnPub.Publish(msg);
             
-            this.NetObj.Despawn();
+            this.NetObj.Despawn(true);
         }
     }
 }

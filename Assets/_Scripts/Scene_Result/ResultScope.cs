@@ -34,7 +34,7 @@ namespace _Scripts.Scene_Result
             builder.Register<IButtonAction<QuickMenuButtonType>, SettingsAction>(Lifetime.Scoped);
             builder.Register<IButtonAction<QuickMenuButtonType>, LeaveAction>(Lifetime.Scoped);
 
-            builder.Register<ResultMemberCardProvider>(Lifetime.Scoped);
+            builder.Register<ResultMemberCardProvider>(Lifetime.Singleton);
             
             builder.RegisterInstance(_disposableBagBuilder);
 

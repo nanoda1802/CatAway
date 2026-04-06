@@ -221,6 +221,65 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Room",
+            "id": "42eb477c-9c1b-4a69-94bd-3b36791d9062",
+            "actions": [
+                {
+                    "name": "PointerPress",
+                    "type": "Button",
+                    "id": "3c80c279-898e-4590-974f-b5c4ae9c9f46",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PointerPosition",
+                    "type": "Value",
+                    "id": "23cf552e-b14b-4527-9ad1-23af4bc2a250",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b550b1ce-eace-48b5-86d0-e3fbe2acef29",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "PointerPress",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8ca83b27-aee8-40fe-b95b-cc8892dfd8ab",
+                    "path": "<Touchscreen>/Press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";GamePad",
+                    "action": "PointerPress",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c7ac6046-fdb4-4d5d-86b3-68239c69ee06",
+                    "path": "<Pointer>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC;GamePad",
+                    "action": "PointerPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

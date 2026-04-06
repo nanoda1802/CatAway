@@ -29,20 +29,20 @@ namespace _Scripts.Scene_Room.UI
         private bool _isDragActive;
         private Vector2 _dragStartPos;
         private CancellationTokenSource _cts;
-        private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
         
         [Inject]
         private void Construct(            
             StageListData stageList,
             IPublisher<SelectStageRequest> selectStagePub,
-            ISubscriber<SelectStageRespond> selectStageSub)
+            ISubscriber<SelectStageRespond> selectStageSub,
+            DisposableBagBuilder disposableBagBuilder)
         {
             _stageList = stageList;
             _selectStagePub = selectStagePub;
 
             selectStageSub
                 .Subscribe(UpdateThumbnail)
-                .AddTo(_disposableBagBuilder);
+                .AddTo(disposableBagBuilder);
             
             _boardRectTr = GetComponent<RectTransform>();
             _offsetX = _boardRectTr.rect.width;
@@ -60,12 +60,7 @@ namespace _Scripts.Scene_Room.UI
             _cts?.Dispose();
             _cts = null;
         }
-
-        private void OnDestroy()
-        {
-            _disposableBagBuilder?.Build().Dispose();
-        }
-
+        
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (!_isDragActive) return;

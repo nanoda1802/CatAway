@@ -59,6 +59,8 @@ namespace _Scripts.Scene_Stage.UI.Board.Timer
 
         private void StopTimer()
         {
+            Debug.Log($"<color=cyan>[TimerPresenter]</color> stop Timer");
+
             if (IsServer)
             {
                 var cuePresenter = _stageHub.FetchCuePresenter();
@@ -69,6 +71,8 @@ namespace _Scripts.Scene_Stage.UI.Board.Timer
             
             var msg = new EndStageMessage();
             _endPub.Publish(msg);
+            Debug.Log($"<color=cyan>[TimerPresenter]</color> publish end stage");
+
         }
 
         [Rpc(SendTo.Everyone)]

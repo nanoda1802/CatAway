@@ -24,8 +24,6 @@ namespace _Scripts.Scene_Home
         private IPublisher<PopUpMessage> _popUpPub;
         private IPublisher<PopDownMessage> _popDownPub;
         private IPublisher<DialogMessage> _dialogPub;
-
-        private readonly DisposableBagBuilder _disposableBagBuilder = DisposableBag.CreateBuilder();
         
         [Inject]
         private void Construct(
@@ -37,7 +35,8 @@ namespace _Scripts.Scene_Home
             IPublisher<PopDownMessage> popDownPub,
             IPublisher<DialogMessage> dialogPub,
             ISubscriber<CreateRoomRequest> createSub,
-            ISubscriber<JoinRoomRequest> joinSub)
+            ISubscriber<JoinRoomRequest> joinSub,
+            DisposableBagBuilder disposableBagBuilder)
         {
             _roomStatus = roomStatus;
             _netManager = netManager;
@@ -49,21 +48,13 @@ namespace _Scripts.Scene_Home
             
             createSub
                 .Subscribe(req => CreateRoom(req).Forget())
-                .AddTo(_disposableBagBuilder);
+                .AddTo(disposableBagBuilder);
             
             joinSub
                 .Subscribe(req => JoinRoom(req).Forget())
-                .AddTo(_disposableBagBuilder);
+                .AddTo(disposableBagBuilder);
             
             _netManager.OnConnectionEvent += OnConnection;
-        }
-
-        public override void OnDestroy()
-        {
-            _netManager.OnConnectionEvent -= OnConnection;
-            _disposableBagBuilder?.Build().Dispose();
-            
-            base.OnDestroy();
         }
 
         public override void OnNetworkSpawn()
@@ -72,6 +63,12 @@ namespace _Scripts.Scene_Home
             _loadScenePub.Publish(new LoadSceneMessage("Room", LoadSceneMode.Single));
             
             base.OnNetworkSpawn();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            _netManager.OnConnectionEvent -= OnConnection;
+            base.OnNetworkDespawn();
         }
 
         private void OnConnection(NetworkManager netMgr, ConnectionEventData eventData)
