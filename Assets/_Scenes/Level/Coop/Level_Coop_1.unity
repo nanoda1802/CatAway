@@ -341,8 +341,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: -8731476083798394611, guid: 9595950ac13d70a45a344214ea57093a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8731476083798394611, guid: 9595950ac13d70a45a344214ea57093a, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2259565933
+      value: 3668113307
       objectReference: {fileID: 0}
     - target: {fileID: -8731476083798394611, guid: 9595950ac13d70a45a344214ea57093a, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -455,6 +459,10 @@ PrefabInstance:
       value: ChoppingBoard
       objectReference: {fileID: 0}
     - target: {fileID: 8142648700398495914, guid: e16730c046efc0a4085c88118c8ecf0b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8142648700398495914, guid: e16730c046efc0a4085c88118c8ecf0b, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2902010810
       objectReference: {fileID: 0}
@@ -481,8 +489,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 1296415101
+      value: 1579064585
       objectReference: {fileID: 0}
     - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -965,8 +977,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 4185690945
+      value: 813094523
       objectReference: {fileID: 0}
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -1039,8 +1055,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 256004826
+      value: 323232412
       objectReference: {fileID: 0}
     - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -1612,8 +1632,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 405365353
+      value: 2039333473
       objectReference: {fileID: 0}
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -1897,8 +1921,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2460569839
+      value: 1363666770
       objectReference: {fileID: 0}
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -1970,6 +1998,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
+    - target: {fileID: 3588958529527047382, guid: 7c542e7ca2ff47a48a3a6cace8fc7b81, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3588958529527047382, guid: 7c542e7ca2ff47a48a3a6cace8fc7b81, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 516956891
@@ -2362,6 +2394,10 @@ PrefabInstance:
       value: ChoppingBoard
       objectReference: {fileID: 0}
     - target: {fileID: 8142648700398495914, guid: e16730c046efc0a4085c88118c8ecf0b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8142648700398495914, guid: e16730c046efc0a4085c88118c8ecf0b, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 3661229876
       objectReference: {fileID: 0}
@@ -2459,8 +2495,12 @@ PrefabInstance:
       value: Pantry
       objectReference: {fileID: 0}
     - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 1116591563
+      value: 50017111
       objectReference: {fileID: 0}
     - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -3843,8 +3883,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2516793285
+      value: 486324255
       objectReference: {fileID: 0}
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -4511,8 +4555,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 4112525955
+      value: 62739694
       objectReference: {fileID: 0}
     - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -4580,6 +4628,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
+    - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 4166029743
@@ -4655,8 +4707,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 3943885168
+      value: 2451731250
       objectReference: {fileID: 0}
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -4731,6 +4787,10 @@ PrefabInstance:
     - target: {fileID: 4140863123615490672, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: m_Name
       value: Pantry
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: GlobalObjectIdHash
@@ -5243,8 +5303,12 @@ PrefabInstance:
       value: Pantry
       objectReference: {fileID: 0}
     - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2595402822
+      value: 1365473846
       objectReference: {fileID: 0}
     - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -5321,8 +5385,12 @@ PrefabInstance:
       value: Bin
       objectReference: {fileID: 0}
     - target: {fileID: 6334045403596729713, guid: bdbe7a49f08b3d748b599c62ce7daa98, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6334045403596729713, guid: bdbe7a49f08b3d748b599c62ce7daa98, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2912495093
+      value: 4024803572
       objectReference: {fileID: 0}
     - target: {fileID: 6334045403596729713, guid: bdbe7a49f08b3d748b599c62ce7daa98, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -5527,6 +5595,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
+    - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 1396110064
@@ -5995,7 +6067,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Stage.LevelScope
   parentReference:
-    TypeName: _Scripts.Scene_Stage.StageScope
+    TypeName: _Scripts.Stage.StageScope
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 684401895}
@@ -6483,6 +6555,10 @@ PrefabInstance:
       value: Pantry
       objectReference: {fileID: 0}
     - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2257243889
       objectReference: {fileID: 0}
@@ -6628,8 +6704,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 5377982196670736061, guid: 87ea98a799732d54fb426a04c575d3cb, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5377982196670736061, guid: 87ea98a799732d54fb426a04c575d3cb, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 4034714351
+      value: 1473527952
       objectReference: {fileID: 0}
     - target: {fileID: 5377982196670736061, guid: 87ea98a799732d54fb426a04c575d3cb, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -7613,8 +7693,12 @@ PrefabInstance:
       value: Pantry
       objectReference: {fileID: 0}
     - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 1225908271
+      value: 1382258869
       objectReference: {fileID: 0}
     - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -7837,8 +7921,12 @@ PrefabInstance:
       value: ChoppingBoard
       objectReference: {fileID: 0}
     - target: {fileID: 8142648700398495914, guid: e16730c046efc0a4085c88118c8ecf0b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8142648700398495914, guid: e16730c046efc0a4085c88118c8ecf0b, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 3367802637
+      value: 2858746331
       objectReference: {fileID: 0}
     - target: {fileID: 8142648700398495914, guid: e16730c046efc0a4085c88118c8ecf0b, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -7938,8 +8026,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 457077886981560598, guid: 69f2ae7800a02654390ed3de849cd9f9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 457077886981560598, guid: 69f2ae7800a02654390ed3de849cd9f9, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 1130385769
+      value: 3759819828
       objectReference: {fileID: 0}
     - target: {fileID: 457077886981560598, guid: 69f2ae7800a02654390ed3de849cd9f9, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -8079,8 +8171,12 @@ PrefabInstance:
       value: Pantry
       objectReference: {fileID: 0}
     - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2473724761
+      value: 4182550155
       objectReference: {fileID: 0}
     - target: {fileID: 5310376794471936453, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -8569,6 +8665,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
+    - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 4111236143
@@ -9972,8 +10072,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2113225229
+      value: 2651175708
       objectReference: {fileID: 0}
     - target: {fileID: 3588958529527047382, guid: cf779876436fe05439d028af85f284d9, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -10157,8 +10261,12 @@ PrefabInstance:
       value: ChoppingBoard
       objectReference: {fileID: 0}
     - target: {fileID: 8142648700398495914, guid: e16730c046efc0a4085c88118c8ecf0b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8142648700398495914, guid: e16730c046efc0a4085c88118c8ecf0b, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2936626990
+      value: 1264281900
       objectReference: {fileID: 0}
     - target: {fileID: 8142648700398495914, guid: e16730c046efc0a4085c88118c8ecf0b, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -10469,8 +10577,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 3010313215
+      value: 1676030521
       objectReference: {fileID: 0}
     - target: {fileID: 1318807194987166605, guid: e43c5a04a0b80924cb3b418ae043b8b4, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -10675,8 +10787,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 684401896}
     m_Modifications:
     - target: {fileID: 457077886981560598, guid: 69f2ae7800a02654390ed3de849cd9f9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 457077886981560598, guid: 69f2ae7800a02654390ed3de849cd9f9, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 881771780
+      value: 3161764828
       objectReference: {fileID: 0}
     - target: {fileID: 457077886981560598, guid: 69f2ae7800a02654390ed3de849cd9f9, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -11101,8 +11217,8 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 399632424}
   - {fileID: 1299116061}
+  - {fileID: 399632424}
   - {fileID: 1047346660}
   - {fileID: 1664353097}
   - {fileID: 512732051}

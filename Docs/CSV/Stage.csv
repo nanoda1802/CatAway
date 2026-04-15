@@ -1,0 +1,5 @@
+id,mode,description,duration,playerSpawnPoints_Count,OrderInfo_ID,Remarks
+0,1,-,180,4,Comp_Order_0,"PantryTypes: 1, 2, 4, 8, 16(Main)"
+1,1,-,180,4,Comp_Order_1,"PantryTypes: 1, 2, 4, 8, 16(Main)"
+0,0,-,180,4,Coop_Order_0,"PantryTypes: 1, 2, 4, 8, 16(Main)"
+1,0,-,180,4,Coop_Order_1,"PantryTypes: 1, 2, 4, 8, 16(Main)"

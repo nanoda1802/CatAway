@@ -181,7 +181,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 615240572631847751, guid: 2958e5862ae6a7745b5f49ed05a6aa23, type: 3}
       propertyPath: parentReference.TypeName
-      value: _Scripts.Scene_Result.ResultScope
+      value: _Scripts.Result.ResultScope
       objectReference: {fileID: 0}
     - target: {fileID: 836072983290523364, guid: 2958e5862ae6a7745b5f49ed05a6aa23, type: 3}
       propertyPath: m_AnchorMax.y

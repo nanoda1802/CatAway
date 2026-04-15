@@ -491,7 +491,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 615240572631847751, guid: 2958e5862ae6a7745b5f49ed05a6aa23, type: 3}
       propertyPath: parentReference.TypeName
-      value: _Scripts.Scene_Stage.StageScope
+      value: _Scripts.Stage.StageScope
       objectReference: {fileID: 0}
     - target: {fileID: 916278511615759252, guid: 2958e5862ae6a7745b5f49ed05a6aa23, type: 3}
       propertyPath: m_SizeDelta.y
@@ -685,6 +685,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2192950309437410989, guid: 3f4a1cf68573d1046869269c6387c242, type: 3}
+      propertyPath: parentReference.TypeName
+      value: _Scripts.Stage.StageScope
+      objectReference: {fileID: 0}
     - target: {fileID: 3669242713406420036, guid: 3f4a1cf68573d1046869269c6387c242, type: 3}
       propertyPath: m_SortingOrder
       value: 0
@@ -852,6 +856,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1574472012971896334, guid: 8071ea1d9c257a449a0b10c4315649c7, type: 3}
+      propertyPath: parentReference.TypeName
+      value: _Scripts.Stage.StageScope
+      objectReference: {fileID: 0}
     - target: {fileID: 1574472012971896334, guid: 8071ea1d9c257a449a0b10c4315649c7, type: 3}
       propertyPath: 'autoInjectGameObjects.Array.data[1]'
       value: 
@@ -1427,7 +1435,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6499601406785164921, guid: 445ee2dfdbbead544adc36ee6adc5b44, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.00005340576
+      value: -0.000038146973
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1,5 +1,5 @@
 ﻿using System;
-using _Scripts.Scene_Stage.Item;
+using _Scripts.Stage.Item;
 using Unity.Netcode.Components;
 
 namespace _Scripts._Wrapper

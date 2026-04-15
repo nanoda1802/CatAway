@@ -1,0 +1,6 @@
+Name,Type,MaxProgress,MaxPrepState,ThrowForce,DampingThreshold,DampingRatio,ValidVelocityCutOff,Remarks(Models & Scales)
+Bun,1,0,1,17,10,0.97,25,"Default: MeshID(7768090395952822846, 3f85a287d1d712348aad8d756c7c3bfe), Scale(0.45, 0.5, 0.45)"
+Cheese,16,1.5,1,17,10,0.97,25,"Default: MeshID(-6534272639565767917, c77e13b355f72044683605dafb23df16), Scale(0.75, 0.5, 0.6)"
+Lettuce,8,1.2,1,17,10,0.97,25,"Default: MeshID(3760286561286826541, d8ecb712bfd84474aa5c417b7b4b0c20), Scale(0.4, 0.35, 0.4)"
+Patty,2,8,2,17,10,0.97,25,"Default: MeshID(-8794997232909900580, 367bab942037468409d91209a6d73770), Scale(0.5, 0.8, 0.5)"
+Tomato,4,1,1,17,10,0.97,25,"Default: MeshID(-1340541719380434750, 83fdd2cb637136948b1588fa64ac2eb4), Scale(0.55, 0.5, 0.55)"
