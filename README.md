@@ -1,2 +1,2 @@
-# PartTimeCat
+# CatAway
 
