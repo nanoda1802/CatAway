@@ -16,7 +16,7 @@ namespace _Scripts.Stage.Table
                 case (null,Ingredient)
                 or (null,Plate)
                 or (null,Cookware):
-                    return HandlePickCase(carrier, table);
+                    return HandleDisplaceCase(carrier, table);
                 
                 case (Ingredient,null)
                 or (Plate,null)
@@ -60,7 +60,7 @@ namespace _Scripts.Stage.Table
             }
         }
 
-        private BrokerResult HandlePickCase(CarrierBehaviour carrier, IPlacable table)
+        private BrokerResult HandleDisplaceCase(CarrierBehaviour carrier, IPlacable table)
         {
             if (!table.CanDisPlace(out var reason)) return new BrokerResult(false, reason);
             

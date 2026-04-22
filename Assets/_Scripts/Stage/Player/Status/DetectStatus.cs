@@ -79,7 +79,7 @@ namespace _Scripts.Stage.Player.Status
             bool isHit = Physics.Raycast(_detectPoint.position, _detectPoint.forward, out RaycastHit hit, _data.RayDistance,
                 _data.TableLayer);
             
-            Debug.DrawRay(_detectPoint.position, _detectPoint.forward * _data.RayDistance, Color.red,1f);
+            // Debug.DrawRay(_detectPoint.position, _detectPoint.forward * _data.RayDistance, Color.red,1f);
             
             table = isHit ? hit.transform.GetComponentInChildren<NetworkObject>() : null;
             

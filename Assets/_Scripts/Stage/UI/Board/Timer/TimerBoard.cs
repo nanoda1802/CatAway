@@ -58,7 +58,7 @@ namespace _Scripts.Stage.UI.Board.Timer
                 .Subscribe(msg => fillBarImg.fillAmount = 0)
                 .AddTo(disposableBagBuilder);
         }
-        
+
         public void Apply(float data)
         {
             UpdateFillBar(data / _stageData.Duration);

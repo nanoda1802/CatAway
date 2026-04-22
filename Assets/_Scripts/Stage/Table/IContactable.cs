@@ -14,6 +14,5 @@ namespace _Scripts.Stage.Table
         public void RespondTo(Ingredient ingredient) { }
         public void RespondTo(Plate plate, ulong carrierId) { }
         public void RespondTo(Cookware cookware) { }
-        
     }
 }

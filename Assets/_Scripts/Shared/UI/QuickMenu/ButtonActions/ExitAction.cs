@@ -20,7 +20,7 @@ namespace _Scripts.Shared.UI.QuickMenu.ButtonActions
             if (!IsValidClick) return;
             _lastClickTime = Time.time;
 
-            Debug.Log("Exit Game");
+            Application.Quit();
         }
     }
 }

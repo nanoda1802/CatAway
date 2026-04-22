@@ -39,7 +39,7 @@ namespace _Scripts.Stage.Player.Behaviour
 
             if (_carrierBehaviour.HasAttachments)
             {
-                KnockBackClientRpc(other.relativeVelocity, RpcTarget.Single(this.OwnerClientId, RpcTargetUse.Temp));
+                KnockBackRpc(other.relativeVelocity, RpcTarget.Single(this.OwnerClientId, RpcTargetUse.Temp));
             }
             else
             {
@@ -48,7 +48,7 @@ namespace _Scripts.Stage.Player.Behaviour
         }
 
         [Rpc(SendTo.SpecifiedInParams)]
-        private void KnockBackClientRpc(Vector3 knockBackDir, RpcParams rpcParams = default)
+        private void KnockBackRpc(Vector3 knockBackDir, RpcParams rpcParams = default)
         {
             knockBackDir.y = 0;
             knockBackDir.Normalize();

@@ -1,4 +1,6 @@
+using System;
 using _Scripts._Helper;
+using _Scripts._Test;
 using _Scripts.Stage._Data;
 using _Scripts.Stage._Messages;
 using _Scripts.Stage.Player.Status;
@@ -32,7 +34,9 @@ namespace _Scripts.Stage.Player.Behaviour
         private readonly int _moveParamHash = Animator.StringToHash("Move");
         private readonly int _moveSpeedParamHash = Animator.StringToHash("MoveSpeed");
         private readonly int _dashParamHash = Animator.StringToHash("Dash");
-    
+
+        // private MoveTest _test;
+        
         [Inject]
         private void Construct(
             MoveStatus moveStatus, 
@@ -66,6 +70,8 @@ namespace _Scripts.Stage.Player.Behaviour
             endSub
                 .Subscribe(UnsubscribeInputEvents)
                 .AddTo(disposableBagBuilder);
+            
+            // _test = new MoveTest(transform.position);
         }
         
         public override void OnNetworkDespawn()
@@ -80,7 +86,13 @@ namespace _Scripts.Stage.Player.Behaviour
             Move();
             Rotate();
         }
-        
+
+        // private void Update()
+        // {
+        //     if (!IsSpawned) return;
+        //     _test.DetectMove(transform);
+        // }
+
         private void Move()
         {
             _playerRb.MovePosition(_playerRb.position + _moveStatus.MoveOffset);
@@ -112,7 +124,12 @@ namespace _Scripts.Stage.Player.Behaviour
             _playerRb.linearVelocity = _playerRb.angularVelocity = Vector3.zero;
             if (!isDashBegin) _moveStatus.UpdateLastDashTime();
         }
-    
+
+        private void OnMoveStarted(InputAction.CallbackContext ctx)
+        {
+            // _test.RecordInput(transform).Forget();
+        }
+
         private void OnMovePerformed(InputAction.CallbackContext ctx)
         {
             if (_interactStatus.IsInteracting) return;
@@ -125,6 +142,8 @@ namespace _Scripts.Stage.Player.Behaviour
         {
             _moveStatus.SetMoveDirection(Vector2.zero);
             _animator.SetBool(_moveParamHash, false);
+            
+            // _test.CancelRecordInput();
         }
     
         private void OnDashStarted(InputAction.CallbackContext ctx)
@@ -155,6 +174,7 @@ namespace _Scripts.Stage.Player.Behaviour
             if (!IsLocalPlayer) return;
             
             _moveAction.Enable();
+            _moveAction.started += OnMoveStarted; // [TEST]
             _moveAction.performed += OnMovePerformed;
             _moveAction.canceled += OnMoveCanceled;
             
@@ -169,6 +189,7 @@ namespace _Scripts.Stage.Player.Behaviour
         {
             if (!IsLocalPlayer) return;
             
+            _moveAction.started -= OnMoveStarted; // [TEST]
             _moveAction.performed -= OnMovePerformed;
             _moveAction.canceled -= OnMoveCanceled;
             _moveAction.Disable();

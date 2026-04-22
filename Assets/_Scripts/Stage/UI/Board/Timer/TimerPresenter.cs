@@ -1,8 +1,10 @@
-﻿using _Scripts.Stage._Data;
+﻿using System;
+using _Scripts.Stage._Data;
 using _Scripts.Stage._Enums;
 using _Scripts.Stage._Messages;
 using MessagePipe;
 using Unity.Netcode;
+using UnityEngine;
 using VContainer;
 
 namespace _Scripts.Stage.UI.Board.Timer
@@ -36,7 +38,7 @@ namespace _Scripts.Stage.UI.Board.Timer
                 .Subscribe(BeginTimer)
                 .AddTo(disposableBagBuilder);
         }
-
+        
         public void NetworkUpdate(NetworkUpdateStage updateStage)
         {
             if (!IsSpawned) return;
