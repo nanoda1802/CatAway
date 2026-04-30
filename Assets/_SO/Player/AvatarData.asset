@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f3f4d487ed149119665228be37f1172, type: 3}
+  m_Name: AvatarData
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.AvatarData
+  coatColorSprites:
+  - {fileID: 21300000, guid: adfa153a89bbaa446ad43b8bf7e0933b, type: 3}
+  - {fileID: 21300000, guid: e859b5da4a6afe3458a2bcc5c6c274a4, type: 3}
+  - {fileID: 21300000, guid: 5d66136e35947d54285c9401fa1cf434, type: 3}
+  - {fileID: 21300000, guid: 159ee5156d0bb994d8fe9d411d983f81, type: 3}
+  - {fileID: 21300000, guid: 08c171d6fb2d6014593988a0979c5e52, type: 3}
+  - {fileID: 21300000, guid: 6bc2870c80188b545bfa36a7aa55cd35, type: 3}
+  - {fileID: 21300000, guid: 928cbb478554ca4419ebf40a2772d9e7, type: 3}
+  - {fileID: 21300000, guid: 0f671ed08b69a20418be0c9af4c5d6e1, type: 3}
+  - {fileID: 21300000, guid: abbb2d111423c824fbed86e3550e3fc6, type: 3}
+  - {fileID: 21300000, guid: 6c6046bcec8dd9049b5b1e8769876627, type: 3}
+  coatColorTextures:
+  - {fileID: 2800000, guid: adfa153a89bbaa446ad43b8bf7e0933b, type: 3}
+  - {fileID: 2800000, guid: e859b5da4a6afe3458a2bcc5c6c274a4, type: 3}
+  - {fileID: 2800000, guid: 5d66136e35947d54285c9401fa1cf434, type: 3}
+  - {fileID: 2800000, guid: 159ee5156d0bb994d8fe9d411d983f81, type: 3}
+  - {fileID: 2800000, guid: 08c171d6fb2d6014593988a0979c5e52, type: 3}
+  - {fileID: 2800000, guid: 6bc2870c80188b545bfa36a7aa55cd35, type: 3}
+  - {fileID: 2800000, guid: 928cbb478554ca4419ebf40a2772d9e7, type: 3}
+  - {fileID: 2800000, guid: 0f671ed08b69a20418be0c9af4c5d6e1, type: 3}
+  - {fileID: 2800000, guid: abbb2d111423c824fbed86e3550e3fc6, type: 3}
+  - {fileID: 2800000, guid: 6c6046bcec8dd9049b5b1e8769876627, type: 3}
+  faceMaterials: []

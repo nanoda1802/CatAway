@@ -1,0 +1,8 @@
+ProviderName,ObjType,ObjNamePrefix,DefaultCount,MaxCount
+Ingredient,Item,Ingredient,30,50
+Plate,Item,Plate,6,10
+Cookware,Item,Pan,4,10
+PlatingIcon,Widget,PlatingIcon,10,20
+ProgressBar,Widget,ProgressBar,10,20
+TableAlert,Widget,TableAlert,6,10
+Toast,Widget,Toast,10,20

@@ -1,0 +1,3 @@
+Category,Name,BGM_FadeSpeed,BGM_Volume,SFX_Volume,IsSfxMute,IsBgmMute,Remarks
+Sound,SoundSettings,1.5,1,1,0,0,"ProviderInfo: SFX(30/50)"
+Stage,StageSfx,-,-,-,-,-,"15 SFX types mapped to clips"

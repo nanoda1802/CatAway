@@ -6,8 +6,35 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/_Scenes/Home.unity
+    guid: c693e1cf18553bc4489b7bc9862c46a4
+  - enabled: 1
+    path: Assets/_Scenes/Room.unity
+    guid: 2feccc18c90bb384c8ae96cc6cd88682
+  - enabled: 1
+    path: Assets/_Scenes/Stage.unity
+    guid: 5bdc24fc2a6eaa84a903706703ff0384
+  - enabled: 1
+    path: Assets/_Scenes/Result.unity
+    guid: 5c59c1b5ac110fe4d8e1ed1b13d76355
+  - enabled: 1
+    path: Assets/_Scenes/UI/StageUi_Comp.unity
+    guid: da9c10b643b1e28409c428c2620f0f67
+  - enabled: 1
+    path: Assets/_Scenes/UI/StageUi_Coop.unity
+    guid: 657b712a27dd2384880cc28c8dda81a7
+  - enabled: 1
+    path: Assets/_Scenes/Level/Comp/Level_Comp_0.unity
+    guid: 5571a5db6ed9eb6448a4218adbd15bd9
+  - enabled: 1
+    path: Assets/_Scenes/Level/Comp/Level_Comp_1.unity
+    guid: 594dfa9a3ae659445979182a31e6126f
+  - enabled: 1
+    path: Assets/_Scenes/Level/Coop/Level_Coop_0.unity
+    guid: eea82cca588e099489a8cdf5e1f1f805
+  - enabled: 1
+    path: Assets/_Scenes/Level/Coop/Level_Coop_1.unity
+    guid: a760d5a032e7db54a9ed2d70e64e9cd4
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

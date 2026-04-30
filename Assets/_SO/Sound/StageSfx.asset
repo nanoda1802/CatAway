@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ca2edc905e849bd9453dccc34865267, type: 3}
+  m_Name: StageSfx
+  m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Scene_Stage.Data.StageSfxData
+  sfxList:
+  - type: 0
+    clip: {fileID: 8300000, guid: c8021812d48aec043b83fc83763f85a0, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 1
+    clip: {fileID: 8300000, guid: 21bc52d46c96f284aae69a75fccb376e, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 2
+    clip: {fileID: 8300000, guid: bb9ff60b15548c24995a48ebd3b70dda, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 3
+    clip: {fileID: 8300000, guid: 867b56fa87123ad469d093c8725d9dff, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 4
+    clip: {fileID: 8300000, guid: 888c016cf833f944480796a92c87b0d1, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 5
+    clip: {fileID: 8300000, guid: 86b151fc1dba6ff4bb69276971c4969f, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 6
+    clip: {fileID: 8300000, guid: ebfff410dba18654694b547488e91f2d, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 1
+  - type: 7
+    clip: {fileID: 8300000, guid: d8d569934d5a4684896a7d47f4e56cdb, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 1
+  - type: 8
+    clip: {fileID: 8300000, guid: 7ff6525e146f68344b3e74fcdf40cc2f, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 1
+  - type: 9
+    clip: {fileID: 8300000, guid: ae760e562ed82964eb0e2c514dcf5c3a, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 10
+    clip: {fileID: 8300000, guid: 68ddc3c80bff8d9468eefe97b363acb4, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 11
+    clip: {fileID: 8300000, guid: f32b67491b09e4f45ad8700b65bded03, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 12
+    clip: {fileID: 8300000, guid: a1cf1eab627fcbe4cb4260cf4ae8418e, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 13
+    clip: {fileID: 8300000, guid: 7465c205b9369994b8318adece728389, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  - type: 14
+    clip: {fileID: 8300000, guid: 941372c48faae7d4ab39d0e658b95a75, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0

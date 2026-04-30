@@ -1,0 +1,5 @@
+OrderID,MaxActiveOrderCount,NewOrderInterval,RequiredType,MenuList_Summary
+Comp_Order_0,3,3,1,"19(100s), 13(100s), 5(60s), 3(70s), 9(60s)"
+Comp_Order_1,3,3,1,"19(100s), 13(100s), 5(60s), 3(70s), 9(60s)"
+Coop_Order_0,5,3,1,"19(100s), 13(100s), 5(60s), 3(70s), 9(60s)"
+Coop_Order_1,5,3,1,"19(100s), 13(100s), 5(60s), 3(70s), 9(60s)"
