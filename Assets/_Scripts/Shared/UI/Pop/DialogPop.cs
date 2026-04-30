@@ -126,6 +126,7 @@ namespace _Scripts.Shared.UI.Pop
             inputField.gameObject.SetActive(true);
             msgTxt.gameObject.SetActive(false);
             waitingImg.gameObject.SetActive(false);
+            headerTxt.text = "Join Room";
             buttons[DialogButtonType.Retry].gameObject.SetActive(false);
             buttons[DialogButtonType.Submit].gameObject.SetActive(true);
         }

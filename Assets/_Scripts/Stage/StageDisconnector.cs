@@ -81,7 +81,8 @@ namespace _Scripts.Stage
                     NetworkManager.DisconnectClient(memId, "Host left room!");
                 }   
             }
-            
+
+            StopSounds();
             LoadHomeAfterShutdown().Forget();
         }
 

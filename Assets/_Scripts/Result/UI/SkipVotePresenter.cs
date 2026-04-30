@@ -86,11 +86,12 @@ namespace _Scripts.Result.UI
             if (eventData.EventType != ConnectionEvent.ClientDisconnected) return;
 
             bool removed = _agreedIdList.Remove(eventData.ClientId);
-            if (removed)
-            {
-                _sharedVoteStatus.Value = new SkipVoteStatus(_agreedIdList.Count, CurVoterCount - 1);
-            }
-
+            // if (removed)
+            // {
+            //     _sharedVoteStatus.Value = new SkipVoteStatus(_agreedIdList.Count, CurVoterCount - 1);
+            // }
+            _sharedVoteStatus.Value = new SkipVoteStatus(_agreedIdList.Count, CurVoterCount - 1);
+            
             if (AllAgreed)
             {
                 SkipRpc();
