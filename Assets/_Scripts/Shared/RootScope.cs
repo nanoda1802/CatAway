@@ -52,6 +52,7 @@ namespace _Scripts.Shared
         private void RegisterEntryPoints(EntryPointsBuilder builder)
         {
             builder.Add<ApprovalManager>().AsSelf();
+            builder.Add<AuthManager>().AsSelf();
             builder.Add<RoomStatus>().AsSelf();
             builder.Add<SceneChanger>().AsSelf();
             builder.Add<PlayerStatus>().AsSelf();
