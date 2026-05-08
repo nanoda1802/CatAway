@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using _Scripts.Room._Messages;
+using _Scripts.Shared;
 using _Scripts.Shared._Data;
 using _Scripts.Shared._Enums;
 using _Scripts.Shared._Messages;
@@ -9,6 +10,8 @@ using Cysharp.Threading.Tasks;
 using MessagePipe;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
 using Random = UnityEngine.Random;
@@ -17,10 +20,11 @@ namespace _Scripts.Home
 {
     public class RoomConnector : NetworkBehaviour
     {
-        private const int ConnectTimeoutMs = 3500;
+        private const int ConnectTimeoutMs = 5000;
         
         private NetworkManager _netManager;
         private UnityTransport _utp;
+        private AuthManager _authManager;
         
         private RoomStatus _roomStatus;
 
@@ -34,6 +38,7 @@ namespace _Scripts.Home
             RoomStatus roomStatus,
             NetworkManager netManager,
             UnityTransport utp,
+            AuthManager authManager,
             IPublisher<LoadSceneMessage> loadScenePub,
             IPublisher<PopUpMessage> popUpPub,
             IPublisher<PopDownMessage> popDownPub,
@@ -45,6 +50,7 @@ namespace _Scripts.Home
             _roomStatus = roomStatus;
             _netManager = netManager;
             _utp = utp;
+            _authManager = authManager;
             _loadScenePub = loadScenePub;
             _popUpPub = popUpPub;
             _popDownPub = popDownPub;
@@ -106,13 +112,27 @@ namespace _Scripts.Home
         
         private async UniTask CreateRoom(CreateRoomRequest req)
         {
-            await UniTask.Delay(500, cancellationToken: req.Ct); // 릴레이에서 방 생성하고 코드 받기
-            
-            _roomStatus.Code = $"{Random.Range(0, 256)}.{Random.Range(0, 256)}.{Random.Range(0, 256)}.{Random.Range(0, 256)}";
+            RelayServerData relayData;
             
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(req.Ct);
             linkedCts.CancelAfterSlim(ConnectTimeoutMs);
-
+            
+            try
+            {
+                relayData = await _authManager.AllocateRelayServerAndGetJoinCode(4, linkedCts.Token);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Relay Connect Failed : {e.Message}");
+                SendDialog("Fail To Create", e.Message, DialogButtonType.Cancel);
+                return;
+            }
+            
+            Debug.Log($"Relay Connect Success : {_authManager.RoomCode}");
+            _roomStatus.Code = _authManager.RoomCode;
+            
+            _utp.SetRelayServerData(relayData);
+            
             var networkStarted = _netManager.StartHost();
             
             if (!networkStarted)
@@ -126,6 +146,7 @@ namespace _Scripts.Home
             if (canceled && this != null && !IsSpawned)
             {
                 _netManager.Shutdown();
+                
                 if (!req.Ct.IsCancellationRequested)
                 {
                     SendDialog("Fail To Create", "The operation timed out.", DialogButtonType.Cancel);
@@ -135,19 +156,30 @@ namespace _Scripts.Home
 
         private async UniTask JoinRoom(JoinRoomRequest req)
         {
-            // 요청받은 코드 정규식 검사
-            // 아니면 _utp.SetConnectionData() 여기서 문제 발생
-            // 트랜스포트가 비정상 작동해서 포트를 점거해버림
-            
-            var code = string.IsNullOrEmpty(req.Code) ? "127.0.0.1" : req.Code;
-            
-            _utp.SetConnectionData(code, 7777); // 릴레이에서 방 찾아서 RelayData 갱신
-            
-            await UniTask.Delay(500, cancellationToken: req.Ct);  // 릴레이에 코드 보내서 방 찾고 UTP 설정 하기
+            RelayServerData relayData;
             
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(req.Ct);
             linkedCts.CancelAfterSlim(ConnectTimeoutMs);
 
+            try
+            {
+                relayData = await _authManager.JoinRelayServerFromJoinCode(req.Code, linkedCts.Token);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Relay Connect Failed : {e.Message}");
+                SendDialog("Fail To Join", e.Message, DialogButtonType.Retry | DialogButtonType.Cancel);
+                return;
+            }
+            
+            _utp.SetRelayServerData(relayData);
+            
+            // var code = string.IsNullOrEmpty(req.Code) ? "127.0.0.1" : req.Code;
+            
+            // _utp.SetConnectionData(code, 7777); // 릴레이에서 방 찾아서 RelayData 갱신
+            
+            // await UniTask.Delay(500, cancellationToken: req.Ct);  // 릴레이에 코드 보내서 방 찾고 UTP 설정 하기
+            
             var networkStarted = _netManager.StartClient();
 
             if (!networkStarted)
@@ -161,6 +193,7 @@ namespace _Scripts.Home
             if (canceled && this != null && !IsSpawned)
             {
                 _netManager.Shutdown();
+                
                 if (!req.Ct.IsCancellationRequested)
                 {
                     SendDialog("Fail To Join", "The operation timed out.", DialogButtonType.Retry | DialogButtonType.Cancel);
